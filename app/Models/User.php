@@ -14,19 +14,31 @@ use Illuminate\Notifications\Notifiable;
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    protected $table = 'users';
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $primaryKey = 'user_id';
+
+    protected $fillable = [
+        'nama',
+        'username',
+        'email',
+        'password',
+        'role',
+        'no_telepon',
+        'alamat',
+    ];
+
+    protected $hidden = [
+        'password',
+    ];
+
+    public function keranjang()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Keranjang::class, 'user_id', 'user_id');
+    }
+
+    public function pesanan()
+    {
+        return $this->hasMany(Pesanan::class, 'user_id', 'user_id');
     }
 }
