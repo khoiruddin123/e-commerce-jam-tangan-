@@ -30,16 +30,41 @@
                         <a class="nav-link active" href="{{ route('produk.index') }}">Katalog Produk</a>
                     </li>
                 </ul>
+                 <!-- Menu Kanan: Keranjang & Akun -->
                 <div class="d-flex align-items-center gap-2">
                     <a href="#" class="btn btn-outline-light btn-sm">
                         <i class="bi bi-cart3"></i> Keranjang
                     </a>
+
+                    @guest
+                        <!-- Tautan jika belum login -->
+                        <a href="{{ route('login') }}" class="btn btn-light btn-sm">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Masuk
+                        </a>
+                    @else
+                        <!-- Dropdown jika sudah login -->
+                        <div class="dropdown">
+                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person me-1"></i> {{ Auth::user()->nama ?? Auth::user()->username }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                <li><span class="dropdown-item-text small text-muted">Role: {{ ucfirst(Auth::user()->role ?? 'Pelanggan') }}</span></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger small">
+                                            <i class="bi bi-box-arrow-right me-1"></i> Keluar
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    @endguest
                 </div>
             </div>
         </div>
     </nav>
-
-    <!-- Konten Utama -->
     <main class="py-4">
         <div class="container">
             @if(session('success'))
