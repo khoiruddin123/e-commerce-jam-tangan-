@@ -30,3 +30,13 @@ Route::middleware(['auth', 'role:pelanggan'])->prefix('pelanggan')->name('pelang
         return view('pelanggan.beranda');
     })->name('beranda');
 });
+
+// --- Rute Autentikasi (Guest) ---
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+
+    // Tambahan Rute Registrasi (F2)
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});

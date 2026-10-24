@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - E-Commerce Jam Tangan</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-slate-100 flex items-center justify-center min-h-screen px-4">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 border border-slate-200">
         <div class="text-center mb-6">
@@ -46,6 +48,11 @@
                 Masuk
             </button>
         </form>
+        <p class="text-center text-sm text-slate-600 mt-6">
+            Belum punya akun?
+            <a href="{{ route('register') }}" class="text-indigo-600 hover:underline font-semibold">Daftar di sini</a>
+        </p>
     </div>
 </body>
+
 </html>
