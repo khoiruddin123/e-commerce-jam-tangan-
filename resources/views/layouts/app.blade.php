@@ -50,6 +50,20 @@
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                 <li><span class="dropdown-item-text small text-muted">Role: {{ ucfirst(Auth::user()->role ?? 'Pelanggan') }}</span></li>
                                 <li><hr class="dropdown-divider"></li>
+                                @if(Auth::user()->role === 'admin')
+                                    <li>
+                                        <a href="{{ route('admin.dashboard') }}" class="dropdown-item small">
+                                            <i class="bi bi-speedometer2 me-1"></i> Dashboard Admin
+                                        </a>
+                                    </li>
+                                @else
+                                    <li>
+                                        <a href="{{ route('pelanggan.beranda') }}" class="dropdown-item small">
+                                            <i class="bi bi-bag-check me-1"></i> Riwayat Pesanan Saya
+                                        </a>
+                                    </li>
+                                @endif
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf

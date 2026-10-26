@@ -27,6 +27,10 @@ class Pesanan extends Model
         'catatan',
     ];
 
+    protected $casts = [
+        'tanggal_pesanan' => 'datetime',
+    ];
+
     public function user()
     {
         return $this->belongsTo(
@@ -49,6 +53,15 @@ class Pesanan extends Model
     {
         return $this->hasOne(
             Pembayaran::class,
+            'pesanan_id',
+            'pesanan_id'
+        );
+    }
+
+    public function pengiriman()
+    {
+        return $this->hasOne(
+            Pengiriman::class,
             'pesanan_id',
             'pesanan_id'
         );
