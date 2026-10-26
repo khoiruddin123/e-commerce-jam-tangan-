@@ -32,7 +32,7 @@
                 </ul>
                  <!-- Menu Kanan: Keranjang & Akun -->
                 <div class="d-flex align-items-center gap-2">
-                    <a href="#" class="btn btn-outline-light btn-sm">
+                    <a href="{{ route('keranjang.index') }}" class="btn btn-outline-light btn-sm">
                         <i class="bi bi-cart3"></i> Keranjang
                     </a>
 
