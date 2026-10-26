@@ -106,69 +106,74 @@
                     </h3>
                 </div>
 
-                <!-- Pilihan Varian Produk (F7 - 03 & F7 - 04) -->
+                <!-- Pilihan Varian Produk & Formulir Keranjang (F8-01) -->
                 @if($produk->varian->isNotEmpty())
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold small text-dark d-flex justify-content-between align-items-center">
-                            <span>Pilih Varian:</span>
-                            <span id="displaySku" class="text-muted fw-normal" style="font-size: 0.8rem;"></span>
-                        </label>
-                        <div class="d-flex flex-wrap gap-2" id="variantOptions">
-                            @foreach($produk->varian as $varian)
-                                <input type="radio" 
-                                       class="btn-check variant-radio" 
-                                       name="varian_id" 
-                                       id="varian_{{ $varian->varian_id }}" 
-                                       value="{{ $varian->varian_id }}"
-                                       data-nama="{{ $varian->nama_varian }}"
-                                       data-sku="{{ $varian->kode_sku }}"
-                                       data-harga="{{ $varian->harga_varian }}"
-                                       data-stok="{{ $varian->stok }}"
-                                       data-warna="{{ $varian->warna }}"
-                                       data-tali="{{ $varian->bahan_tali }}"
-                                       {{ $loop->first ? 'checked' : '' }}
-                                       autocomplete="off">
-                                <label class="btn btn-outline-dark btn-sm rounded-3 py-2 px-3 text-start position-relative" 
-                                       for="varian_{{ $varian->varian_id }}">
-                                    <span class="fw-semibold d-block">{{ $varian->nama_varian }}</span>
-                                    <span class="small text-muted d-block" style="font-size: 0.75rem;">
-                                        {{ $varian->warna ?? '-' }} | {{ $varian->bahan_tali ?? '-' }}
-                                    </span>
-                                </label>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <!-- Indikator Stok Berdasarkan Varian Terpilih (F7 - 04) -->
-                    <div class="mb-4 p-3 bg-light rounded-3 d-flex align-items-center justify-content-between" id="stockStatusContainer">
-                        <div class="d-flex align-items-center gap-2">
-                            <i id="stockIcon" class="bi bi-check-circle-fill text-success fs-5"></i>
-                            <div>
-                                <span class="d-block small text-muted">Ketersediaan Stok:</span>
-                                <strong id="stockText" class="text-dark">Pilih varian...</strong>
+                    <form action="{{ route('keranjang.tambah') }}" method="POST">
+                        @csrf
+                        
+                        <!-- Pilihan Varian -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-dark d-flex justify-content-between align-items-center">
+                                <span>Pilih Varian:</span>
+                                <span id="displaySku" class="text-muted fw-normal" style="font-size: 0.8rem;"></span>
+                            </label>
+                            <div class="d-flex flex-wrap gap-2" id="variantOptions">
+                                @foreach($produk->varian as $varian)
+                                    <input type="radio" 
+                                           class="btn-check variant-radio" 
+                                           name="varian_id" 
+                                           id="varian_{{ $varian->varian_id }}" 
+                                           value="{{ $varian->varian_id }}"
+                                           data-nama="{{ $varian->nama_varian }}"
+                                           data-sku="{{ $varian->kode_sku }}"
+                                           data-harga="{{ $varian->harga_varian }}"
+                                           data-stok="{{ $varian->stok }}"
+                                           data-warna="{{ $varian->warna }}"
+                                           data-tali="{{ $varian->bahan_tali }}"
+                                           {{ $loop->first ? 'checked' : '' }}
+                                           autocomplete="off">
+                                    <label class="btn btn-outline-dark btn-sm rounded-3 py-2 px-3 text-start position-relative" 
+                                           for="varian_{{ $varian->varian_id }}">
+                                        <span class="fw-semibold d-block">{{ $varian->nama_varian }}</span>
+                                        <span class="small text-muted d-block" style="font-size: 0.75rem;">
+                                            {{ $varian->warna ?? '-' }} | {{ $varian->bahan_tali ?? '-' }}
+                                        </span>
+                                    </label>
+                                @endforeach
                             </div>
                         </div>
-                        <span id="stockBadge" class="badge bg-success-subtle text-success border border-success-subtle">
-                            Tersedia
-                        </span>
-                    </div>
 
-                    <!-- Jumlah Pembelian & Tombol Aksi -->
-                    <div class="row g-2 align-items-center mb-3">
-                        <div class="col-4 col-sm-3">
-                            <label class="form-label small text-muted mb-1">Jumlah</label>
-                            <div class="input-group input-group-sm">
-                                <button class="btn btn-outline-secondary" type="button" onclick="adjustQty(-1)">-</button>
-                                <input type="number" id="inputQty" class="form-control text-center fw-semibold" value="1" min="1" max="1">
-                                <button class="btn btn-outline-secondary" type="button" onclick="adjustQty(1)">+</button>
+                        <!-- Indikator Stok Berdasarkan Varian Terpilih (F7 - 04 & F8 - 04) -->
+                        <div class="mb-4 p-3 bg-light rounded-3 d-flex align-items-center justify-content-between" id="stockStatusContainer">
+                            <div class="d-flex align-items-center gap-2">
+                                <i id="stockIcon" class="bi bi-check-circle-fill text-success fs-5"></i>
+                                <div>
+                                    <span class="d-block small text-muted">Ketersediaan Stok:</span>
+                                    <strong id="stockText" class="text-dark">Pilih varian...</strong>
+                                </div>
+                            </div>
+                            <span id="stockBadge" class="badge bg-success-subtle text-success border border-success-subtle">
+                                Tersedia
+                            </span>
+                        </div>
+
+                        <!-- Jumlah Pembelian & Tombol Aksi -->
+                        <div class="row g-2 align-items-center mb-3">
+                            <div class="col-4 col-sm-3">
+                                <label class="form-label small text-muted mb-1">Jumlah</label>
+                                <div class="input-group input-group-sm">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="adjustQty(-1)">-</button>
+                                    <input type="number" id="inputQty" name="jumlah" class="form-control text-center fw-semibold" value="1" min="1" max="1">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="adjustQty(1)">+</button>
+                                </div>
+                            </div>
+                            <div class="col-8 col-sm-9 d-flex gap-2 pt-4">
+                                <button type="submit" class="btn btn-dark w-100 py-2 fw-semibold" id="btnAddToCart">
+                                    <i class="bi bi-cart-plus me-1"></i> Tambah ke Keranjang
+                                </button>
                             </div>
                         </div>
-                        <div class="col-8 col-sm-9 d-flex gap-2 pt-4">
-                            <button type="button" class="btn btn-dark w-100 py-2 fw-semibold" id="btnAddToCart">
-                                <i class="bi bi-cart-plus me-1"></i> Tambah ke Keranjang
-                            </button>
-                        </div>
-                    </div>
+                    </form>
                 @else
                     <!-- Jika seluruh produk belum memiliki varian aktif -->
                     <div class="alert alert-warning border-0 rounded-3 mb-4">

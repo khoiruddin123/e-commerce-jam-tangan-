@@ -15,6 +15,7 @@ class Keranjang extends Model
         'status',
     ];
 
+
     public function user()
     {
         return $this->belongsTo(
@@ -24,6 +25,7 @@ class Keranjang extends Model
         );
     }
 
+
     public function detail()
     {
         return $this->hasMany(
@@ -31,5 +33,19 @@ class Keranjang extends Model
             'keranjang_id',
             'keranjang_id'
         );
+    }
+
+
+    public function getTotalHargaAttribute(): float
+    {
+        return (float) $this->detail->sum(function ($item) {
+            return $item->subtotal;
+        });
+    }
+
+ 
+    public function getTotalItemAttribute(): int
+    {
+        return (int) $this->detail->sum('jumlah');
     }
 }
