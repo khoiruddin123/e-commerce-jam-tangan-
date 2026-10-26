@@ -40,4 +40,13 @@ class DetailPesanan extends Model
             'varian_id'
         );
     }
+
+    public function ulasan()
+    {
+        return $this->hasOne(
+            Ulasan::class,
+            'detail_pesanan_id',
+            'detail_pesanan_id'
+        );
+    }
 }

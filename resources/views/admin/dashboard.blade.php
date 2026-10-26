@@ -31,14 +31,26 @@
                 <h3 class="font-bold text-slate-700">Katalog & Stok Produk</h3>
                 <p class="text-xs text-slate-500 mt-1">Kelola data jam tangan, varian, dan galeri.</p>
             </div>
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <h3 class="font-bold text-slate-700">Pesanan & Pengiriman</h3>
-                <p class="text-xs text-slate-500 mt-1">Proses pesanan dibayar dan input nomor resi pengiriman.</p>
-            </div>
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <h3 class="font-bold text-slate-700">Laporan Omzet Bulanan</h3>
-                <p class="text-xs text-slate-500 mt-1">Lihat rekapitulasi penjualan dan cetak laporan bulanan.</p>
-            </div>
+            <a href="{{ route('admin.pesanan.index') }}" class="block bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition group cursor-pointer">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-bold text-slate-800 group-hover:text-blue-600 transition">Pesanan & Pengiriman</h3>
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Aktif</span>
+                </div>
+                <p class="text-xs text-slate-500">Kelola verifikasi transaksi, status pemrosesan jam, dan input nomor resi kurir.</p>
+                <div class="mt-4 flex items-center text-xs font-semibold text-blue-600 group-hover:translate-x-1 transition duration-150">
+                    Buka Logistik & Pesanan &rarr;
+                </div>
+            </a>
+            <a href="{{ route('admin.laporan.omzet') }}" class="block bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-400 transition group cursor-pointer">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-bold text-slate-800 group-hover:text-indigo-600 transition">Laporan Omzet Bulanan</h3>
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Aktif</span>
+                </div>
+                <p class="text-xs text-slate-500">Lihat rekapitulasi omzet penjualan, filter bulan/tahun, dan cetak laporan.</p>
+                <div class="mt-4 flex items-center text-xs font-semibold text-indigo-600 group-hover:translate-x-1 transition duration-150">
+                    Buka Laporan Omzet &rarr;
+                </div>
+            </a>
         </div>
     </main>
 </body>
