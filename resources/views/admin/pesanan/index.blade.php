@@ -28,6 +28,7 @@
                 <nav class="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-600">
                     <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600 transition">Dashboard</a>
                     <a href="{{ route('admin.kategori.index') }}" class="hover:text-blue-600 transition">Kategori Produk</a>
+                    <a href="{{ route('admin.varian.index') }}" class="hover:text-blue-600 transition">Varian & Stok</a>
                     <a href="{{ route('admin.pesanan.index') }}" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-1">Pesanan & Logistik</a>
                     <a href="{{ route('admin.laporan.omzet') }}" class="hover:text-blue-600 transition">Laporan Omzet</a>
                 </nav>
