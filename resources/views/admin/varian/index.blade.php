@@ -65,20 +65,6 @@
                     <i class="bi bi-truck text-sm"></i>
                     <span>Pesanan & Pengiriman</span>
                 </a>
-
-                <!-- Laporan Omzet -->
-                <a href="{{ route('admin.laporan.omzet') }}" 
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
-                    <i class="bi bi-graph-up text-sm"></i>
-                    <span>Laporan Omzet</span>
-                </a>
-
-                <!-- Pengaturan Toko -->
-                <a href="#" onclick="alert('Pengaturan Toko Kronos: Semua modul gateway pembayaran SSL & kurir logistik berjalan normal.'); return false;" 
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
-                    <i class="bi bi-gear text-sm"></i>
-                    <span>Pengaturan Toko</span>
-                </a>
             </nav>
         </div>
 

@@ -15,11 +15,16 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
+        @media print {
+            aside, header, .no-print { display: none !important; }
+            body { background: white !important; }
+            main { padding: 0 !important; max-width: 100% !important; }
+        }
     </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-800 antialiased flex min-h-screen">
 
-    <!-- 1. SIDEBAR NAVIGASI HITAM PEKAT / DARK NAVY (SESUAI MOCKUP) -->
+    <!-- 1. SIDEBAR NAVIGASI HITAM PEKAT / DARK NAVY (SESUAI MOCKUP, TANPA SETTING & LAPORAN) -->
     <aside class="w-64 bg-[#0B1120] text-slate-300 flex flex-col justify-between shrink-0 min-h-screen border-r border-slate-900 sticky top-0 h-screen overflow-y-auto">
         <div class="p-5">
             <!-- Brand Logo KRONOS ADMIN PORTAL -->
@@ -38,7 +43,7 @@
                 MENU NAVIGASI
             </div>
 
-            <!-- Nav Links List -->
+            <!-- Nav Links List (Setting & Laporan Dihapus Sesuai Permintaan) -->
             <nav class="space-y-1 text-xs font-semibold">
                 <!-- Dashboard (Active) -->
                 <a href="{{ route('admin.dashboard') }}" 
@@ -66,20 +71,6 @@
                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
                     <i class="bi bi-truck text-sm"></i>
                     <span>Pesanan & Pengiriman</span>
-                </a>
-
-                <!-- Laporan Omzet -->
-                <a href="{{ route('admin.laporan.omzet') }}" 
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
-                    <i class="bi bi-graph-up text-sm"></i>
-                    <span>Laporan Omzet</span>
-                </a>
-
-                <!-- Pengaturan Toko -->
-                <a href="#" onclick="alert('Pengaturan Toko Kronos: Semua modul gateway pembayaran SSL & kurir logistik berjalan normal.'); return false;" 
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
-                    <i class="bi bi-gear text-sm"></i>
-                    <span>Pengaturan Toko</span>
                 </a>
             </nav>
         </div>
@@ -140,7 +131,7 @@
                 <div class="flex items-center gap-3 pl-2 border-l border-slate-200">
                     <div class="text-right hidden sm:block">
                         <div class="text-xs font-bold text-slate-900 leading-tight">
-                            {{ Auth::user()->nama ?? 'Hendrawan S.' }}
+                            {{ Auth::user()->nama ?? 'Admin' }}
                         </div>
                         <div class="text-[10px] text-slate-400 font-medium">
                             {{ ucfirst(Auth::user()->role ?? 'Super Admin') }}
@@ -148,7 +139,7 @@
                     </div>
                     <!-- Avatar Initials -->
                     <div class="w-9 h-9 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-sm">
-                        {{ strtoupper(substr(Auth::user()->nama ?? 'Hendrawan S', 0, 2)) }}
+                        {{ strtoupper(substr(Auth::user()->nama ?? 'AD', 0, 2)) }}
                     </div>
                 </div>
             </div>
@@ -163,13 +154,13 @@
                     <h1 class="text-2xl font-black text-slate-900 tracking-tight">Dashboard Overview</h1>
                     <p class="text-xs text-slate-500 mt-1">Ringkasan penjualan arloji, metrik utama, dan aktivitas pesanan butik.</p>
                 </div>
-                <div class="flex items-center gap-3">
-                    <!-- Tombol Ekspor Laporan -->
-                    <a href="{{ route('admin.laporan.omzet.cetak') }}" target="_blank"
-                       class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold text-xs px-3.5 py-2.5 rounded-xl shadow-sm transition">
+                <div class="flex items-center gap-3 no-print">
+                    <!-- Tombol Ekspor Laporan (Mencetak / Menyimpan Laporan Dashboard) -->
+                    <button type="button" onclick="window.print()"
+                            class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold text-xs px-3.5 py-2.5 rounded-xl shadow-sm transition cursor-pointer">
                         <i class="bi bi-download"></i>
                         <span>Ekspor Laporan</span>
-                    </a>
+                    </button>
 
                     <!-- Tombol Tambah Produk -->
                     <a href="{{ route('admin.varian.index') }}" 
@@ -180,7 +171,7 @@
                 </div>
             </div>
 
-            <!-- 4 METRIC CARDS SESUAI MOCKUP -->
+            <!-- 4 METRIC CARDS (DATA RIIL DATABASE) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Card 1: TOTAL PRODUK -->
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
@@ -214,7 +205,7 @@
                     </div>
                     <div class="text-2xl font-black text-slate-900 mt-2">{{ $omzetFormatted }}</div>
                     <div class="text-[11px] text-slate-400 font-medium mt-1 flex items-center gap-1">
-                        <span class="text-emerald-600 font-semibold">{{ $omzetGrowth }}</span>
+                        <span class="{{ $omzetGrowth[0] === '+' ? 'text-emerald-600' : 'text-slate-500' }} font-semibold">{{ $omzetGrowth }}</span>
                         <span>vs bulan lalu</span>
                     </div>
                 </div>
@@ -232,15 +223,15 @@
                 </div>
             </div>
 
-            <!-- MIDDLE SECTION: TREN OMZET & KATEGORI PENJUALAN -->
+            <!-- MIDDLE SECTION: TREN OMZET & KATEGORI PENJUALAN (DATA RIIL) -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Kiri: Tren Omzet 6 Bulan (Line Chart) -->
+                <!-- Kiri: Tren Omzet 6 Bulan (Line Chart Riil) -->
                 <div class="lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <div>
                                 <h3 class="font-bold text-sm text-slate-900">Tren Omzet 6 Bulan</h3>
-                                <div class="text-[11px] text-slate-400">Desember 2025 – Mei 2026</div>
+                                <div class="text-[11px] text-slate-400">{{ $chartLabels[0] ?? '' }} – {{ $chartLabels[count($chartLabels)-1] ?? '' }}</div>
                             </div>
                             <!-- Period Tabs -->
                             <div class="flex items-center gap-2 text-xs font-semibold text-slate-400">
@@ -259,7 +250,7 @@
                     <!-- Footer Kartu Grafik -->
                     <div class="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                         <div>
-                            Total Semester 1: <strong class="text-slate-900">Rp4,28 Miliar</strong>
+                            Total 6 Bulan: <strong class="text-slate-900">{{ $totalSemesterFormatted }}</strong>
                         </div>
                         <div class="flex items-center gap-1.5 text-slate-600 font-medium">
                             <i class="bi bi-shield-check text-blue-600"></i>
@@ -268,56 +259,71 @@
                     </div>
                 </div>
 
-                <!-- Kanan: Kategori Penjualan & Produk Terlaris -->
+                <!-- Kanan: Kategori Penjualan & Produk Terlaris (Data Riil) -->
                 <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
                     <div>
                         <h3 class="font-bold text-sm text-slate-900">Kategori Penjualan</h3>
                         <div class="text-[11px] text-slate-400 mb-4">Kontribusi revenue menurut seri</div>
 
-                        <!-- Daftar Kategori & Progress Bar -->
-                        <div class="space-y-3.5">
-                            @foreach($kategoriPenjualan as $kat)
-                                <div>
-                                    <div class="flex items-center justify-between text-xs mb-1">
-                                        <span class="font-semibold text-slate-700">{{ $kat['nama'] }}</span>
-                                        <span class="text-slate-500 font-medium">{{ $kat['persentase'] }}% ({{ $kat['revenue'] }})</span>
+                        @if(empty($kategoriPenjualan))
+                            <div class="py-6 text-center text-xs text-slate-400">
+                                <i class="bi bi-collection text-xl text-slate-300 block mb-1"></i>
+                                Belum ada kategori produk terdaftar
+                            </div>
+                        @else
+                            <!-- Daftar Kategori Riil Database -->
+                            <div class="space-y-3.5">
+                                @foreach($kategoriPenjualan as $kat)
+                                    <div>
+                                        <div class="flex items-center justify-between text-xs mb-1">
+                                            <span class="font-semibold text-slate-700">{{ $kat['nama'] }}</span>
+                                            <span class="text-slate-500 font-medium">{{ $kat['persentase'] }}% ({{ $kat['revenue'] }})</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                            <div class="{{ $kat['warna'] }} h-1.5 rounded-full" style="width: {{ max($kat['persentase'], 4) }}%"></div>
+                                        </div>
                                     </div>
-                                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                                        <div class="{{ $kat['warna'] }} h-1.5 rounded-full" style="width: {{ $kat['persentase'] }}%"></div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
 
-                    <!-- Card Info Produk Terlaris -->
+                    <!-- Card Info Produk Terlaris (Riil Database) -->
                     <div class="pt-4 mt-6 border-t border-slate-100">
                         <div class="flex items-center justify-between text-xs mb-1">
                             <span class="font-bold text-slate-700">Produk Terlaris</span>
-                            <span class="font-bold text-slate-600">{{ $produkTerlaris['terjual'] }}</span>
+                            <span class="font-bold text-slate-600">
+                                {{ $bestSeller ? $bestSeller->total_terjual . ' Unit' : '0 Unit' }}
+                            </span>
                         </div>
-                        <div class="font-bold text-xs text-slate-900">{{ $produkTerlaris['nama'] }}</div>
-                        <div class="text-[11px] text-slate-400 mt-0.5">{{ $produkTerlaris['detail'] }}</div>
+                        @if($bestSeller)
+                            <div class="font-bold text-xs text-slate-900">{{ $bestSeller->nama_produk }}</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">
+                                {{ $bestSeller->nama_varian }} &middot; Rp{{ number_format($bestSeller->harga_satuan, 0, ',', '.') }}
+                            </div>
+                        @else
+                            <div class="text-xs text-slate-400 italic">Belum ada riwayat penjualan produk</div>
+                        @endif
                     </div>
                 </div>
             </div>
 
-            <!-- BOTTOM SECTION: PESANAN TERBARU (TABEL SESUAI MOCKUP) -->
+            <!-- BOTTOM SECTION: PESANAN TERBARU (DATA RIIL DATABASE) -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div class="flex items-center gap-2">
                         <h3 class="font-bold text-sm text-slate-900">Pesanan Terbaru</h3>
-                        <span class="text-[11px] text-slate-400">20 transaksi terkini</span>
+                        <span class="text-[11px] text-slate-400">{{ $pesananTerbaru->count() }} transaksi</span>
                     </div>
                     <!-- Filter Search Mini -->
-                    <div class="relative w-full sm:w-64">
+                    <div class="relative w-full sm:w-64 no-print">
                         <i class="bi bi-search absolute left-3 top-2 text-slate-400 text-xs"></i>
                         <input type="text" placeholder="Cari pesanan..." 
                                class="w-full text-xs pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 
-                <!-- Tabel Transaksi -->
+                <!-- Tabel Transaksi Riil Database -->
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -331,37 +337,53 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-xs">
-                            @foreach($pesananTerbaru as $order)
+                            @forelse($pesananTerbaru as $order)
+                                @php
+                                    $firstItem = $order->detail->first();
+                                    $namaProduk = $firstItem->nama_produk ?? $firstItem->varian->produk->nama_produk ?? 'Jam Tangan';
+                                    if ($order->detail->count() > 1) {
+                                        $namaProduk .= ' (+' . ($order->detail->count() - 1) . ' item)';
+                                    }
+
+                                    $statusLabel = match ($order->status_pesanan) {
+                                        'diproses'            => 'Diproses QC',
+                                        'dikirim'             => 'Siap Kirim',
+                                        'selesai'             => 'Selesai',
+                                        'dibatalkan'          => 'Dibatalkan',
+                                        'dibayar'             => 'Dibayar',
+                                        default               => 'Menunggu Bayar'
+                                    };
+                                @endphp
                                 <tr class="hover:bg-slate-50/50 transition">
                                     <td class="py-3.5 px-4 font-mono font-medium text-slate-800">
-                                        {{ $order['no_pesanan'] }}
+                                        {{ $order->nomor_pesanan ?? ('#KW-' . date('Ymd', strtotime($order->tanggal_pesanan ?? now())) . '-' . $order->pesanan_id) }}
                                     </td>
                                     <td class="py-3.5 px-4">
-                                        <div class="font-semibold text-slate-800">{{ $order['pelanggan'] }}</div>
-                                        <div class="text-[10px] text-slate-400">{{ $order['tier'] }}</div>
+                                        <div class="font-semibold text-slate-800">{{ $order->user->nama ?? $order->user->username ?? $order->nama_penerima ?? 'Pelanggan' }}</div>
+                                        <div class="text-[10px] text-slate-400">Member</div>
                                     </td>
                                     <td class="py-3.5 px-4 text-slate-600 font-medium">
-                                        {{ $order['produk'] }}
+                                        {{ $namaProduk }}
                                     </td>
                                     <td class="py-3.5 px-4 font-bold text-slate-900">
-                                        {{ $order['total'] }}
+                                        Rp{{ number_format($order->total_harga, 0, ',', '.') }}
                                     </td>
                                     <td class="py-3.5 px-4">
-                                        @if($order['status'] === 'Diproses QC')
+                                        @if($order->status_pesanan === 'diproses')
                                             <span class="inline-flex items-center text-blue-600 bg-blue-50 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
                                                 Diproses QC
                                             </span>
-                                        @elseif($order['status'] === 'Siap Kirim')
+                                        @elseif($order->status_pesanan === 'dikirim')
                                             <span class="inline-flex items-center text-amber-600 bg-amber-50 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
                                                 Siap Kirim
                                             </span>
-                                        @elseif($order['status'] === 'Selesai')
+                                        @elseif($order->status_pesanan === 'selesai')
                                             <span class="inline-flex items-center text-emerald-600 bg-emerald-50 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
                                                 Selesai
                                             </span>
                                         @else
                                             <span class="inline-flex items-center text-slate-600 bg-slate-100 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
-                                                {{ $order['status'] }}
+                                                {{ $statusLabel }}
                                             </span>
                                         @endif
                                     </td>
@@ -371,19 +393,28 @@
                                         </a>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="py-12 text-center text-slate-400">
+                                        <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-2 text-slate-400 text-lg">
+                                            <i class="bi bi-inbox"></i>
+                                        </div>
+                                        <div class="font-semibold text-slate-700 text-xs">Belum Ada Transaksi Pesanan</div>
+                                        <div class="text-[11px] text-slate-400 mt-0.5">Pesanan baru dari pelanggan akan otomatis tercatat di sini.</div>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Footer Tabel & Pagination -->
+                <!-- Footer Tabel -->
                 <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                    <div>Menampilkan 5 dari 20 pesanan</div>
-                    <div class="flex items-center gap-1 font-semibold">
-                        <span class="w-6 h-6 flex items-center justify-center rounded bg-slate-100 text-slate-800">1</span>
-                        <span class="w-6 h-6 flex items-center justify-center rounded hover:bg-slate-50 cursor-pointer">2</span>
-                        <span class="w-6 h-6 flex items-center justify-center rounded hover:bg-slate-50 cursor-pointer">3</span>
-                    </div>
+                    <div>Menampilkan {{ $pesananTerbaru->count() }} pesanan</div>
+                    <a href="{{ route('admin.pesanan.index') }}" class="text-blue-600 hover:text-blue-700 font-semibold text-xs flex items-center gap-1">
+                        <span>Buka Semua Pesanan</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
                 </div>
             </div>
 
@@ -399,12 +430,11 @@
         </main>
     </div>
 
-    <!-- Script Chart.js untuk Menggambar Grafik Garis Tren Omzet -->
+    <!-- Script Chart.js untuk Menggambar Grafik Garis Tren Omzet (Data Riil) -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('chartTrenOmzet').getContext('2d');
             
-            // Gradient fill untuk grafik
             const gradient = ctx.createLinearGradient(0, 0, 0, 200);
             gradient.addColorStop(0, 'rgba(37, 99, 235, 0.15)');
             gradient.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
@@ -451,7 +481,8 @@
                         },
                         y: {
                             display: false,
-                            grid: { display: false }
+                            grid: { display: false },
+                            min: 0
                         }
                     }
                 }

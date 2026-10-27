@@ -4,161 +4,140 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pesanan;
+use App\Models\DetailPesanan;
 use App\Models\Produk;
 use App\Models\VarianProduk;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     /**
-     * Menampilkan Dashboard Utama Admin sesuai desain butik KRONOS Horology.
+     * Menampilkan Dashboard Utama Admin dengan kalkulasi 100% data riil dari database (tanpa data dummy).
      */
     public function index(Request $request)
     {
-        // 1. Metrik Total Produk & Varian (SKU)
-        $dbTotalVarian = VarianProduk::count();
-        $dbAktifVarian = VarianProduk::where('status_varian', 'aktif')->count();
-        $dbTotalProduk = Produk::count();
+        // 1. Data Riil Total Produk & Varian (SKU)
+        $totalSKU = VarianProduk::count();
+        $aktifSKU = VarianProduk::where('status_varian', 'aktif')->count();
+        $drafSKU  = VarianProduk::where('status_varian', '!=', 'aktif')->count();
 
-        $totalSKU = $dbTotalVarian > 0 ? $dbTotalVarian : 48;
-        $aktifSKU = $dbTotalVarian > 0 ? $dbAktifVarian : 42;
-        $drafSKU  = $totalSKU - $aktifSKU;
+        // 2. Data Riil Pesanan Perlu Diproses
+        $perluDiprosesCount = Pesanan::whereIn('status_pesanan', ['menunggu_pembayaran', 'dibayar', 'diproses'])->count();
+        $menungguQC         = Pesanan::where('status_pesanan', 'diproses')->count();
+        $siapKirim          = Pesanan::where('status_pesanan', 'dikirim')->count();
 
-        // 2. Metrik Pesanan Perlu Diproses
-        $dbPerluDiproses = Pesanan::whereIn('status_pesanan', ['menunggu_pembayaran', 'diproses'])->count();
-        $perluDiprosesCount = $dbPerluDiproses > 0 ? $dbPerluDiproses : 6;
-        $menungguQC = $dbPerluDiproses > 0 ? Pesanan::where('status_pesanan', 'diproses')->count() : 4;
-        $siapKirim  = $perluDiprosesCount - $menungguQC;
+        // 3. Data Riil Omzet Bulan Ini
+        $currentMonth = now()->month;
+        $currentYear  = now()->year;
 
-        // 3. Metrik Omzet Bulan Ini
-        $dbOmzet = Pesanan::where('status_pesanan', 'selesai')->sum('total_harga');
-        $omzetBulanIni = $dbOmzet > 0 ? $dbOmzet : 842500000;
-        $omzetFormatted = 'Rp' . number_format($omzetBulanIni / 1000000, 1, ',', '.') . ' Jt';
-        $omzetGrowth = '+14.8%';
+        $omzetBulanIni = Pesanan::where('status_pesanan', 'selesai')
+            ->whereMonth('tanggal_pesanan', $currentMonth)
+            ->whereYear('tanggal_pesanan', $currentYear)
+            ->sum('total_harga');
 
-        // 4. Metrik Transaksi Berhasil
-        $dbTransaksiBerhasil = Pesanan::where('status_pesanan', 'selesai')->count();
-        $transaksiBerhasilCount = $dbTransaksiBerhasil > 0 ? $dbTransaksiBerhasil : 20;
-        $rataRataTransaksi = $transaksiBerhasilCount > 0 ? ($omzetBulanIni / $transaksiBerhasilCount) : 42100000;
-        $rataRataFormatted = 'Rp' . number_format($rataRataTransaksi / 1000000, 1, ',', '.') . ' Juta';
+        // Pertumbuhan omzet vs bulan lalu
+        $lastMonthDate = now()->subMonth();
+        $omzetBulanLalu = Pesanan::where('status_pesanan', 'selesai')
+            ->whereMonth('tanggal_pesanan', $lastMonthDate->month)
+            ->whereYear('tanggal_pesanan', $lastMonthDate->year)
+            ->sum('total_harga');
 
-        // 5. Data Grafik Tren Omzet 6 Bulan
-        $chartLabels = ['Des 2025', 'Jan 2026', 'Feb 2026', 'Mar 2026', 'Apr 2026', 'Mei 2026'];
-        $chartValues = [120, 240, 310, 420, 580, 842.5]; // dalam jutaan rupiah
+        if ($omzetBulanLalu > 0) {
+            $growthValue = round((($omzetBulanIni - $omzetBulanLalu) / $omzetBulanLalu) * 100, 1);
+            $omzetGrowth = ($growthValue >= 0 ? '+' : '') . $growthValue . '%';
+        } else {
+            $omzetGrowth = $omzetBulanIni > 0 ? '+100%' : '0%';
+        }
 
-        // 6. Kontribusi Kategori Penjualan
-        $kategoriPenjualan = [
-            [
-                'nama'       => 'Chronograph Master',
-                'persentase' => 42,
-                'revenue'    => 'Rp353,8 Jt',
-                'warna'      => 'bg-blue-600'
-            ],
-            [
-                'nama'       => 'Diver Professional',
-                'persentase' => 30,
-                'revenue'    => 'Rp252,7 Jt',
-                'warna'      => 'bg-cyan-500'
-            ],
-            [
-                'nama'       => 'Dress Classic',
-                'persentase' => 28,
-                'revenue'    => 'Rp235,9 Jt',
-                'warna'      => 'bg-indigo-500'
-            ],
-        ];
+        // Format tampilan ringkas omzet
+        if ($omzetBulanIni >= 1000000000) {
+            $omzetFormatted = 'Rp' . number_format($omzetBulanIni / 1000000000, 2, ',', '.') . ' M';
+        } elseif ($omzetBulanIni >= 1000000) {
+            $omzetFormatted = 'Rp' . number_format($omzetBulanIni / 1000000, 1, ',', '.') . ' Jt';
+        } else {
+            $omzetFormatted = 'Rp' . number_format($omzetBulanIni, 0, ',', '.');
+        }
 
-        // 7. Produk Terlaris
-        $produkTerlaris = [
-            'nama'      => 'Halden Classic 40 Brown Leather',
-            'detail'    => 'Rp1.885.000 · Automatic Caliber 8215',
-            'terjual'   => '14 Unit'
-        ];
+        // 4. Data Riil Transaksi Berhasil
+        $transaksiBerhasilCount = Pesanan::where('status_pesanan', 'selesai')->count();
+        $totalOmzetKeseluruhan  = Pesanan::where('status_pesanan', 'selesai')->sum('total_harga');
+        $rataRataTransaksi      = $transaksiBerhasilCount > 0 ? ($totalOmzetKeseluruhan / $transaksiBerhasilCount) : 0;
 
-        // 8. Pesanan Terbaru
-        $realOrders = Pesanan::with(['user', 'detail.varian.produk', 'pengiriman'])
+        if ($rataRataTransaksi >= 1000000) {
+            $rataRataFormatted = 'Rp' . number_format($rataRataTransaksi / 1000000, 1, ',', '.') . ' Juta';
+        } else {
+            $rataRataFormatted = 'Rp' . number_format($rataRataTransaksi, 0, ',', '.');
+        }
+
+        // 5. Data Riil Grafik Tren Omzet 6 Bulan Terakhir
+        $chartLabels   = [];
+        $chartValues   = [];
+        $totalSemester = 0;
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $label = $date->translatedFormat('M Y');
+            $monthlySales = Pesanan::where('status_pesanan', 'selesai')
+                ->whereMonth('tanggal_pesanan', $date->month)
+                ->whereYear('tanggal_pesanan', $date->year)
+                ->sum('total_harga');
+
+            $chartLabels[] = $label;
+            // Angka dalam jutaan rupiah untuk skala grafik
+            $chartValues[] = round($monthlySales / 1000000, 2);
+            $totalSemester += $monthlySales;
+        }
+
+        $totalSemesterFormatted = $totalSemester >= 1000000000
+            ? 'Rp' . number_format($totalSemester / 1000000000, 2, ',', '.') . ' Miliar'
+            : ($totalSemester >= 1000000 
+                ? 'Rp' . number_format($totalSemester / 1000000, 1, ',', '.') . ' Juta' 
+                : 'Rp' . number_format($totalSemester, 0, ',', '.'));
+
+        // 6. Data Riil Kontribusi Kategori Penjualan
+        $daftarKategori = Kategori::withCount('produk')->get();
+        $kategoriPenjualan = [];
+        $colors = ['bg-blue-600', 'bg-cyan-500', 'bg-indigo-500', 'bg-amber-500', 'bg-purple-500', 'bg-emerald-500'];
+
+        foreach ($daftarKategori as $idx => $kat) {
+            // Hitung revenue riil dari kategori ini pada pesanan yang sudah selesai
+            $katOmzet = DetailPesanan::whereHas('pesanan', function ($q) {
+                $q->where('status_pesanan', 'selesai');
+            })->whereHas('varian.produk', function ($q) use ($kat) {
+                $q->where('kategori_id', $kat->kategori_id);
+            })->sum('subtotal');
+
+            $persen = $totalOmzetKeseluruhan > 0 ? round(($katOmzet / $totalOmzetKeseluruhan) * 100, 1) : 0;
+
+            $revFormatted = $katOmzet >= 1000000 
+                ? 'Rp' . number_format($katOmzet / 1000000, 1, ',', '.') . ' Jt' 
+                : 'Rp' . number_format($katOmzet, 0, ',', '.');
+
+            $kategoriPenjualan[] = [
+                'nama'         => $kat->nama_kategori,
+                'persentase'   => $persen,
+                'revenue'      => $revFormatted,
+                'produk_count' => $kat->produk_count,
+                'warna'        => $colors[$idx % count($colors)]
+            ];
+        }
+
+        // 7. Data Riil Produk Terlaris
+        $bestSeller = DetailPesanan::selectRaw('varian_id, nama_produk, nama_varian, harga_satuan, SUM(jumlah) as total_terjual')
+            ->whereHas('pesanan', function ($q) {
+                $q->where('status_pesanan', 'selesai');
+            })
+            ->groupBy('varian_id', 'nama_produk', 'nama_varian', 'harga_satuan')
+            ->orderByDesc('total_terjual')
+            ->first();
+
+        // 8. Data Riil 5 Pesanan Terbaru
+        $pesananTerbaru = Pesanan::with(['user', 'detail.varian.produk', 'pengiriman'])
             ->latest('tanggal_pesanan')
             ->take(5)
             ->get();
-
-        if ($realOrders->isNotEmpty()) {
-            $pesananTerbaru = $realOrders->map(function ($order) {
-                $firstItem = $order->detail->first();
-                $namaProduk = $firstItem->varian->produk->nama_produk ?? 'Jam Tangan Eksklusif';
-                if ($order->detail->count() > 1) {
-                    $namaProduk .= ' +' . ($order->detail->count() - 1) . ' item';
-                }
-
-                $statusLabel = match ($order->status_pesanan) {
-                    'diproses'            => 'Diproses QC',
-                    'dikirim'             => 'Siap Kirim',
-                    'selesai'             => 'Selesai',
-                    'dibatalkan'          => 'Dibatalkan',
-                    default               => 'Menunggu Bayar'
-                };
-
-                return [
-                    'no_pesanan' => '#KW-' . date('Ymd', strtotime($order->tanggal_pesanan)) . '-' . $order->pesanan_id,
-                    'pelanggan'  => $order->user->nama ?? $order->user->username ?? 'Pelanggan',
-                    'tier'       => 'Member',
-                    'produk'     => $namaProduk,
-                    'total'      => 'Rp' . number_format($order->total_harga, 0, ',', '.'),
-                    'status'     => $statusLabel,
-                    'pesanan_id' => $order->pesanan_id,
-                ];
-            });
-        } else {
-            // Data mockup presisi sesuai visual referensi pengguna
-            $pesananTerbaru = collect([
-                [
-                    'no_pesanan' => '#KW-20260520-9410',
-                    'pelanggan'  => 'Bambang Wicaksono',
-                    'tier'       => 'VIP Platinum',
-                    'produk'     => 'Halden Classic 40 Brown',
-                    'total'      => 'Rp1.885.000',
-                    'status'     => 'Diproses QC',
-                    'pesanan_id' => 9410,
-                ],
-                [
-                    'no_pesanan' => '#KW-20260520-9409',
-                    'pelanggan'  => 'Anindya Rahma',
-                    'tier'       => 'Member Gold',
-                    'produk'     => 'Kronos Chrono Master Pro',
-                    'total'      => 'Rp48.500.000',
-                    'status'     => 'Siap Kirim',
-                    'pesanan_id' => 9409,
-                ],
-                [
-                    'no_pesanan' => '#KW-20260520-9408',
-                    'pelanggan'  => 'Taufiq Prabowo',
-                    'tier'       => 'First Purchase',
-                    'produk'     => 'Kronos Abyss Diver 300M',
-                    'total'      => 'Rp32.200.000',
-                    'status'     => 'Selesai',
-                    'pesanan_id' => 9408,
-                ],
-                [
-                    'no_pesanan' => '#KW-20260519-9407',
-                    'pelanggan'  => 'Darmawan Luhut',
-                    'tier'       => 'VIP Diamond',
-                    'produk'     => 'Halden Classic 40 Brown',
-                    'total'      => 'Rp1.885.000',
-                    'status'     => 'Diproses QC',
-                    'pesanan_id' => 9407,
-                ],
-                [
-                    'no_pesanan' => '#KW-20260519-9406',
-                    'pelanggan'  => 'Siti Maryam',
-                    'tier'       => 'Member Silver',
-                    'produk'     => 'Kronos Heritage Vintage 38',
-                    'total'      => 'Rp24.900.000',
-                    'status'     => 'Selesai',
-                    'pesanan_id' => 9406,
-                ],
-            ]);
-        }
 
         return view('admin.dashboard', compact(
             'totalSKU',
@@ -173,8 +152,9 @@ class DashboardController extends Controller
             'rataRataFormatted',
             'chartLabels',
             'chartValues',
+            'totalSemesterFormatted',
             'kategoriPenjualan',
-            'produkTerlaris',
+            'bestSeller',
             'pesananTerbaru'
         ));
     }
