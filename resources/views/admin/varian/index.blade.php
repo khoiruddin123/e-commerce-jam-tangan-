@@ -109,11 +109,6 @@
                     <span>Butik Terhubung</span>
                 </div>
 
-                <button type="button" class="relative text-slate-500 hover:text-slate-700 transition">
-                    <i class="bi bi-bell text-base"></i>
-                    <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-blue-600"></span>
-                </button>
-
                 <div class="flex items-center gap-3 pl-2 border-l border-slate-200">
                     <div class="text-right hidden sm:block">
                         <div class="text-xs font-bold text-slate-900 leading-tight">
