@@ -11,6 +11,9 @@ use App\Http\Controllers\Admin\VarianController;
 use App\Http\Controllers\Pelanggan\PelangganController;
 use App\Http\Controllers\Pelanggan\UlasanController;
 use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\PembayaranController;
+
 
 // --- Rute Publik / Katalog ---
 Route::get('/', [ProdukController::class, 'index'])->name('produk.index');
@@ -61,10 +64,24 @@ Route::middleware(['auth', 'role:pelanggan'])->prefix('pelanggan')->name('pelang
     Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
 });
 
-// --- Rute Keranjang Belanja (F8) ---
+// --- Rute Keranjang Belanja (F8 Part 1) ---
 Route::middleware('auth')->group(function () {
     Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
     Route::post('/keranjang/tambah', [KeranjangController::class, 'tambah'])->name('keranjang.tambah');
     Route::patch('/keranjang/{id}', [KeranjangController::class, 'update'])->name('keranjang.update');
     Route::delete('/keranjang/{id}', [KeranjangController::class, 'hapus'])->name('keranjang.hapus');
+});
+
+// --- Rute Checkout & Pengiriman (F8 Part 2) ---
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'proses'])->name('checkout.proses');
+});
+
+// --- Rute Konfirmasi Pembayaran Simulasi (F9) ---
+Route::middleware('auth')->group(function () {
+    Route::get('/pembayaran/{id}', [PembayaranController::class, 'show'])->name('pembayaran.show');
+    Route::post('/pembayaran/{id}/verifikasi', [PembayaranController::class, 'verifikasi'])->name('pembayaran.verifikasi');
+    Route::post('/pembayaran/{id}/batal', [PembayaranController::class, 'batal'])->name('pembayaran.batal');
+    Route::get('/pembayaran/{id}/sukses', [PembayaranController::class, 'sukses'])->name('pembayaran.sukses');
 });
