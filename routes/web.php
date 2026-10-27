@@ -3,9 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\PesananController;
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\VarianController;
 use App\Http\Controllers\Pelanggan\PelangganController;
 use App\Http\Controllers\Pelanggan\UlasanController;
 use App\Http\Controllers\KeranjangController;
@@ -27,9 +29,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 
 // --- Halaman Khusus Admin ---
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Manajemen Pesanan & Pengiriman
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
@@ -45,6 +45,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
     Route::put('/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
     Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
+
+    // Manajemen Varian, Harga & Stok
+    Route::get('/varian', [VarianController::class, 'index'])->name('varian.index');
+    Route::post('/varian', [VarianController::class, 'store'])->name('varian.store');
+    Route::put('/varian/{id}', [VarianController::class, 'update'])->name('varian.update');
+    Route::patch('/varian/{id}/stok-harga', [VarianController::class, 'updateStokHarga'])->name('varian.updateStokHarga');
+    Route::delete('/varian/{id}', [VarianController::class, 'destroy'])->name('varian.destroy');
 });
 
 // --- Halaman Khusus Pelanggan ---

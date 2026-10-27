@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Kategori Produk | Panel Admin KRONOS</title>
+    <title>Kelola Kategori - Kronos Watch</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -15,180 +15,264 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-[#f8fafc] min-h-screen text-slate-800 antialiased flex flex-col justify-between">
+<body class="bg-[#f8fafc] text-slate-800 antialiased flex min-h-screen">
 
-    <!-- Top Navigation Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center">
-            <div class="flex items-center gap-6">
-                <a href="{{ route('admin.dashboard') }}" class="font-extrabold text-sm sm:text-base tracking-widest text-slate-900 flex items-center gap-2">
-                    <i class="bi bi-watch text-blue-600 text-lg"></i>
-                    <span>KRONOS ADMIN</span>
+    <!-- 1. SIDEBAR NAVIGASI HITAM PEKAT / DARK NAVY (SESUAI MOCKUP) -->
+    <aside class="w-64 bg-[#0B1120] text-slate-300 flex flex-col justify-between shrink-0 min-h-screen border-r border-slate-900 sticky top-0 h-screen overflow-y-auto">
+        <div class="p-5">
+            <!-- Brand Logo KRONOS ADMIN PORTAL -->
+            <div class="flex items-center gap-3 mb-8 px-1">
+                <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-lg shadow-sm shadow-blue-500/30">
+                    <i class="bi bi-watch"></i>
+                </div>
+                <div>
+                    <div class="text-sm font-extrabold tracking-widest text-white">KRONOS</div>
+                    <div class="text-[10px] tracking-widest text-slate-400 font-semibold uppercase">ADMIN PORTAL</div>
+                </div>
+            </div>
+
+            <!-- Menu Heading -->
+            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-3">
+                MENU NAVIGASI
+            </div>
+
+            <!-- Nav Links List -->
+            <nav class="space-y-1 text-xs font-semibold">
+                <!-- Dashboard -->
+                <a href="{{ route('admin.dashboard') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i class="bi bi-grid-fill text-sm"></i>
+                    <span>Dashboard</span>
                 </a>
-                <nav class="hidden md:flex items-center gap-5 text-xs font-semibold text-slate-600">
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600 transition">Dashboard</a>
-                    <a href="{{ route('admin.kategori.index') }}" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-1">Kategori Produk</a>
-                    <a href="{{ route('admin.pesanan.index') }}" class="hover:text-blue-600 transition">Pesanan & Logistik</a>
-                    <a href="{{ route('admin.laporan.omzet') }}" class="hover:text-blue-600 transition">Laporan Omzet</a>
-                </nav>
-            </div>
 
-            <div class="flex items-center gap-4">
-                <div class="text-right hidden sm:block">
-                    <div class="text-xs font-bold text-slate-800">{{ Auth::user()->nama ?? 'Admin' }}</div>
-                    <div class="text-[10px] text-slate-400">Administrator</div>
-                </div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-full transition flex items-center gap-1">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Keluar</span>
-                    </button>
-                </form>
-            </div>
+                <!-- Kelola Produk & Varian Stok -->
+                <a href="{{ route('admin.varian.index') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i class="bi bi-watch text-sm"></i>
+                    <span>Kelola Produk</span>
+                </a>
+
+                <!-- Kelola Kategori (Active) -->
+                <a href="{{ route('admin.kategori.index') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-blue-600 text-white font-semibold shadow-sm transition">
+                    <i class="bi bi-collection text-sm"></i>
+                    <span>Kelola Kategori</span>
+                </a>
+
+                <!-- Pesanan & Pengiriman -->
+                <a href="{{ route('admin.pesanan.index') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i class="bi bi-truck text-sm"></i>
+                    <span>Pesanan & Pengiriman</span>
+                </a>
+            </nav>
         </div>
-    </header>
 
-    <!-- Main Content Container -->
-    <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-7 flex-1">
-
-        <!-- Flash Message Notifikasi Sukses -->
-        @if(session('success'))
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl text-sm flex items-center justify-between shadow-sm">
-                <div class="flex items-center gap-2.5">
-                    <i class="bi bi-check-circle-fill text-emerald-600 text-lg"></i>
-                    <span>{{ session('success') }}</span>
-                </div>
-                <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700">
-                    <i class="bi bi-x-lg"></i>
-                </button>
-            </div>
-        @endif
-
-        <!-- Flash Message Notifikasi Error -->
-        @if(session('error'))
-            <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl text-sm flex items-center justify-between shadow-sm">
-                <div class="flex items-center gap-2.5">
-                    <i class="bi bi-exclamation-triangle-fill text-rose-600 text-lg"></i>
-                    <span>{{ session('error') }}</span>
-                </div>
-                <button type="button" onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700">
-                    <i class="bi bi-x-lg"></i>
-                </button>
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl text-sm space-y-1 shadow-sm">
-                @foreach($errors->all() as $error)
-                    <div class="flex items-center gap-2">
-                        <i class="bi bi-exclamation-circle text-rose-600"></i>
-                        <span>{{ $error }}</span>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-
-        <!-- Header Bar & Tombol Tambah -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
-            <div>
-                <div class="flex items-center gap-2.5">
-                    <h1 class="text-xl font-bold text-slate-900 tracking-tight">Manajemen Kategori Produk</h1>
-                    <span class="bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-blue-200/60">
-                        Total: {{ $daftarKategori->count() }} Kategori
+        <!-- Sidebar Footer: Status Butik & Tombol Keluar -->
+        <div class="p-4 space-y-4">
+            <div class="bg-[#131D38] border border-slate-800 rounded-2xl p-3.5 text-xs">
+                <div class="flex items-center justify-between text-[11px] mb-1">
+                    <span class="font-bold text-slate-400 uppercase tracking-wider text-[10px]">STATUS BUTIK</span>
+                    <span class="inline-flex items-center gap-1 text-emerald-400 font-bold text-[10px]">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Aktif
                     </span>
                 </div>
-                <p class="text-xs text-slate-500 mt-1">
-                    Kelola pengelompokan produk jam tangan (contoh: Automatic, Chronograph, Diver, Smartwatch, Classic).
-                </p>
+                <div class="font-bold text-white text-xs">Showroom Jakarta Flagship</div>
+                <div class="text-[10px] text-slate-400 mt-0.5">Jam Operasional: 10:00 - 22:00</div>
             </div>
-            <div>
-                <button type="button" onclick="openModalTambah()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-sm shadow-blue-500/20 transition-all cursor-pointer">
-                    <i class="bi bi-plus-lg text-sm"></i>
-                    <span>Tambah Kategori Baru</span>
-                </button>
-            </div>
-        </div>
 
-        <!-- Tabel Daftar Kategori -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-            @if($daftarKategori->isEmpty())
-                <!-- Tampilan jika belum ada data -->
-                <div class="text-center py-16 px-4">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                        <i class="bi bi-tags"></i>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="w-full flex items-center gap-2.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800/40 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
+                    <i class="bi bi-box-arrow-left text-sm"></i>
+                    <span>Keluar</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- 2. MAIN CONTENT AREA (KANAN) -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+        <!-- Top Header Bar -->
+        <header class="bg-white border-b border-slate-200/80 sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between gap-4">
+            <div class="relative w-72 sm:w-96">
+                <i class="bi bi-search absolute left-3.5 top-2.5 text-slate-400 text-xs"></i>
+                <input type="text" placeholder="Cari kategori atau seri jam..." 
+                       class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2 text-slate-700 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+            </div>
+
+            <div class="flex items-center gap-4 sm:gap-6">
+                <div class="hidden md:inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200/70 text-[11px] font-semibold px-3 py-1 rounded-full">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span>Butik Terhubung</span>
+                </div>
+
+                <div class="flex items-center gap-3 pl-2 border-l border-slate-200">
+                    <div class="text-right hidden sm:block">
+                        <div class="text-xs font-bold text-slate-900 leading-tight">
+                            {{ Auth::user()->nama ?? 'Hendrawan S.' }}
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-medium">
+                            {{ ucfirst(Auth::user()->role ?? 'Super Admin') }}
+                        </div>
                     </div>
-                    <h3 class="text-base font-bold text-slate-800">Belum Ada Kategori Produk</h3>
-                    <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-6">
-                        Buat kategori pertama Anda agar jam tangan dapat dikelompokkan dengan rapi pada katalog.
-                    </p>
-                    <button type="button" onclick="openModalTambah()" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-xl transition cursor-pointer">
-                        <i class="bi bi-plus-lg"></i>
-                        <span>Tambah Kategori Sekarang</span>
+                    <div class="w-9 h-9 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-sm">
+                        {{ strtoupper(substr(Auth::user()->nama ?? 'Hendrawan S', 0, 2)) }}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body Container -->
+        <main class="p-6 sm:p-8 space-y-6 max-w-7xl w-full mx-auto flex-1">
+
+            <!-- Flash Message Notifikasi Sukses -->
+            @if(session('success'))
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl text-sm flex items-center justify-between shadow-sm">
+                    <div class="flex items-center gap-2.5">
+                        <i class="bi bi-check-circle-fill text-emerald-600 text-lg"></i>
+                        <span>{{ session('success') }}</span>
+                    </div>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700">
+                        <i class="bi bi-x-lg"></i>
                     </button>
                 </div>
-            @else
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                <th class="py-3.5 px-6 w-16">No</th>
-                                <th class="py-3.5 px-6">Nama Kategori</th>
-                                <th class="py-3.5 px-6">Deskripsi</th>
-                                <th class="py-3.5 px-6 text-center w-36">Jumlah Produk</th>
-                                <th class="py-3.5 px-6 text-right w-44">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 text-xs">
-                            @foreach($daftarKategori as $index => $kategori)
-                                <tr class="hover:bg-slate-50/60 transition">
-                                    <td class="py-4 px-6 text-slate-400 font-medium">{{ $index + 1 }}</td>
-                                    <td class="py-4 px-6">
-                                        <div class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                                            <i class="bi bi-tag text-blue-500"></i>
-                                            <span>{{ $kategori->nama_kategori }}</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 text-slate-600 max-w-md">
-                                        {{ $kategori->deskripsi ?? '-' }}
-                                    </td>
-                                    <td class="py-4 px-6 text-center">
-                                        <span class="inline-flex items-center gap-1 font-semibold text-[11px] px-2.5 py-1 rounded-full {{ $kategori->produk_count > 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500' }}">
-                                            <i class="bi bi-box-seam"></i>
-                                            {{ $kategori->produk_count }} Produk
-                                        </span>
-                                    </td>
-                                    <td class="py-4 px-6 text-right">
-                                        <div class="flex items-center justify-end gap-2">
-                                            <!-- Tombol Edit -->
-                                            <button type="button" 
-                                                onclick="openModalEdit({{ $kategori->kategori_id }}, '{{ addslashes($kategori->nama_kategori) }}', '{{ addslashes($kategori->deskripsi ?? '') }}')"
-                                                class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition cursor-pointer">
-                                                <i class="bi bi-pencil-square"></i>
-                                                <span>Ubah</span>
-                                            </button>
+            @endif
 
-                                            <!-- Tombol Hapus -->
-                                            <form action="{{ route('admin.kategori.destroy', $kategori->kategori_id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori {{ addslashes($kategori->nama_kategori) }}?');" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" 
-                                                    class="inline-flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition cursor-pointer"
-                                                    {{ $kategori->produk_count > 0 ? 'title=Kategori_masih_memiliki_produk' : '' }}>
-                                                    <i class="bi bi-trash"></i>
-                                                    <span>Hapus</span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+            <!-- Flash Message Notifikasi Error -->
+            @if(session('error'))
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl text-sm flex items-center justify-between shadow-sm">
+                    <div class="flex items-center gap-2.5">
+                        <i class="bi bi-exclamation-triangle-fill text-rose-600 text-lg"></i>
+                        <span>{{ session('error') }}</span>
+                    </div>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
             @endif
-        </div>
-    </main>
+
+            @if($errors->any())
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl text-sm space-y-1 shadow-sm">
+                    @foreach($errors->all() as $error)
+                        <div class="flex items-center gap-2">
+                            <i class="bi bi-exclamation-circle text-rose-600"></i>
+                            <span>{{ $error }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
+            <!-- Header Bar & Tombol Tambah -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+                        <i class="bi bi-collection text-blue-600"></i>
+                        <span>Kelola Kategori Jam Tangan</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Pengelompokan seri produk butik (contoh: Chronograph, Diver Professional, Dress Classic, Automatic).
+                    </p>
+                </div>
+                <div>
+                    <button type="button" onclick="openModalTambah()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-sm shadow-blue-500/20 transition cursor-pointer">
+                        <i class="bi bi-plus-lg text-sm"></i>
+                        <span>Tambah Kategori Baru</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabel Daftar Kategori -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                @if($daftarKategori->isEmpty())
+                    <!-- State Jika Belum Ada Kategori -->
+                    <div class="text-center py-16 px-4">
+                        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                            <i class="bi bi-collection"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800">Belum Ada Kategori Produk</h3>
+                        <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-6">
+                            Buat kategori pertama Anda agar jam tangan dapat dikelompokkan dengan rapi pada katalog.
+                        </p>
+                        <button type="button" onclick="openModalTambah()" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition cursor-pointer">
+                            <i class="bi bi-plus-lg"></i>
+                            <span>Tambah Kategori Sekarang</span>
+                        </button>
+                    </div>
+                @else
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                    <th class="py-3.5 px-6 w-16">NO</th>
+                                    <th class="py-3.5 px-6">NAMA KATEGORI</th>
+                                    <th class="py-3.5 px-6">DESKRIPSI</th>
+                                    <th class="py-3.5 px-6 text-center w-36">JUMLAH PRODUK</th>
+                                    <th class="py-3.5 px-6 text-right w-44">AKSI</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs">
+                                @foreach($daftarKategori as $index => $kategori)
+                                    <tr class="hover:bg-slate-50/60 transition">
+                                        <td class="py-4 px-6 text-slate-400 font-medium">{{ $index + 1 }}</td>
+                                        <td class="py-4 px-6">
+                                            <div class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                                                <i class="bi bi-tag text-blue-500"></i>
+                                                <span>{{ $kategori->nama_kategori }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-6 text-slate-600 max-w-md">
+                                            {{ $kategori->deskripsi ?? '-' }}
+                                        </td>
+                                        <td class="py-4 px-6 text-center">
+                                            <span class="inline-flex items-center gap-1 font-semibold text-[11px] px-2.5 py-1 rounded-full {{ $kategori->produk_count > 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500' }}">
+                                                <i class="bi bi-box-seam"></i>
+                                                {{ $kategori->produk_count }} Produk
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-6 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <!-- Tombol Edit -->
+                                                <button type="button" 
+                                                    onclick="openModalEdit({{ $kategori->kategori_id }}, '{{ addslashes($kategori->nama_kategori) }}', '{{ addslashes($kategori->deskripsi ?? '') }}')"
+                                                    class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition cursor-pointer">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                    <span>Ubah</span>
+                                                </button>
+
+                                                <!-- Tombol Hapus -->
+                                                <form action="{{ route('admin.kategori.destroy', $kategori->kategori_id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori {{ addslashes($kategori->nama_kategori) }}?');" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" 
+                                                        class="inline-flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition cursor-pointer">
+                                                        <i class="bi bi-trash"></i>
+                                                        <span>Hapus</span>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+
+            <!-- SYSTEM FOOTER -->
+            <div class="pt-4 pb-2 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-400">
+                <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>Sistem & Gateway Pembayaran Terhubung Normal (SSL 256-bit)</span>
+                </div>
+                <div>Kronos Horology Studio &copy; 2026</div>
+            </div>
+
+        </main>
+    </div>
 
     <!-- Modal Tambah Kategori -->
     <div id="modalTambah" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
@@ -294,7 +378,6 @@
 
         function openModalEdit(id, nama, deskripsi) {
             const form = document.getElementById('formEditKategori');
-            // Menyesuaikan action URL ke route admin.kategori.update
             form.action = "{{ url('admin/kategori') }}/" + id;
             document.getElementById('edit_nama_kategori').value = nama;
             document.getElementById('edit_deskripsi').value = deskripsi;
@@ -306,7 +389,6 @@
             document.getElementById('modalEdit').classList.add('hidden');
         }
 
-        // Tutup modal jika tombol Escape ditekan
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeModalTambah();

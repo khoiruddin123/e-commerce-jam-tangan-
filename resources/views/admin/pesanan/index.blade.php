@@ -15,42 +15,118 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-[#f8fafc] min-h-screen text-slate-800 antialiased flex flex-col justify-between">
+<body class="bg-[#f8fafc] text-slate-800 antialiased flex min-h-screen">
 
-    <!-- Top Navigation Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center">
-            <div class="flex items-center gap-6">
-                <a href="{{ route('admin.dashboard') }}" class="font-extrabold text-sm sm:text-base tracking-widest text-slate-900 flex items-center gap-2">
-                    <i class="bi bi-watch text-blue-600 text-lg"></i>
-                    <span>KRONOS ADMIN</span>
-                </a>
-                <nav class="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-600">
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600 transition">Dashboard</a>
-                    <a href="{{ route('admin.kategori.index') }}" class="hover:text-blue-600 transition">Kategori Produk</a>
-                    <a href="{{ route('admin.pesanan.index') }}" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-1">Pesanan & Logistik</a>
-                    <a href="{{ route('admin.laporan.omzet') }}" class="hover:text-blue-600 transition">Laporan Omzet</a>
-                </nav>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <div class="text-right hidden sm:block">
-                    <div class="text-xs font-bold text-slate-800">{{ Auth::user()->nama }}</div>
-                    <div class="text-[10px] text-slate-400">Head of Operations</div>
+    <!-- 1. SIDEBAR NAVIGASI HITAM PEKAT / DARK NAVY (SESUAI MOCKUP) -->
+    <aside class="w-64 bg-[#0B1120] text-slate-300 flex flex-col justify-between shrink-0 min-h-screen border-r border-slate-900 sticky top-0 h-screen overflow-y-auto">
+        <div class="p-5">
+            <!-- Brand Logo KRONOS ADMIN PORTAL -->
+            <div class="flex items-center gap-3 mb-8 px-1">
+                <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-lg shadow-sm shadow-blue-500/30">
+                    <i class="bi bi-watch"></i>
                 </div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-full transition flex items-center gap-1">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Keluar</span>
-                    </button>
-                </form>
+                <div>
+                    <div class="text-sm font-extrabold tracking-widest text-white">KRONOS</div>
+                    <div class="text-[10px] tracking-widest text-slate-400 font-semibold uppercase">ADMIN PORTAL</div>
+                </div>
             </div>
-        </div>
-    </header>
 
-    <!-- Main Content Container -->
-    <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-7 flex-1">
+            <!-- Menu Heading -->
+            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-3">
+                MENU NAVIGASI
+            </div>
+
+            <!-- Nav Links List (Tanpa Setting & Laporan) -->
+            <nav class="space-y-1 text-xs font-semibold">
+                <!-- Dashboard -->
+                <a href="{{ route('admin.dashboard') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i class="bi bi-grid-fill text-sm"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <!-- Kelola Produk -->
+                <a href="{{ route('admin.varian.index') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i class="bi bi-watch text-sm"></i>
+                    <span>Kelola Produk</span>
+                </a>
+
+                <!-- Kelola Kategori -->
+                <a href="{{ route('admin.kategori.index') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i class="bi bi-collection text-sm"></i>
+                    <span>Kelola Kategori</span>
+                </a>
+
+                <!-- Pesanan & Pengiriman (Active) -->
+                <a href="{{ route('admin.pesanan.index') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-blue-600 text-white font-semibold shadow-sm transition">
+                    <i class="bi bi-truck text-sm"></i>
+                    <span>Pesanan & Pengiriman</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Sidebar Footer: Status Butik & Tombol Keluar -->
+        <div class="p-4 space-y-4">
+            <div class="bg-[#131D38] border border-slate-800 rounded-2xl p-3.5 text-xs">
+                <div class="flex items-center justify-between text-[11px] mb-1">
+                    <span class="font-bold text-slate-400 uppercase tracking-wider text-[10px]">STATUS BUTIK</span>
+                    <span class="inline-flex items-center gap-1 text-emerald-400 font-bold text-[10px]">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Aktif
+                    </span>
+                </div>
+                <div class="font-bold text-white text-xs">Showroom Jakarta Flagship</div>
+                <div class="text-[10px] text-slate-400 mt-0.5">Jam Operasional: 10:00 - 22:00</div>
+            </div>
+
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="w-full flex items-center gap-2.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800/40 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
+                    <i class="bi bi-box-arrow-left text-sm"></i>
+                    <span>Keluar</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- 2. MAIN CONTENT AREA (KANAN) -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+        <!-- Top Header Bar -->
+        <header class="bg-white border-b border-slate-200/80 sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between gap-4">
+            <div class="relative w-72 sm:w-96">
+                <i class="bi bi-search absolute left-3.5 top-2.5 text-slate-400 text-xs"></i>
+                <input type="text" placeholder="Cari pesanan, pembeli, atau resi..." 
+                       class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2 text-slate-700 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+            </div>
+
+            <div class="flex items-center gap-4 sm:gap-6">
+                <div class="hidden md:inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200/70 text-[11px] font-semibold px-3 py-1 rounded-full">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span>Butik Terhubung</span>
+                </div>
+
+                <div class="flex items-center gap-3 pl-2 border-l border-slate-200">
+                    <div class="text-right hidden sm:block">
+                        <div class="text-xs font-bold text-slate-900 leading-tight">
+                            {{ Auth::user()->nama ?? 'Admin' }}
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-medium">
+                            {{ ucfirst(Auth::user()->role ?? 'Super Admin') }}
+                        </div>
+                    </div>
+                    <div class="w-9 h-9 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-sm">
+                        {{ strtoupper(substr(Auth::user()->nama ?? 'AD', 0, 2)) }}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body Container -->
+        <main class="p-6 sm:p-8 space-y-6 max-w-7xl w-full mx-auto flex-1">
 
         <!-- Flash Message Notifikasi -->
         @if(session('success'))
@@ -445,15 +521,17 @@
             </div>
         </div>
 
-    </main>
-
-    <!-- Footer Butik -->
-    <footer class="bg-slate-900 text-white py-6 border-t border-slate-800 text-xs mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <div class="font-bold tracking-wider">KRONOS WATCH LOGISTICS DISPATCH &bull; VAULT CONTROL</div>
-            <div class="text-slate-400">Panel Operasional & Distribusi Jam Tangan &copy; {{ date('Y') }}</div>
+        <!-- SYSTEM FOOTER -->
+        <div class="pt-4 pb-2 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-400">
+            <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Sistem & Gateway Pembayaran Terhubung Normal (SSL 256-bit)</span>
+            </div>
+            <div>Kronos Horology Studio &copy; 2026</div>
         </div>
-    </footer>
+
+    </main>
+</div>
 
 
     <!-- MODAL 1: INPUT / EDIT NOMOR RESI -->
