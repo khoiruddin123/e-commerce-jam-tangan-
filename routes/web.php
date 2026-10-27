@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\PesananController;
+use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Pelanggan\PelangganController;
 use App\Http\Controllers\Pelanggan\UlasanController;
 use App\Http\Controllers\KeranjangController;
@@ -38,6 +39,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Laporan Omzet Bulanan
     Route::get('/laporan-omzet', [LaporanController::class, 'index'])->name('laporan.omzet');
     Route::get('/laporan-omzet/cetak', [LaporanController::class, 'cetak'])->name('laporan.omzet.cetak');
+
+    // Manajemen Kategori Produk
+    Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+    Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
+    Route::put('/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
+    Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
 });
 
 // --- Halaman Khusus Pelanggan ---
