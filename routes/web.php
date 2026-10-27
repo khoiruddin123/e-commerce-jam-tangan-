@@ -3,14 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProdukController;
-<<<<<<< HEAD
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\PesananController;
 use App\Http\Controllers\Pelanggan\PelangganController;
 use App\Http\Controllers\Pelanggan\UlasanController;
-=======
 use App\Http\Controllers\KeranjangController;
->>>>>>> 0bf751f4928b6c7b03be6920768ab9ac4db656cd
 
 // --- Rute Publik / Katalog ---
 Route::get('/', [ProdukController::class, 'index'])->name('produk.index');
@@ -20,12 +17,7 @@ Route::get('/produk/{id}', [ProdukController::class, 'show'])->name('produk.deta
 // --- Rute Autentikasi (Guest) ---
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-<<<<<<< HEAD
-    Route::post('/login', [AuthController::class, 'login']); 
-=======
     Route::post('/login', [AuthController::class, 'login']);
-
->>>>>>> 0bf751f4928b6c7b03be6920768ab9ac4db656cd
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 });
@@ -50,15 +42,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 // --- Halaman Khusus Pelanggan ---
 Route::middleware(['auth', 'role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
-<<<<<<< HEAD
     Route::get('/beranda', [PelangganController::class, 'index'])->name('beranda');
     Route::get('/pesanan', [PelangganController::class, 'index'])->name('pesanan');
     Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
-});
-=======
-    Route::get('/beranda', function () {
-        return view('pelanggan.beranda');
-    })->name('beranda');
 });
 
 // --- Rute Keranjang Belanja (F8) ---
@@ -68,4 +54,3 @@ Route::middleware('auth')->group(function () {
     Route::patch('/keranjang/{id}', [KeranjangController::class, 'update'])->name('keranjang.update');
     Route::delete('/keranjang/{id}', [KeranjangController::class, 'hapus'])->name('keranjang.hapus');
 });
->>>>>>> 0bf751f4928b6c7b03be6920768ab9ac4db656cd
