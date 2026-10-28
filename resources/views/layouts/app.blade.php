@@ -157,50 +157,15 @@
                         @endif
                     </a>
 
-                    <!-- User Account Dropdown -->
+                    <!-- User Account / Profil -->
                     @guest
                         <a href="{{ route('login') }}" class="btn btn-dark rounded-pill px-3 py-1.5 fw-semibold small">
                             <i class="bi bi-box-arrow-in-right me-1"></i> Masuk
                         </a>
                     @else
-                        <div class="dropdown">
-                            <button class="btn btn-light rounded-circle border p-0 d-flex align-items-center justify-content-center overflow-hidden" type="button" data-bs-toggle="dropdown" style="width: 40px; height: 40px;" title="{{ Auth::user()->nama ?? Auth::user()->username }}">
-                                <i class="bi bi-person-circle fs-4 text-dark"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2 p-2" style="min-width: 220px;">
-                                <li class="px-3 py-2 border-bottom">
-                                    <span class="fw-bold d-block text-dark small">{{ Auth::user()->nama ?? Auth::user()->username }}</span>
-                                    <span class="text-muted small" style="font-size: 0.75rem;">Role: {{ ucfirst(Auth::user()->role ?? 'Pelanggan') }}</span>
-                                </li>
-                                @if(Auth::user()->role === 'admin')
-                                    <li>
-                                        <a href="{{ route('admin.dashboard') }}" class="dropdown-item rounded-2 py-2 small mt-1">
-                                            <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard Admin
-                                        </a>
-                                    </li>
-                                @else
-                                    <li>
-                                        <a href="{{ route('pelanggan.beranda') }}" class="dropdown-item rounded-2 py-2 small mt-1">
-                                            <i class="bi bi-bag-check me-2 text-success"></i> Riwayat Pesanan Saya
-                                        </a>
-                                    </li>
-                                @endif
-                                <li>
-                                    <a href="{{ route('keranjang.index') }}" class="dropdown-item rounded-2 py-2 small">
-                                        <i class="bi bi-cart3 me-2 text-info"></i> Keranjang Saya
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item rounded-2 py-2 text-danger small">
-                                            <i class="bi bi-box-arrow-right me-2"></i> Keluar
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
+                        <a href="{{ route('profil.show') }}" class="btn {{ request()->routeIs('profil.*') ? 'btn-primary text-white border-primary' : 'btn-light text-dark border' }} rounded-circle p-0 d-flex align-items-center justify-content-center overflow-hidden text-decoration-none" style="width: 40px; height: 40px;" title="Profil {{ Auth::user()->nama ?? Auth::user()->username }}">
+                            <i class="bi bi-person-circle fs-4"></i>
+                        </a>
                     @endguest
                 </div>
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,14 +15,30 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
         @media print {
-            aside, header, .no-print { display: none !important; }
-            body { background: white !important; }
-            main { padding: 0 !important; max-width: 100% !important; }
+
+            aside,
+            header,
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: white !important;
+            }
+
+            main {
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
         }
     </style>
 </head>
+
 <body class="bg-[#f8fafc] text-slate-800 antialiased flex min-h-screen">
 
     <!-- 1. SIDEBAR NAVIGASI HITAM PEKAT / DARK NAVY (SESUAI MOCKUP, TANPA SETTING & LAPORAN) -->
@@ -46,29 +63,29 @@
             <!-- Nav Links List (Setting & Laporan Dihapus Sesuai Permintaan) -->
             <nav class="space-y-1 text-xs font-semibold">
                 <!-- Dashboard (Active) -->
-                <a href="{{ route('admin.dashboard') }}" 
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-blue-600 text-white font-semibold shadow-sm transition">
+                <a href="{{ route('admin.dashboard') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-blue-600 text-white font-semibold shadow-sm transition">
                     <i class="bi bi-grid-fill text-sm"></i>
                     <span>Dashboard</span>
                 </a>
 
                 <!-- Kelola Produk & Varian Stok -->
-                <a href="{{ route('admin.varian.index') }}" 
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                <a href="{{ route('admin.varian.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
                     <i class="bi bi-watch text-sm"></i>
                     <span>Kelola Produk</span>
                 </a>
 
                 <!-- Kelola Kategori -->
-                <a href="{{ route('admin.kategori.index') }}" 
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                <a href="{{ route('admin.kategori.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
                     <i class="bi bi-collection text-sm"></i>
                     <span>Kelola Kategori</span>
                 </a>
 
                 <!-- Pesanan & Pengiriman -->
-                <a href="{{ route('admin.pesanan.index') }}" 
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                <a href="{{ route('admin.pesanan.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
                     <i class="bi bi-truck text-sm"></i>
                     <span>Pesanan & Pengiriman</span>
                 </a>
@@ -109,8 +126,8 @@
             <!-- Search Bar Input -->
             <div class="relative w-72 sm:w-96">
                 <i class="bi bi-search absolute left-3.5 top-2.5 text-slate-400 text-xs"></i>
-                <input type="text" placeholder="Cari SKU, pesanan, atau pembeli..." 
-                       class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2 text-slate-700 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                <input type="text" placeholder="Cari SKU, pesanan, atau pembeli..."
+                    class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2 text-slate-700 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
             </div>
 
             <!-- Top Right Info & Profile -->
@@ -151,14 +168,14 @@
                 <div class="flex items-center gap-3 no-print">
                     <!-- Tombol Ekspor Laporan (Mencetak / Menyimpan Laporan Dashboard) -->
                     <button type="button" onclick="window.print()"
-                            class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold text-xs px-3.5 py-2.5 rounded-xl shadow-sm transition cursor-pointer">
+                        class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold text-xs px-3.5 py-2.5 rounded-xl shadow-sm transition cursor-pointer">
                         <i class="bi bi-download"></i>
                         <span>Ekspor Laporan</span>
                     </button>
 
                     <!-- Tombol Tambah Produk -->
-                    <a href="{{ route('admin.varian.index') }}" 
-                       class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-sm shadow-blue-500/20 transition">
+                    <a href="{{ route('admin.varian.index') }}"
+                        class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-sm shadow-blue-500/20 transition">
                         <i class="bi bi-plus-lg"></i>
                         <span>Tambah Produk</span>
                     </a>
@@ -260,25 +277,25 @@
                         <div class="text-[11px] text-slate-400 mb-4">Kontribusi revenue menurut seri</div>
 
                         @if(empty($kategoriPenjualan))
-                            <div class="py-6 text-center text-xs text-slate-400">
-                                <i class="bi bi-collection text-xl text-slate-300 block mb-1"></i>
-                                Belum ada kategori produk terdaftar
-                            </div>
+                        <div class="py-6 text-center text-xs text-slate-400">
+                            <i class="bi bi-collection text-xl text-slate-300 block mb-1"></i>
+                            Belum ada kategori produk terdaftar
+                        </div>
                         @else
-                            <!-- Daftar Kategori Riil Database -->
-                            <div class="space-y-3.5">
-                                @foreach($kategoriPenjualan as $kat)
-                                    <div>
-                                        <div class="flex items-center justify-between text-xs mb-1">
-                                            <span class="font-semibold text-slate-700">{{ $kat['nama'] }}</span>
-                                            <span class="text-slate-500 font-medium">{{ $kat['persentase'] }}% ({{ $kat['revenue'] }})</span>
-                                        </div>
-                                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                                            <div class="{{ $kat['warna'] }} h-1.5 rounded-full" style="width: {{ max($kat['persentase'], 4) }}%"></div>
-                                        </div>
-                                    </div>
-                                @endforeach
+                        <!-- Daftar Kategori Riil Database -->
+                        <div class="space-y-3.5">
+                            @foreach($kategoriPenjualan as $kat)
+                            <div>
+                                <div class="flex items-center justify-between text-xs mb-1">
+                                    <span class="font-semibold text-slate-700">{{ $kat['nama'] }}</span>
+                                    <span class="text-slate-500 font-medium">{{ $kat['persentase'] }}% ({{ $kat['revenue'] }})</span>
+                                </div>
+                                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                    <div class="{{ $kat['warna'] }} h-1.5 rounded-full" style="width: {{ max($kat['persentase'], 4) }}%"></div>
+                                </div>
                             </div>
+                            @endforeach
+                        </div>
                         @endif
                     </div>
 
@@ -291,12 +308,12 @@
                             </span>
                         </div>
                         @if($bestSeller)
-                            <div class="font-bold text-xs text-slate-900">{{ $bestSeller->nama_produk }}</div>
-                            <div class="text-[11px] text-slate-400 mt-0.5">
-                                {{ $bestSeller->nama_varian }} &middot; Rp{{ number_format($bestSeller->harga_satuan, 0, ',', '.') }}
-                            </div>
+                        <div class="font-bold text-xs text-slate-900">{{ $bestSeller->nama_produk }}</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">
+                            {{ $bestSeller->nama_varian }} &middot; Rp{{ number_format($bestSeller->harga_satuan, 0, ',', '.') }}
+                        </div>
                         @else
-                            <div class="text-xs text-slate-400 italic">Belum ada riwayat penjualan produk</div>
+                        <div class="text-xs text-slate-400 italic">Belum ada riwayat penjualan produk</div>
                         @endif
                     </div>
                 </div>
@@ -312,8 +329,8 @@
                     <!-- Filter Search Mini -->
                     <div class="relative w-full sm:w-64 no-print">
                         <i class="bi bi-search absolute left-3 top-2 text-slate-400 text-xs"></i>
-                        <input type="text" placeholder="Cari pesanan..." 
-                               class="w-full text-xs pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" placeholder="Cari pesanan..."
+                            class="w-full text-xs pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 
@@ -332,71 +349,71 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-xs">
                             @forelse($pesananTerbaru as $order)
-                                @php
-                                    $firstItem = $order->detail->first();
-                                    $namaProduk = $firstItem->nama_produk ?? $firstItem->varian->produk->nama_produk ?? 'Jam Tangan';
-                                    if ($order->detail->count() > 1) {
-                                        $namaProduk .= ' (+' . ($order->detail->count() - 1) . ' item)';
-                                    }
+                            @php
+                            $firstItem = $order->detail->first();
+                            $namaProduk = $firstItem->nama_produk ?? $firstItem->varian->produk->nama_produk ?? 'Jam Tangan';
+                            if ($order->detail->count() > 1) {
+                            $namaProduk .= ' (+' . ($order->detail->count() - 1) . ' item)';
+                            }
 
-                                    $statusLabel = match ($order->status_pesanan) {
-                                        'diproses'            => 'Diproses QC',
-                                        'dikirim'             => 'Siap Kirim',
-                                        'selesai'             => 'Selesai',
-                                        'dibatalkan'          => 'Dibatalkan',
-                                        'dibayar'             => 'Dibayar',
-                                        default               => 'Menunggu Bayar'
-                                    };
-                                @endphp
-                                <tr class="hover:bg-slate-50/50 transition">
-                                    <td class="py-3.5 px-4 font-mono font-medium text-slate-800">
-                                        {{ $order->nomor_pesanan ?? ('#KW-' . date('Ymd', strtotime($order->tanggal_pesanan ?? now())) . '-' . $order->pesanan_id) }}
-                                    </td>
-                                    <td class="py-3.5 px-4">
-                                        <div class="font-semibold text-slate-800">{{ $order->user->nama ?? $order->user->username ?? $order->nama_penerima ?? 'Pelanggan' }}</div>
-                                        <div class="text-[10px] text-slate-400">Member</div>
-                                    </td>
-                                    <td class="py-3.5 px-4 text-slate-600 font-medium">
-                                        {{ $namaProduk }}
-                                    </td>
-                                    <td class="py-3.5 px-4 font-bold text-slate-900">
-                                        Rp{{ number_format($order->total_harga, 0, ',', '.') }}
-                                    </td>
-                                    <td class="py-3.5 px-4">
-                                        @if($order->status_pesanan === 'diproses')
-                                            <span class="inline-flex items-center text-blue-600 bg-blue-50 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
-                                                Diproses QC
-                                            </span>
-                                        @elseif($order->status_pesanan === 'dikirim')
-                                            <span class="inline-flex items-center text-amber-600 bg-amber-50 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
-                                                Siap Kirim
-                                            </span>
-                                        @elseif($order->status_pesanan === 'selesai')
-                                            <span class="inline-flex items-center text-emerald-600 bg-emerald-50 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
-                                                Selesai
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center text-slate-600 bg-slate-100 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
-                                                {{ $statusLabel }}
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="py-3.5 px-4 text-right">
-                                        <a href="{{ route('admin.pesanan.index') }}" class="text-blue-600 hover:text-blue-800 font-semibold text-xs transition">
-                                            Detail
-                                        </a>
-                                    </td>
-                                </tr>
+                            $statusLabel = match ($order->status_pesanan) {
+                            'diproses' => 'Diproses QC',
+                            'dikirim' => 'Siap Kirim',
+                            'selesai' => 'Selesai',
+                            'dibatalkan' => 'Dibatalkan',
+                            'dibayar' => 'Dibayar',
+                            default => 'Menunggu Bayar'
+                            };
+                            @endphp
+                            <tr class="hover:bg-slate-50/50 transition">
+                                <td class="py-3.5 px-4 font-mono font-medium text-slate-800">
+                                    {{ $order->nomor_pesanan ?? ('#KW-' . date('Ymd', strtotime($order->tanggal_pesanan ?? now())) . '-' . $order->pesanan_id) }}
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    <div class="font-semibold text-slate-800">{{ $order->user->nama ?? $order->user->username ?? $order->nama_penerima ?? 'Pelanggan' }}</div>
+                                    <div class="text-[10px] text-slate-400">Member</div>
+                                </td>
+                                <td class="py-3.5 px-4 text-slate-600 font-medium">
+                                    {{ $namaProduk }}
+                                </td>
+                                <td class="py-3.5 px-4 font-bold text-slate-900">
+                                    Rp{{ number_format($order->total_harga, 0, ',', '.') }}
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    @if($order->status_pesanan === 'diproses')
+                                    <span class="inline-flex items-center text-blue-600 bg-blue-50 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
+                                        Diproses QC
+                                    </span>
+                                    @elseif($order->status_pesanan === 'dikirim')
+                                    <span class="inline-flex items-center text-amber-600 bg-amber-50 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
+                                        Siap Kirim
+                                    </span>
+                                    @elseif($order->status_pesanan === 'selesai')
+                                    <span class="inline-flex items-center text-emerald-600 bg-emerald-50 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
+                                        Selesai
+                                    </span>
+                                    @else
+                                    <span class="inline-flex items-center text-slate-600 bg-slate-100 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">
+                                        {{ $statusLabel }}
+                                    </span>
+                                    @endif
+                                </td>
+                                <td class="py-3.5 px-4 text-right">
+                                    <a href="{{ route('admin.pesanan.index') }}" class="text-blue-600 hover:text-blue-800 font-semibold text-xs transition">
+                                        Detail
+                                    </a>
+                                </td>
+                            </tr>
                             @empty
-                                <tr>
-                                    <td colspan="6" class="py-12 text-center text-slate-400">
-                                        <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-2 text-slate-400 text-lg">
-                                            <i class="bi bi-inbox"></i>
-                                        </div>
-                                        <div class="font-semibold text-slate-700 text-xs">Belum Ada Transaksi Pesanan</div>
-                                        <div class="text-[11px] text-slate-400 mt-0.5">Pesanan baru dari pelanggan akan otomatis tercatat di sini.</div>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="6" class="py-12 text-center text-slate-400">
+                                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-2 text-slate-400 text-lg">
+                                        <i class="bi bi-inbox"></i>
+                                    </div>
+                                    <div class="font-semibold text-slate-700 text-xs">Belum Ada Transaksi Pesanan</div>
+                                    <div class="text-[11px] text-slate-400 mt-0.5">Pesanan baru dari pelanggan akan otomatis tercatat di sini.</div>
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -426,9 +443,9 @@
 
     <!-- Script Chart.js untuk Menggambar Grafik Garis Tren Omzet (Data Riil) -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('chartTrenOmzet').getContext('2d');
-            
+
             const gradient = ctx.createLinearGradient(0, 0, 0, 200);
             gradient.addColorStop(0, 'rgba(37, 99, 235, 0.15)');
             gradient.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
@@ -436,10 +453,14 @@
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: {!! json_encode($chartLabels) !!},
+                    labels: {
+                        !!json_encode($chartLabels) !!
+                    },
                     datasets: [{
                         label: 'Omzet (Juta Rp)',
-                        data: {!! json_encode($chartValues) !!},
+                        data: {
+                            !!json_encode($chartValues) !!
+                        },
                         borderColor: '#2563EB',
                         borderWidth: 2.5,
                         backgroundColor: gradient,
@@ -456,7 +477,9 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false },
+                        legend: {
+                            display: false
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -467,15 +490,22 @@
                     },
                     scales: {
                         x: {
-                            grid: { display: false },
+                            grid: {
+                                display: false
+                            },
                             ticks: {
-                                font: { size: 10, family: "'Inter', sans-serif" },
+                                font: {
+                                    size: 10,
+                                    family: "'Inter', sans-serif"
+                                },
                                 color: '#94A3B8'
                             }
                         },
                         y: {
                             display: false,
-                            grid: { display: false },
+                            grid: {
+                                display: false
+                            },
                             min: 0
                         }
                     }
@@ -484,4 +514,5 @@
         });
     </script>
 </body>
+
 </html>
