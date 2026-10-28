@@ -15,8 +15,8 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PembayaranController;
 
 
-// --- Rute Publik / Katalog ---
-Route::get('/', [ProdukController::class, 'index'])->name('produk.index');
+// --- Rute Publik / Beranda & Katalog ---
+Route::get('/', [ProdukController::class, 'beranda'])->name('produk.index');
 Route::get('/produk', [ProdukController::class, 'index'])->name('produk.katalog');
 Route::get('/produk/{id}', [ProdukController::class, 'show'])->name('produk.detail');
 
