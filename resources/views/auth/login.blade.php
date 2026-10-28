@@ -216,33 +216,6 @@
         </button>
     </form>
 
-    <!-- Pemisah Garis ATAU MASUK DENGAN -->
-    <div class="d-flex align-items-center gap-3 my-3">
-        <hr class="flex-grow-1 border-secondary border-opacity-25 m-0">
-        <span class="text-secondary fw-bold text-uppercase" style="font-size: 0.68rem; letter-spacing: 1px;">
-            ATAU MASUK DENGAN
-        </span>
-        <hr class="flex-grow-1 border-secondary border-opacity-25 m-0">
-    </div>
-
-    <!-- Dua Tombol Sejajar Google dan Apple ID (Dinonaktifkan) -->
-    <div class="row g-2.5 mb-4">
-        <div class="col-6">
-            <button type="button" disabled title="Segera hadir"
-                    class="btn-social-disabled w-100 d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-google text-danger"></i>
-                <span>Google</span>
-            </button>
-        </div>
-        <div class="col-6">
-            <button type="button" disabled title="Segera hadir"
-                    class="btn-social-disabled w-100 d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-apple text-dark"></i>
-                <span>Apple ID</span>
-            </button>
-        </div>
-    </div>
-
     <!-- Link ke Register -->
     <p class="text-center text-secondary mb-0" style="font-size: 0.84rem;">
         Belum punya akun?
