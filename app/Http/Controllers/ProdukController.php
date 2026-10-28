@@ -5,10 +5,66 @@ namespace App\Http\Controllers;
 use App\Models\Produk;
 use App\Models\Kategori;
 use App\Models\Merek;
+use App\Models\Ulasan;
 use Illuminate\Http\Request;
 
 class ProdukController extends Controller
 {
+    /**
+     * Menampilkan halaman Beranda (Homepage) utama untuk pelanggan.
+     */
+    public function beranda()
+    {
+        // 1. Ambil daftar kategori lengkap beserta jumlah produk aktifnya
+        $daftarKategori = Kategori::withCount(['produk' => function ($q) {
+            $q->where('status_produk', 'aktif');
+        }])
+        ->orderBy('nama_kategori')
+        ->get();
+
+        // 2. Query 8 produk unggulan terbaru yang aktif beserta harga dari varian aktif
+        $produkTerbaru = Produk::query()
+            ->with([
+                'kategori',
+                'merek',
+                'galeri' => function ($q) {
+                    $q->orderByDesc('foto_utama')->orderBy('urutan', 'asc');
+                },
+                'varian' => function ($q) {
+                    $q->where('status_varian', 'aktif');
+                },
+            ])
+            ->withMin(['varian as harga_terendah' => function ($q) {
+                $q->where('status_varian', 'aktif');
+            }], 'harga_varian')
+            ->withSum(['varian as total_stok' => function ($q) {
+                $q->where('status_varian', 'aktif');
+            }], 'stok')
+            ->withCount('ulasan')
+            ->withAvg('ulasan', 'rating')
+            ->where('status_produk', 'aktif')
+            ->latest('produk_id')
+            ->take(8)
+            ->get();
+
+        // 3. Produk sorotan untuk Hero Section
+        $heroProduct = $produkTerbaru->first();
+
+        // 4. Testimoni pelanggan terverifikasi dari database ulasan
+        $daftarTestimoni = Ulasan::with(['user', 'produk'])
+            ->where('rating', '>=', 4)
+            ->latest('tanggal_ulasan')
+            ->take(3)
+            ->get();
+
+        return view('beranda', compact(
+            'daftarKategori',
+            'produkTerbaru',
+            'heroProduct',
+            'daftarTestimoni'
+        ));
+    }
+
     /**
      * F7 - Menampilkan katalog produk bergaya horologi mewah, pencarian, filter kategori & merek, serta rentang harga.
      */
@@ -156,6 +212,7 @@ class ProdukController extends Controller
             ->where('produk_id', '!=', $id)
             ->limit(4)
             ->get();
+
         return view('produk.show', compact(
             'produk',
             'daftarUlasan',
