@@ -1,56 +1,32 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat Pesanan Saya - Kronos Watch</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Google Fonts Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
-</head>
-<body class="bg-[#f8fafc] min-h-screen text-slate-800 antialiased flex flex-col justify-between">
+@extends('layouts.app')
 
-    <!-- Header / Navbar Pelanggan -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center">
-            <div class="flex items-center gap-6">
-                <a href="{{ route('produk.index') }}" class="font-extrabold text-base tracking-widest text-slate-900 flex items-center gap-2">
-                    <i class="bi bi-watch text-blue-600 text-lg"></i>
-                    <span>KRONOS WATCH</span>
-                </a>
-                <nav class="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-600">
-                    <a href="{{ route('produk.index') }}" class="hover:text-blue-600 transition">Katalog Jam</a>
-                    <a href="{{ route('pelanggan.beranda') }}" class="text-blue-600">Riwayat Pesanan</a>
-                </nav>
-            </div>
+@section('title', 'Riwayat Pesanan Saya - Kronos Watch')
 
-            <div class="flex items-center gap-4">
-                <div class="text-right hidden sm:block">
-                    <div class="text-xs font-bold text-slate-800">{{ $user->nama }}</div>
-                    <div class="text-[10px] text-slate-400">Kolektor Terdaftar</div>
-                </div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-full transition flex items-center gap-1">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Keluar</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </header>
+@section('content')
 
-    <!-- Main Container -->
-    <main class="max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 space-y-6 flex-1">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        corePlugins: {
+            preflight: false,
+        }
+    }
+</script>
+<style>
+    .riwayat-wrapper {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .riwayat-wrapper a {
+        text-decoration: none;
+    }
+    .riwayat-wrapper button {
+        border-style: none;
+    }
+</style>
 
-        <!-- Notifikasi Pesan Sukses / Error -->
+<div class="riwayat-wrapper max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+
         @if(session('success'))
             <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl text-sm flex items-center justify-between shadow-sm">
                 <div class="flex items-center gap-2">
@@ -308,23 +284,10 @@
             @endforelse
         </div>
 
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-white py-8 border-t border-slate-800 text-xs mt-12">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div>
-                <div class="font-extrabold tracking-wider text-sm mb-1">KRONOS WATCH</div>
-                <p class="text-slate-400 text-[11px]">Kurasi mahakarya horologi Swiss dan internasional dengan keaslian terjamin.</p>
-            </div>
-            <div class="text-slate-400 text-right">
-                &copy; {{ date('Y') }} Kronos Watch. All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+    </div>
 
 
-    <div id="modalUlasan" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div id="modalUlasan" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden" style="z-index: 1055;">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in-95 duration-200">
             
             <!-- Header Modal -->
@@ -621,7 +584,7 @@
     </script>
 
     <!-- Modal Lacak Pengiriman Interaktif -->
-    <div id="modalLacakPengiriman" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div id="modalLacakPengiriman" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden" style="z-index: 1055;">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in-95 duration-200">
             <!-- Header Modal -->
             <div class="flex items-start justify-between mb-5">
@@ -710,6 +673,4 @@
             </div>
         </div>
     </div>
-
-</body>
-</html>
+@endsection
