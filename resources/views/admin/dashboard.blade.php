@@ -69,15 +69,9 @@
                     <span>Dashboard</span>
                 </a>
 
-<<<<<<< HEAD
-                <!-- Kelola Produk & Varian Stok -->
-                <a href="{{ route('admin.varian.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
-=======
                 <!-- Kelola Produk -->
-                <a href="{{ route('admin.produk.index') }}" 
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
->>>>>>> origin/main
+                <a href="{{ route('admin.produk.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
                     <i class="bi bi-watch text-sm"></i>
                     <span>Kelola Produk</span>
                 </a>
@@ -194,13 +188,8 @@
                     </button>
 
                     <!-- Tombol Tambah Produk -->
-<<<<<<< HEAD
-                    <a href="{{ route('admin.varian.index') }}"
+                    <a href="{{ route('admin.produk.index') }}"
                         class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-sm shadow-blue-500/20 transition">
-=======
-                    <a href="{{ route('admin.produk.index') }}" 
-                       class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-sm shadow-blue-500/20 transition">
->>>>>>> origin/main
                         <i class="bi bi-plus-lg"></i>
                         <span>Tambah Produk</span>
                     </a>
@@ -478,14 +467,10 @@
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: {
-                        !!json_encode($chartLabels) !!
-                    },
+                    labels: @json($chartLabels),
                     datasets: [{
                         label: 'Omzet (Juta Rp)',
-                        data: {
-                            !!json_encode($chartValues) !!
-                        },
+                        data: @json($chartValues),
                         borderColor: '#2563EB',
                         borderWidth: 2.5,
                         backgroundColor: gradient,
