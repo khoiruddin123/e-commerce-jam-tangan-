@@ -15,29 +15,105 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
+        /* Mencegah layout shift (lompatan horizontal) saat berpindah antar halaman */
+        html {
+            overflow-y: scroll;
+            scrollbar-gutter: stable;
+        }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            /* Gradasi biru muda lembut (Ice Blue Ambient) */
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             background: linear-gradient(180deg, #edf4fe 0%, #f3f7fd 340px, #f8fafc 100%);
             background-attachment: fixed;
             color: #1e293b;
+            min-height: 100vh;
         }
+        /* Top Navbar Terkunci Presisi & Konsisten */
         .top-navbar {
-            background-color: rgba(255, 255, 255, 0.92) !important;
+            height: 68px;
+            min-height: 68px;
+            background-color: rgba(255, 255, 255, 0.96) !important;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+        .top-navbar .navbar-container {
+            width: 100% !important;
+            max-width: 1320px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+        @media (max-width: 1399.98px) {
+            .top-navbar .navbar-container { max-width: 1140px !important; }
+        }
+        @media (max-width: 1199.98px) {
+            .top-navbar .navbar-container { max-width: 960px !important; }
+        }
+        @media (max-width: 991.98px) {
+            .top-navbar .navbar-container { max-width: 720px !important; }
+        }
+        @media (max-width: 767.98px) {
+            .top-navbar .navbar-container { max-width: 540px !important; }
+        }
+
+        /* 3-Kolom CSS Grid: Kolom Kiri Pinned, Kolom Tengah Centered, Kolom Kanan Pinned */
+        .navbar-header-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            width: 100%;
+        }
+        .navbar-brand-col {
+            justify-self: start;
+            display: flex;
+            align-items: center;
+        }
+        .navbar-center-col {
+            justify-self: center;
+            display: flex;
+            align-items: center;
+        }
+        .navbar-actions-col {
+            justify-self: end;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        @media (max-width: 767.98px) {
+            .navbar-header-grid {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .brand-logo-box {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            min-height: 38px;
+            flex-shrink: 0;
         }
         .navbar-brand-title {
-            font-size: 1.15rem;
+            font-size: 1.18rem;
             font-weight: 800;
             letter-spacing: -0.5px;
             line-height: 1.1;
+            white-space: nowrap;
         }
         .navbar-brand-sub {
             font-size: 0.65rem;
             letter-spacing: 1.5px;
             font-weight: 600;
             color: #94a3b8;
+            white-space: nowrap;
+            line-height: 1;
+            margin-top: 2px;
         }
         .nav-capsule {
             background-color: #f1f5f9;
@@ -45,6 +121,7 @@
             padding: 4px;
             display: inline-flex;
             gap: 4px;
+            align-items: center;
         }
         .nav-capsule-link {
             padding: 6px 18px;
@@ -53,7 +130,11 @@
             font-weight: 600;
             color: #64748b;
             text-decoration: none;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .nav-capsule-link:hover {
             color: #0f172a;
@@ -112,39 +193,43 @@
         }
     @endphp
 
-    <!-- Top Navbar Sesuai Mockup -->
-    <header class="top-navbar border-bottom sticky-top py-2 shadow-sm">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
+    <!-- Top Navbar Terkunci Presisi: Logo & Brand Tidak Akan Pernah Bergerak -->
+    <header class="top-navbar border-bottom py-0 shadow-sm">
+        <div class="navbar-container">
+            <div class="navbar-header-grid">
 
-                <!-- Logo & Brand Title -->
-                <a class="d-flex align-items-center gap-2 text-decoration-none text-dark" href="{{ route('produk.index') }}">
-                    <div class="bg-dark text-white rounded-3 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-                        <i class="bi bi-watch fs-5"></i>
-                    </div>
-                    <div>
-                        <div class="navbar-brand-title">KRONOS WATCH</div>
-                        <div class="navbar-brand-sub">HOROLOGY JAKARTA</div>
-                    </div>
-                </a>
+                <!-- 1. Kolom Kiri: Brand & Logo (Anchor ke Kiri) -->
+                <div class="navbar-brand-col">
+                    <a class="d-flex align-items-center gap-2.5 text-decoration-none text-dark flex-shrink-0" href="{{ route('produk.index') }}">
+                        <div class="brand-logo-box bg-dark text-white rounded-3 d-flex align-items-center justify-content-center shadow-xs">
+                            <i class="bi bi-watch fs-5"></i>
+                        </div>
+                        <div class="d-flex flex-column justify-content-center">
+                            <div class="navbar-brand-title">KRONOS WATCH</div>
+                            <div class="navbar-brand-sub">HOROLOGY JAKARTA</div>
+                        </div>
+                    </a>
+                </div>
 
-                <!-- Segmented Capsule Nav (Tengah) -->
-                <nav class="nav-capsule d-none d-md-flex">
-                    <a href="{{ route('produk.index') }}" class="nav-capsule-link {{ request()->routeIs('produk.index') && !request()->hasAny(['kategori_id', 'merek_id']) ? 'active' : '' }}">
-                        Beranda
-                    </a>
-                    <a href="{{ route('produk.katalog') }}" class="nav-capsule-link {{ request()->routeIs('produk.katalog') || request()->hasAny(['kategori_id', 'merek_id']) ? 'active' : '' }}">
-                        Katalog
-                    </a>
-                    @auth
-                        <a href="{{ route('pelanggan.beranda') }}" class="nav-capsule-link {{ request()->routeIs('pelanggan.*') ? 'active' : '' }}">
-                            Pesanan
+                <!-- 2. Kolom Tengah: Segmented Capsule Nav (Anchor ke Center Layar) -->
+                <div class="navbar-center-col">
+                    <nav class="nav-capsule d-none d-md-flex">
+                        <a href="{{ route('produk.index') }}" class="nav-capsule-link {{ request()->routeIs('produk.index') && !request()->hasAny(['kategori_id', 'merek_id']) ? 'active' : '' }}">
+                            Beranda
                         </a>
-                    @endauth
-                </nav>
+                        <a href="{{ route('produk.katalog') }}" class="nav-capsule-link {{ request()->routeIs('produk.katalog') || request()->hasAny(['kategori_id', 'merek_id']) ? 'active' : '' }}">
+                            Katalog
+                        </a>
+                        @auth
+                            <a href="{{ route('pelanggan.beranda') }}" class="nav-capsule-link {{ request()->routeIs('pelanggan.*') ? 'active' : '' }}">
+                                Pesanan
+                            </a>
+                        @endauth
+                    </nav>
+                </div>
 
-                <!-- Icon Kanan: Pencarian, Keranjang Belanja, & Akun -->
-                <div class="d-flex align-items-center gap-3">
+                <!-- 3. Kolom Kanan: Pencarian, Keranjang, Akun (Anchor ke Kanan) -->
+                <div class="navbar-actions-col">
                     <a href="{{ route('produk.katalog') }}#searchSection" class="btn btn-light rounded-circle border-0 d-none d-sm-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" title="Cari Jam Tangan">
                         <i class="bi bi-search text-dark"></i>
                     </a>
