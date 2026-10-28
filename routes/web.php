@@ -15,6 +15,7 @@ use App\Http\Controllers\Pelanggan\UlasanController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\ProfilController;
 
 
 // --- Rute Publik / Beranda & Katalog ---
@@ -25,7 +26,7 @@ Route::get('/produk/{id}', [ProdukController::class, 'show'])->name('produk.deta
 // --- Rute Autentikasi (Guest) ---
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 });
@@ -79,6 +80,13 @@ Route::middleware(['auth', 'role:pelanggan'])->prefix('pelanggan')->name('pelang
     Route::get('/beranda', [PelangganController::class, 'index'])->name('beranda');
     Route::get('/pesanan', [PelangganController::class, 'index'])->name('pesanan');
     Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
+});
+
+// --- Rute Profil Pelanggan ---
+Route::middleware('auth')->group(function () {
+    Route::get('/profil', [ProfilController::class, 'show'])->name('profil.show');
+    Route::put('/profil', [ProfilController::class, 'update'])->name('profil.update');
+    Route::put('/profil/password', [ProfilController::class, 'updatePassword'])->name('profil.password');
 });
 
 // --- Rute Keranjang Belanja (F8 Part 1) ---
