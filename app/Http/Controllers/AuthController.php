@@ -110,6 +110,6 @@ class AuthController extends Controller
             return redirect()->intended(route('admin.dashboard'));
         }
 
-        return redirect()->intended(route('pelanggan.beranda'));
+        return redirect()->intended(route('produk.index'));
     }
 }
