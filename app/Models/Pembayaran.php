@@ -22,6 +22,14 @@ class Pembayaran extends Model
         'status_pembayaran',
     ];
 
+
+    protected $casts = [
+        'waktu_pembayaran' => 'datetime',
+        'batas_pembayaran' => 'datetime',
+        'jumlah_bayar'     => 'decimal:2',
+    ];
+
+
     public function pesanan()
     {
         return $this->belongsTo(

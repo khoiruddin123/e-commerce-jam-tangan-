@@ -128,8 +128,8 @@
                             </span>
                         </div>
 
-                        <!-- Status Pesanan Badge -->
-                        <div>
+                                   <!-- Status Pesanan Badge & Tombol Bayar Sekarang (F9) -->
+                        <div class="flex items-center gap-2">
                             @if($pesanan->status_pesanan === 'selesai')
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
                                     <i class="bi bi-check-circle-fill text-blue-600"></i>
@@ -140,6 +140,22 @@
                                     <i class="bi bi-truck text-sky-600"></i>
                                     Dalam Pengiriman
                                 </span>
+                            @elseif($pesanan->status_pesanan === 'menunggu_pembayaran')
+                                <a href="{{ route('pembayaran.show', $pesanan->pesanan_id) }}" 
+                                   class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-sm transition active:scale-95">
+                                    <i class="bi bi-credit-card-2-front"></i>
+                                    <span>Bayar Sekarang &rarr;</span>
+                                </a>
+                            @elseif($pesanan->status_pesanan === 'dibayar')
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <i class="bi bi-patch-check-fill text-emerald-600"></i>
+                                    Dibayar & Lunas
+                                </span>
+                            @elseif($pesanan->status_pesanan === 'dibatalkan')
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                    <i class="bi bi-x-circle text-rose-600"></i>
+                                    Dibatalkan
+                                </span>
                             @else
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
                                     <i class="bi bi-clock-history"></i>
@@ -147,7 +163,6 @@
                                 </span>
                             @endif
                         </div>
-                    </div>
 
                     <!-- Informasi Pengiriman & Nomor Resi (Khusus Pelanggan) -->
                     @php
