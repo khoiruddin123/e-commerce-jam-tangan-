@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -28,7 +30,17 @@ class AuthController extends Controller
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        $loginInput = $request->input('login');
+        $throttleKey = Str::lower($request->input('login')) . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return back()->withErrors([
+                'login' => "Terlalu banyak percobaan masuk. Silakan coba lagi dalam {$seconds} detik.",
+            ])->onlyInput('login');
+        }
+
+        $loginInput = trim((string) $request->input('login'));
         $fieldType = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         $credentials = [
@@ -36,14 +48,18 @@ class AuthController extends Controller
             'password' => $request->input('password'),
         ];
 
+        // Jangan gunakan fitur remember karena tabel users tidak memiliki kolom remember_token
         if (Auth::attempt($credentials, false)) {
+            RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
 
             return $this->redirectByRole(Auth::user()->role);
         }
 
+        RateLimiter::hit($throttleKey, 60);
+
         return back()->withErrors([
-            'login' => 'Email/username atau password salah.',
+            'login' => 'Email atau password salah',
         ])->onlyInput('login');
     }
 
@@ -59,40 +75,61 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // Validasi kelengkapan dan keunikan data (F2-03)
+        // Bersihkan awalan 0 pada nomor telepon bila pengguna mengetik 0 di depan
+        $rawPhone = trim((string) $request->input('no_telepon'));
+        $cleanPhone = ltrim($rawPhone, '0');
+        $request->merge(['no_telepon' => $cleanPhone]);
+
+        // Validasi kelengkapan dan keunikan data dalam bahasa Indonesia
         $validated = $request->validate([
-            'nama' => ['required', 'string', 'max:100'],
-            'username' => ['required', 'string', 'max:50', 'unique:users,username', 'alpha_dash'],
-            'email' => ['required', 'string', 'email', 'max:120', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
-            'no_telepon' => ['nullable', 'string', 'max:20'],
-            'alamat' => ['nullable', 'string'],
+            'nama' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'no_telepon' => ['required', 'string', 'regex:/^[0-9]+$/', 'digits_between:9,13'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'terms' => ['accepted'],
         ], [
             'nama.required' => 'Nama lengkap wajib diisi.',
-            'username.required' => 'Username wajib diisi.',
-            'username.unique' => 'Username ini sudah dipakai, coba yang lain.',
-            'username.alpha_dash' => 'Username tidak boleh pakai spasi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email ini sudah terdaftar.',
+            'nama.max' => 'Nama lengkap maksimal 255 karakter.',
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format alamat email tidak valid.',
+            'email.max' => 'Alamat email maksimal 255 karakter.',
+            'email.unique' => 'Email sudah terdaftar. Silakan gunakan email lain atau masuk.',
+            'no_telepon.required' => 'Nomor telepon wajib diisi.',
+            'no_telepon.regex' => 'Nomor telepon hanya boleh berisi angka.',
+            'no_telepon.digits_between' => 'Nomor telepon harus terdiri dari 9 sampai 13 digit setelah +62.',
             'password.required' => 'Password wajib diisi.',
-            'password.min' => 'Password minimal 6 karakter.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok dengan password.',
+            'terms.accepted' => 'Anda wajib menyetujui Syarat & Ketentuan serta Kebijakan Privasi.',
         ]);
 
-        // Simpan ke database (F2-04)
+        // Buat username otomatis dari bagian depan email (sebelum @): huruf kecil, hanya huruf, angka, dan titik
+        $emailLocalPart = explode('@', strtolower($validated['email']))[0] ?? 'user';
+        $baseUsername = preg_replace('/[^a-z0-9.]/', '', $emailLocalPart);
+        if ($baseUsername === '') {
+            $baseUsername = 'pelanggan';
+        }
+        $baseUsername = substr($baseUsername, 0, 40);
+
+        $username = $baseUsername;
+        $counter = 1;
+        while (User::where('username', $username)->exists()) {
+            $username = $baseUsername . $counter;
+            $counter++;
+        }
+
+        // Simpan ke database (role selalu pelanggan, ditentukan di server)
         User::create([
             'nama' => $validated['nama'],
-            'username' => $validated['username'],
-            'email' => $validated['email'],
+            'username' => $username,
+            'email' => strtolower($validated['email']),
             'password' => Hash::make($validated['password']),
-            'role' => 'pelanggan', // Default otomatis pelanggan
-            'no_telepon' => $validated['no_telepon'] ?? null,
-            'alamat' => $validated['alamat'] ?? null,
+            'role' => 'pelanggan',
+            'no_telepon' => '+62' . $validated['no_telepon'],
+            'alamat' => '',
         ]);
 
-        // Arahkan ke halaman login dengan pesan sukses (sesuai Activity Diagram F2)
-        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan masuk dengan akun baru Anda.');
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat. Silakan masuk.');
     }
 
     public function logout(Request $request)

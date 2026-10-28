@@ -60,7 +60,7 @@
                 MENU NAVIGASI
             </div>
 
-            <!-- Nav Links List (Setting & Laporan Dihapus Sesuai Permintaan) -->
+            <!-- Nav Links List -->
             <nav class="space-y-1 text-xs font-semibold">
                 <!-- Dashboard (Active) -->
                 <a href="{{ route('admin.dashboard') }}"
@@ -69,11 +69,24 @@
                     <span>Dashboard</span>
                 </a>
 
+<<<<<<< HEAD
                 <!-- Kelola Produk & Varian Stok -->
                 <a href="{{ route('admin.varian.index') }}"
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+=======
+                <!-- Kelola Produk -->
+                <a href="{{ route('admin.produk.index') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+>>>>>>> origin/main
                     <i class="bi bi-watch text-sm"></i>
                     <span>Kelola Produk</span>
+                </a>
+
+                <!-- Kelola Varian, Harga & Stok -->
+                <a href="{{ route('admin.varian.index') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i class="bi bi-boxes text-sm"></i>
+                    <span>Varian & Stok</span>
                 </a>
 
                 <!-- Kelola Kategori -->
@@ -81,6 +94,13 @@
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
                     <i class="bi bi-collection text-sm"></i>
                     <span>Kelola Kategori</span>
+                </a>
+
+                <!-- Kelola Merek -->
+                <a href="{{ route('admin.merek.index') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i class="bi bi-tag-fill text-sm"></i>
+                    <span>Kelola Merek</span>
                 </a>
 
                 <!-- Pesanan & Pengiriman -->
@@ -174,8 +194,13 @@
                     </button>
 
                     <!-- Tombol Tambah Produk -->
+<<<<<<< HEAD
                     <a href="{{ route('admin.varian.index') }}"
                         class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-sm shadow-blue-500/20 transition">
+=======
+                    <a href="{{ route('admin.produk.index') }}" 
+                       class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-sm shadow-blue-500/20 transition">
+>>>>>>> origin/main
                         <i class="bi bi-plus-lg"></i>
                         <span>Tambah Produk</span>
                     </a>

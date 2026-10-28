@@ -46,10 +46,17 @@
                 </a>
 
                 <!-- Kelola Produk -->
-                <a href="{{ route('admin.varian.index') }}" 
+                <a href="{{ route('admin.produk.index') }}" 
                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
                     <i class="bi bi-watch text-sm"></i>
                     <span>Kelola Produk</span>
+                </a>
+
+                <!-- Kelola Varian, Harga & Stok -->
+                <a href="{{ route('admin.varian.index') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i class="bi bi-boxes text-sm"></i>
+                    <span>Varian & Stok</span>
                 </a>
 
                 <!-- Kelola Kategori -->
@@ -57,6 +64,13 @@
                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
                     <i class="bi bi-collection text-sm"></i>
                     <span>Kelola Kategori</span>
+                </a>
+
+                <!-- Kelola Merek -->
+                <a href="{{ route('admin.merek.index') }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i class="bi bi-tag-fill text-sm"></i>
+                    <span>Kelola Merek</span>
                 </a>
 
                 <!-- Pesanan & Pengiriman (Active) -->

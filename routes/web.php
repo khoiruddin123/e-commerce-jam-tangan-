@@ -7,7 +7,9 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\PesananController;
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\MerekController;
 use App\Http\Controllers\Admin\VarianController;
+use App\Http\Controllers\Admin\ProdukController as AdminProdukController;
 use App\Http\Controllers\Pelanggan\PelangganController;
 use App\Http\Controllers\Pelanggan\UlasanController;
 use App\Http\Controllers\KeranjangController;
@@ -24,7 +26,7 @@ Route::get('/produk/{id}', [ProdukController::class, 'show'])->name('produk.deta
 // --- Rute Autentikasi (Guest) ---
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 });
@@ -34,6 +36,15 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 // --- Halaman Khusus Admin ---
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Manajemen Produk & Galeri Foto Horologi
+    Route::get('/produk', [AdminProdukController::class, 'index'])->name('produk.index');
+    Route::post('/produk', [AdminProdukController::class, 'store'])->name('produk.store');
+    Route::put('/produk/{id}', [AdminProdukController::class, 'update'])->name('produk.update');
+    Route::delete('/produk/{id}', [AdminProdukController::class, 'destroy'])->name('produk.destroy');
+    Route::post('/produk/{id}/foto', [AdminProdukController::class, 'uploadFoto'])->name('produk.uploadFoto');
+    Route::delete('/produk/foto/{fotoId}', [AdminProdukController::class, 'hapusFoto'])->name('produk.hapusFoto');
+    Route::patch('/produk/foto/{fotoId}/utama', [AdminProdukController::class, 'setFotoUtama'])->name('produk.setFotoUtama');
 
     // Manajemen Pesanan & Pengiriman
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
@@ -49,6 +60,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
     Route::put('/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
     Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
+
+    // Manajemen Merek Jam Tangan
+    Route::get('/merek', [MerekController::class, 'index'])->name('merek.index');
+    Route::post('/merek', [MerekController::class, 'store'])->name('merek.store');
+    Route::put('/merek/{id}', [MerekController::class, 'update'])->name('merek.update');
+    Route::delete('/merek/{id}', [MerekController::class, 'destroy'])->name('merek.destroy');
 
     // Manajemen Varian, Harga & Stok
     Route::get('/varian', [VarianController::class, 'index'])->name('varian.index');

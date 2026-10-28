@@ -9,6 +9,7 @@
     tailwind.config = {
         corePlugins: {
             preflight: false,
+            container: false,
         }
     }
 </script>
@@ -24,7 +25,8 @@
     }
 </style>
 
-<div class="riwayat-wrapper max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+<div class="container py-4">
+    <div class="riwayat-wrapper space-y-6">
 
 
         @if(session('success'))
