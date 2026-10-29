@@ -87,14 +87,17 @@ class AuthController extends Controller
 
         // Validasi kelengkapan dan keunikan data dalam bahasa Indonesia
         $validated = $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
+            'nama_username' => ['required', 'string', 'min:3', 'max:30', 'regex:/^[A-Za-z0-9._]+$/', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'no_telepon' => ['required', 'string', 'regex:/^[0-9]+$/', 'digits_between:9,13'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'terms' => ['accepted'],
         ], [
-            'nama.required' => 'Nama lengkap wajib diisi.',
-            'nama.max' => 'Nama lengkap maksimal 255 karakter.',
+            'nama_username.required' => 'Nama / Username wajib diisi.',
+            'nama_username.min' => 'Minimal 3 karakter.',
+            'nama_username.max' => 'Maksimal 30 karakter.',
+            'nama_username.regex' => 'Hanya boleh huruf, angka, titik, dan underscore (tanpa spasi).',
+            'nama_username.unique' => 'Nama / Username sudah dipakai. Silakan pilih yang lain.',
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format alamat email tidak valid.',
             'email.max' => 'Alamat email maksimal 255 karakter.',
@@ -108,25 +111,10 @@ class AuthController extends Controller
             'terms.accepted' => 'Anda wajib menyetujui Syarat & Ketentuan serta Kebijakan Privasi.',
         ]);
 
-        // Buat username otomatis dari bagian depan email (sebelum @): huruf kecil, hanya huruf, angka, dan titik
-        $emailLocalPart = explode('@', strtolower($validated['email']))[0] ?? 'user';
-        $baseUsername = preg_replace('/[^a-z0-9.]/', '', $emailLocalPart);
-        if ($baseUsername === '') {
-            $baseUsername = 'user';
-        }
-        $baseUsername = substr($baseUsername, 0, 40);
-
-        $username = $baseUsername;
-        $counter = 1;
-        while (User::where('username', $username)->exists()) {
-            $username = $baseUsername . $counter;
-            $counter++;
-        }
-
-        // Simpan ke database (role selalu pelanggan, ditentukan di server)
+        // Simpan ke database (nama dan username diisi nilai yang sama, role selalu pelanggan)
         User::create([
-            'nama' => $validated['nama'],
-            'username' => $username,
+            'nama' => $validated['nama_username'],
+            'username' => $validated['nama_username'],
             'email' => strtolower($validated['email']),
             'password' => Hash::make($validated['password']),
             'role' => 'pelanggan',
@@ -134,7 +122,7 @@ class AuthController extends Controller
             'alamat' => '',
         ]);
 
-        return redirect()->route('login')->with('success', "Akun berhasil dibuat. Username Anda: {$username}. Anda bisa masuk dengan email atau username.");
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat. Silakan masuk dengan email atau username Anda.');
     }
 
     public function logout(Request $request)

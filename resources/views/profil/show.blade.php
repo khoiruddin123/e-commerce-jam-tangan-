@@ -4,11 +4,12 @@
 
 @section('content')
 @php
+    $namaUsername = $user->username ?: $user->nama;
     $inisial = mb_strtoupper(mb_substr(trim($user->nama ?: $user->username), 0, 1));
     $tanggalBergabung = $user->created_at
         ? \Carbon\Carbon::parse($user->created_at)->locale('id')->translatedFormat('d F Y')
         : '-';
-    $hasProfileErrors = $errors->hasAny(['nama', 'email', 'no_telepon', 'alamat']);
+    $hasProfileErrors = $errors->hasAny(['nama_username', 'email', 'no_telepon', 'alamat']);
 @endphp
 
 <style>
@@ -94,14 +95,16 @@
                         </div>
 
                         <h2 class="fw-bolder text-white mb-1" style="letter-spacing: -0.6px;">
-                            {{ $user->nama }}
+                            {{ $user->nama ?: $user->username }}
                         </h2>
 
                         <div class="d-flex flex-wrap align-items-center gap-3 text-white-50 small">
-                            <span>
-                                <i class="bi bi-at text-primary"></i>{{ $user->username }}
-                            </span>
-                            <span>&bull;</span>
+                            @if(!empty($user->username) && $user->username !== $user->nama)
+                                <span>
+                                    <i class="bi bi-at text-primary"></i>{{ $user->username }}
+                                </span>
+                                <span>&bull;</span>
+                            @endif
                             <span>
                                 <i class="bi bi-envelope me-1 text-primary"></i>{{ $user->email }}
                             </span>
@@ -157,18 +160,10 @@
                 <!-- Tampilan Informasi Akun (Mode Baca) -->
                 <div id="viewProfilSection" class="{{ $hasProfileErrors ? 'd-none' : '' }}">
                     <div class="row g-3">
-                        <div class="col-sm-6">
+                        <div class="col-12">
                             <div class="profile-info-item h-100">
-                                <span class="text-muted d-block small mb-1" style="font-size: 0.75rem;">Nama Lengkap</span>
-                                <div class="fw-bold text-dark" style="font-size: 0.92rem;">{{ $user->nama }}</div>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="profile-info-item h-100">
-                                <span class="text-muted d-block small mb-1" style="font-size: 0.75rem;">Username</span>
-                                <div class="fw-bold text-dark" style="font-size: 0.92rem;">{{ $user->username }}</div>
-                                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Dibuat otomatis, dapat dipakai untuk login.</small>
+                                <span class="text-muted d-block small mb-1" style="font-size: 0.75rem;">Nama / Username</span>
+                                <div class="fw-bold text-dark" style="font-size: 0.92rem;">{{ $namaUsername }}</div>
                             </div>
                         </div>
 
@@ -210,25 +205,18 @@
                         @method('PUT')
 
                         <div class="row g-3">
-                            <div class="col-sm-6">
-                                <label for="nama" class="form-label fw-bold small text-dark mb-1">
-                                    Nama Lengkap <span class="text-danger">*</span>
+                            <div class="col-12">
+                                <label for="nama_username" class="form-label fw-bold small text-dark mb-1">
+                                    Nama / Username <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" id="nama" name="nama"
-                                       value="{{ old('nama', $user->nama) }}"
-                                       class="form-control profile-form-control @error('nama') is-invalid @enderror"
-                                       placeholder="Masukkan nama lengkap" required>
-                                @error('nama')
+                                <input type="text" id="nama_username" name="nama_username"
+                                       value="{{ old('nama_username', $namaUsername) }}"
+                                       class="form-control profile-form-control @error('nama_username') is-invalid @enderror"
+                                       placeholder="Nama atau username Anda" required>
+                                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Huruf, angka, titik, atau underscore. Dipakai untuk login.</small>
+                                @error('nama_username')
                                     <div class="invalid-feedback d-block small mt-1">{{ $message }}</div>
                                 @enderror
-                            </div>
-
-                            <div class="col-sm-6">
-                                <label class="form-label fw-bold small text-secondary mb-1">
-                                    Username <span class="badge bg-secondary-subtle text-secondary fw-normal" style="font-size: 0.65rem;">Tidak dapat diubah</span>
-                                </label>
-                                <div class="profile-form-control" style="background-color: #f1f5f9; color: #64748b; cursor: not-allowed;">{{ $user->username }}</div>
-                                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Dibuat otomatis, dapat dipakai untuk login.</small>
                             </div>
 
                             <div class="col-sm-6">

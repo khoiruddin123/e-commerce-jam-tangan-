@@ -118,35 +118,39 @@
     <form action="{{ route('register') }}" method="POST" novalidate>
         @csrf
 
-        <!-- 1. Nama Lengkap -->
+        <!-- 1. Nama / Username -->
         <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-1">
-                <label for="nama" class="form-label fw-bold text-dark mb-0" style="font-size: 0.78rem;">
-                    Nama Lengkap
+                <label for="nama_username" class="form-label fw-bold text-dark mb-0" style="font-size: 0.78rem;">
+                    Nama / Username
                 </label>
-                @error('nama')
+                @error('nama_username')
                     <span class="fw-bold" style="font-size: 0.68rem; color: #e11d48;">Periksa Kembali</span>
                 @else
                     <span class="text-secondary fw-semibold" style="font-size: 0.68rem;">Wajib</span>
                 @enderror
             </div>
 
-            <div class="auth-input-group @error('nama') is-error @enderror">
+            <div class="auth-input-group @error('nama_username') is-error @enderror">
                 <span class="auth-input-icon">
                     <i class="bi bi-person"></i>
                 </span>
-                <input type="text" id="nama" name="nama" value="{{ old('nama') }}"
+                <input type="text" id="nama_username" name="nama_username" value="{{ old('nama_username') }}"
                        class="auth-input"
-                       placeholder="Nama lengkap sesuai identitas"
+                       placeholder="Nama atau username Anda"
                        required autofocus>
-                @error('nama')
+                @error('nama_username')
                     <div class="auth-input-suffix">
                         <i class="bi bi-exclamation-circle-fill text-danger"></i>
                     </div>
                 @enderror
             </div>
 
-            @error('nama')
+            <div class="text-secondary mt-1" style="font-size: 0.72rem;">
+                Huruf, angka, titik, atau underscore. Dipakai untuk login.
+            </div>
+
+            @error('nama_username')
                 <div class="d-flex align-items-center gap-1.5 mt-1" style="color: #e11d48; font-size: 0.74rem;">
                     <i class="bi bi-x-circle-fill me-1"></i>
                     <span>{{ $message }}</span>
