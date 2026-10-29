@@ -384,5 +384,7 @@
         }
     </script>
 
+    <x-popup-login />
+    <x-konfirmasi-logout />
 </body>
 </html>
