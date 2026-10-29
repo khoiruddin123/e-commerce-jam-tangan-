@@ -119,7 +119,8 @@ class PesananController extends Controller
 
     /**
      * Memperbarui nomor resi dan kurir logistik ke tabel pengiriman.
-     * Jika status masih diproses/dibayar dan resi diinput, otomatis perbarui status pesanan ke 'dikirim'.
+     * Aturan: Resi hanya bisa diinput/diedit saat status 'diproses' (atau 'dibayar').
+     * Begitu status menjadi 'dikirim' atau 'selesai', resi TERKUNCI PERMANEN.
      */
     public function updateResi(Request $request, $id)
     {
@@ -131,27 +132,46 @@ class PesananController extends Controller
 
         $pesanan = Pesanan::findOrFail($id);
 
-        // Simpan / update ke tabel pengiriman
-        Pengiriman::updateOrCreate(
-            ['pesanan_id' => $pesanan->pesanan_id],
-            [
-                'nama_kurir' => $request->kurir,
-                'nomor_resi' => trim($request->nomor_resi),
-                'tanggal_dikirim' => now(),
-            ]
-        );
-
-        // Otomatis ubah status ke 'dikirim' jika opsi dicentang atau status masih belum dikirim
-        if ($request->has('otomatis_dikirim') || in_array($pesanan->status_pesanan, ['dibayar', 'diproses'])) {
-            $pesanan->status_pesanan = 'dikirim';
-            $pesanan->save();
+        // 1. Kunci Mutlak: Jika status sudah 'dikirim' atau 'selesai', resi terkunci mati
+        if (in_array($pesanan->status_pesanan, ['dikirim', 'selesai'])) {
+            return redirect()->back()->with('error', "Nomor resi untuk pesanan #{$pesanan->nomor_pesanan} sudah TERKUNCI PERMANEN karena paket telah diserahkan ke kurir/selesai.");
         }
 
-        return redirect()->back()->with('success', "Nomor resi untuk pesanan #{$pesanan->nomor_pesanan} berhasil disimpan ({$request->kurir} - {$request->nomor_resi}).");
+        // 2. Cegah input resi pada pesanan belum dibayar atau dibatalkan
+        if (in_array($pesanan->status_pesanan, ['menunggu_pembayaran', 'dibatalkan'])) {
+            return redirect()->back()->with('error', "Nomor resi tidak dapat diinput untuk pesanan dengan status '{$pesanan->status_pesanan}'.");
+        }
+
+        // 3. Bersihkan format nomor resi (Kapital & tanpa spasi)
+        $nomorResiBersih = strtoupper(preg_replace('/\s+/', '', $request->nomor_resi));
+
+        // 4. Simpan / perbarui informasi pengiriman
+        $pengiriman = Pengiriman::firstOrNew(['pesanan_id' => $pesanan->pesanan_id]);
+        $pengiriman->nama_kurir = $request->kurir;
+        $pengiriman->nomor_resi = $nomorResiBersih;
+
+        // 5. Jika opsi 'otomatis_dikirim' dicentang, ubah status pesanan menjadi 'dikirim' dan catat tanggal_dikirim
+        if ($request->boolean('otomatis_dikirim')) {
+            $pesanan->status_pesanan = 'dikirim';
+            $pesanan->save();
+
+            if (!$pengiriman->tanggal_dikirim) {
+                $pengiriman->tanggal_dikirim = now();
+            }
+        }
+
+        $pengiriman->save();
+
+        $pesanStatus = $pesanan->status_pesanan === 'dikirim' 
+            ? "Paket resmi berstatus DIKIRIM dan nomor resi terkunci permanen." 
+            : "Nomor resi tersimpan sebagai draf (status tetap Diproses).";
+
+        return redirect()->back()->with('success', "Nomor resi pesanan #{$pesanan->nomor_pesanan} ({$request->kurir} - {$nomorResiBersih}) berhasil disimpan. {$pesanStatus}");
     }
 
     /**
-     * Memperbarui status pesanan (dibayar, diproses, dikirim, selesai, dibatalkan).
+     * Memperbarui status pesanan (dibayar, diproses, dikirim, dibatalkan).
+     * Status 'selesai' dikhususkan bagi konfirmasi langsung oleh pembeli (F10-07 / BB-73).
      */
     public function updateStatus(Request $request, $id)
     {
@@ -161,6 +181,25 @@ class PesananController extends Controller
         ]);
 
         $pesanan = Pesanan::findOrFail($id);
+
+        // Proteksi Hak Pembeli: Admin tidak boleh sembarangan mengubah ke 'selesai' (F10-07 / BB-73)
+        if ($request->status_pesanan === 'selesai' && $pesanan->status_pesanan !== 'selesai') {
+            return redirect()->back()->with('error', "Status 'Selesai' adalah hak konfirmasi akhir pembeli setelah jam tangan diterima fisik (Sesuai F10-07 & BB-73).");
+        }
+
+        // Jika mengubah status menjadi 'dikirim', pastikan resi sudah diinput terlebih dahulu
+        if ($request->status_pesanan === 'dikirim') {
+            if (!$pesanan->pengiriman || empty($pesanan->pengiriman->nomor_resi)) {
+                return redirect()->back()->with('error', "Pesanan tidak dapat diubah ke status 'Dikirim' tanpa nomor resi. Silakan gunakan tombol 'Input Resi'.");
+            }
+
+            // Catat tanggal_dikirim jika belum ada
+            if (!$pesanan->pengiriman->tanggal_dikirim) {
+                $pesanan->pengiriman->tanggal_dikirim = now();
+                $pesanan->pengiriman->save();
+            }
+        }
+
         $pesanan->status_pesanan = $request->status_pesanan;
 
         if ($request->filled('catatan')) {

@@ -178,7 +178,7 @@
                                 </div>
                             </div>
 
-                            <!-- Tombol Lacak Pesanan -->
+                            <!-- Tombol Lacak Pesanan & Konfirmasi Terima -->
                             <div class="flex items-center gap-2">
                                 <button type="button" 
                                         onclick="openModalLacak('{{ $pesanan->nomor_pesanan }}', '{{ $kurirPelanggan ?? 'Ekspedisi' }}', '{{ $nomorResiPelanggan }}', '{{ $pesanan->status_pesanan }}', '{{ addslashes($pesanan->nama_penerima ?? $user->nama) }}', '{{ addslashes($pesanan->alamat_pengiriman ?? '-') }}', '{{ addslashes($pesanan->kota ?? '-') }}')" 
@@ -186,6 +186,16 @@
                                     <i class="bi bi-geo-alt-fill text-sky-600 group-hover:text-white"></i>
                                     <span>Lacak Pengiriman</span>
                                 </button>
+
+                                @if($pesanan->status_pesanan === 'dikirim')
+                                    <button type="button" 
+                                            onclick="openModalKonfirmasiTerima('{{ $pesanan->pesanan_id }}', '{{ $pesanan->nomor_pesanan }}', '{{ addslashes($kurirPelanggan ?? 'Ekspedisi') }}', '{{ addslashes($nomorResiPelanggan ?? '-') }}')" 
+                                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs hover:shadow transition active:scale-95 cursor-pointer"
+                                            title="Konfirmasi bahwa barang pesanan telah diterima (F10-07)">
+                                        <i class="bi bi-check2-circle text-sm"></i>
+                                        <span>Pesanan Diterima</span>
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     @elseif(in_array($pesanan->status_pesanan, ['diproses', 'dikirim']))
@@ -269,8 +279,19 @@
                             <i class="bi bi-shield-check text-blue-600"></i>
                             <span>Dilindungi Asuransi Kronos Care & Garansi 24 Bulan</span>
                         </div>
-                        <div class="font-semibold text-slate-700">
-                            Total Pesanan: <strong class="text-slate-900 font-black text-sm">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</strong>
+                        <div class="flex items-center gap-3">
+                            <div class="font-semibold text-slate-700">
+                                Total Pesanan: <strong class="text-slate-900 font-black text-sm">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</strong>
+                            </div>
+                            @if($pesanan->status_pesanan === 'dikirim')
+                                <button type="button" 
+                                        onclick="openModalKonfirmasiTerima('{{ $pesanan->pesanan_id }}', '{{ $pesanan->nomor_pesanan }}', '{{ addslashes($kurirPelanggan ?? 'Ekspedisi') }}', '{{ addslashes($nomorResiPelanggan ?? '-') }}')" 
+                                        class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs hover:shadow transition active:scale-95 cursor-pointer"
+                                        title="Konfirmasi bahwa barang pesanan telah diterima (F10-07)">
+                                    <i class="bi bi-check2-circle text-sm"></i>
+                                    <span>Konfirmasi Terima</span>
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -511,8 +532,22 @@
             if (event.key === 'Escape') {
                 closeModalUlasan();
                 closeModalLacak();
+                closeModalKonfirmasiTerima();
             }
         });
+
+        // Fitur Konfirmasi Terima Pesanan (F10-07 / BB-73 s/d BB-75)
+        function openModalKonfirmasiTerima(id, nomorPesanan, kurir, resi) {
+            document.getElementById('modalTerimaOrderNo').textContent = `Pesanan #${nomorPesanan}`;
+            document.getElementById('modalTerimaKurir').textContent = kurir || 'Ekspedisi';
+            document.getElementById('modalTerimaResi').textContent = resi || '-';
+            document.getElementById('formKonfirmasiTerima').action = `/pelanggan/pesanan/${id}/terima`;
+            document.getElementById('modalKonfirmasiTerima').classList.remove('hidden');
+        }
+
+        function closeModalKonfirmasiTerima() {
+            document.getElementById('modalKonfirmasiTerima').classList.add('hidden');
+        }
 
         // Fitur Salin Resi dengan Feedback Visual
         function copyNomorResi(resi, btn) {
@@ -673,6 +708,56 @@
                     Tutup
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Terima Pesanan (F10-07 / BB-73 s/d BB-75) -->
+    <div id="modalKonfirmasiTerima" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden" style="z-index: 1055;">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in-95 duration-200">
+            <!-- Header Modal -->
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="bi bi-box2-heart-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-slate-900 leading-tight">Konfirmasi Penerimaan</h3>
+                        <p class="text-xs text-slate-500 mt-0.5" id="modalTerimaOrderNo">Pesanan #...</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModalKonfirmasiTerima()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
+                    <i class="bi bi-x-lg text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Banner Info -->
+            <div class="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4 mb-5 text-xs text-emerald-950 space-y-2">
+                <div class="flex items-center gap-2 font-bold text-emerald-800">
+                    <i class="bi bi-shield-check text-sm"></i>
+                    <span>Verifikasi Paket Diterima</span>
+                </div>
+                <p class="text-[11px] text-emerald-700 leading-relaxed">
+                    Pastikan jam tangan fisik telah Anda terima dari kurir (<strong id="modalTerimaKurir">Ekspedisi</strong>) dengan nomor resi <strong id="modalTerimaResi" class="font-mono bg-white px-1.5 py-0.5 rounded border border-emerald-200">-</strong> dalam kondisi baik dan lengkap.
+                </p>
+                <div class="text-[10px] text-emerald-600 bg-white/80 p-2.5 rounded-xl border border-emerald-100 flex items-center gap-1.5">
+                    <i class="bi bi-info-circle-fill text-emerald-500"></i>
+                    <span>Setelah konfirmasi, pesanan akan selesai dan Anda dapat memberikan ulasan produk.</span>
+                </div>
+            </div>
+
+            <!-- Form Action -->
+            <form id="formKonfirmasiTerima" method="POST" action="">
+                @csrf
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeModalKonfirmasiTerima()" class="px-5 py-2.5 rounded-full text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition">
+                        Belum Diterima
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 rounded-full text-xs font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md hover:shadow-lg transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="bi bi-check2-circle text-sm"></i>
+                        <span>Ya, Paket Sudah Diterima</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 @endsection

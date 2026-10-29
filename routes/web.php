@@ -79,6 +79,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
     Route::get('/beranda', [PelangganController::class, 'index'])->name('beranda');
     Route::get('/pesanan', [PelangganController::class, 'index'])->name('pesanan');
+    Route::post('/pesanan/{id}/terima', [PelangganController::class, 'konfirmasiTerima'])->name('pesanan.terima');
     Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
 });
 

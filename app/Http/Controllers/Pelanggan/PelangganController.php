@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pelanggan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pesanan;
+use App\Models\Pengiriman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,5 +47,34 @@ class PelangganController extends Controller
             'totalSelesai',
             'user'
         ));
+    }
+
+    /**
+     * Pelanggan mengonfirmasi bahwa pesanan telah diterima (F10-07 / BB-73 s/d BB-75).
+     * Status pesanan berubah dari 'dikirim' menjadi 'selesai' dan mencatat tanggal_diterima.
+     */
+    public function konfirmasiTerima(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        $pesanan = Pesanan::where('pesanan_id', $id)
+            ->where('user_id', $user->user_id)
+            ->firstOrFail();
+
+        // Skenario BB-74: Sistem menolak jika pesanan belum berstatus 'dikirim'
+        if ($pesanan->status_pesanan !== 'dikirim') {
+            return redirect()->back()->with('error', 'Konfirmasi penerimaan hanya dapat dilakukan pada pesanan yang sedang dalam status Dikirim.');
+        }
+
+        // Skenario BB-75: Perbarui status pesanan menjadi 'selesai'
+        $pesanan->status_pesanan = 'selesai';
+        $pesanan->save();
+
+        // Catat tanggal_diterima pada tabel pengiriman
+        $pengiriman = Pengiriman::firstOrNew(['pesanan_id' => $pesanan->pesanan_id]);
+        $pengiriman->tanggal_diterima = now();
+        $pengiriman->save();
+
+        return redirect()->back()->with('success', "Pesanan #{$pesanan->nomor_pesanan} berhasil diselesaikan. Terima kasih! Silakan berikan rating dan ulasan Anda.");
     }
 }
