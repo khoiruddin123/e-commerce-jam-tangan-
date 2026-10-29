@@ -158,13 +158,17 @@ class PesananController extends Controller
             if (!$pengiriman->tanggal_dikirim) {
                 $pengiriman->tanggal_dikirim = now();
             }
+        } elseif ($pesanan->status_pesanan === 'dibayar') {
+            // Jika resi draf diinput pada pesanan yang masih 'dibayar', naikkan status ke 'diproses'
+            $pesanan->status_pesanan = 'diproses';
+            $pesanan->save();
         }
 
         $pengiriman->save();
 
         $pesanStatus = $pesanan->status_pesanan === 'dikirim' 
             ? "Paket resmi berstatus DIKIRIM dan nomor resi terkunci permanen." 
-            : "Nomor resi tersimpan sebagai draf (status tetap Diproses).";
+            : "Nomor resi tersimpan sebagai draf (status Diproses).";
 
         return redirect()->back()->with('success', "Nomor resi pesanan #{$pesanan->nomor_pesanan} ({$request->kurir} - {$nomorResiBersih}) berhasil disimpan. {$pesanStatus}");
     }
@@ -182,12 +186,22 @@ class PesananController extends Controller
 
         $pesanan = Pesanan::findOrFail($id);
 
-        // Proteksi Hak Pembeli: Admin tidak boleh sembarangan mengubah ke 'selesai' (F10-07 / BB-73)
+        // 1. Proteksi Status Final: Pesanan yang sudah selesai atau dibatalkan tidak boleh diubah lagi
+        if (in_array($pesanan->status_pesanan, ['selesai', 'dibatalkan']) && $request->status_pesanan !== $pesanan->status_pesanan) {
+            return redirect()->back()->with('error', "Pesanan dengan status '{$pesanan->status_pesanan}' bersifat final dan tidak dapat diubah statusnya lagi.");
+        }
+
+        // 2. Proteksi Hak Pembeli: Admin tidak boleh sembarangan mengubah ke 'selesai' (F10-07 / BB-73)
         if ($request->status_pesanan === 'selesai' && $pesanan->status_pesanan !== 'selesai') {
             return redirect()->back()->with('error', "Status 'Selesai' adalah hak konfirmasi akhir pembeli setelah jam tangan diterima fisik (Sesuai F10-07 & BB-73).");
         }
 
-        // Jika mengubah status menjadi 'dikirim', pastikan resi sudah diinput terlebih dahulu
+        // 3. Proteksi Regresi: Pesanan yang sudah dikirim tidak boleh diturunkan kembali ke diproses/dibayar
+        if ($pesanan->status_pesanan === 'dikirim' && in_array($request->status_pesanan, ['dibayar', 'diproses', 'menunggu_pembayaran'])) {
+            return redirect()->back()->with('error', "Pesanan yang sudah berstatus 'Dikirim' tidak dapat diturunkan kembali ke status sebelumnya.");
+        }
+
+        // 4. Jika mengubah status menjadi 'dikirim', pastikan resi sudah diinput terlebih dahulu
         if ($request->status_pesanan === 'dikirim') {
             if (!$pesanan->pengiriman || empty($pesanan->pengiriman->nomor_resi)) {
                 return redirect()->back()->with('error', "Pesanan tidak dapat diubah ke status 'Dikirim' tanpa nomor resi. Silakan gunakan tombol 'Input Resi'.");
