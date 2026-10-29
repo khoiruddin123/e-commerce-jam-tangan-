@@ -53,6 +53,11 @@ class AuthController extends Controller
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
 
+            session()->flash('login_success', [
+                'nama' => Auth::user()->nama,
+                'role' => Auth::user()->role,
+            ]);
+
             return $this->redirectByRole(Auth::user()->role);
         }
 
@@ -107,7 +112,7 @@ class AuthController extends Controller
         $emailLocalPart = explode('@', strtolower($validated['email']))[0] ?? 'user';
         $baseUsername = preg_replace('/[^a-z0-9.]/', '', $emailLocalPart);
         if ($baseUsername === '') {
-            $baseUsername = 'pelanggan';
+            $baseUsername = 'user';
         }
         $baseUsername = substr($baseUsername, 0, 40);
 
@@ -129,7 +134,7 @@ class AuthController extends Controller
             'alamat' => '',
         ]);
 
-        return redirect()->route('login')->with('success', 'Akun berhasil dibuat. Silakan masuk.');
+        return redirect()->route('login')->with('success', "Akun berhasil dibuat. Username Anda: {$username}. Anda bisa masuk dengan email atau username.");
     }
 
     public function logout(Request $request)

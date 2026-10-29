@@ -96,13 +96,10 @@
                 <div class="text-[10px] text-slate-400 mt-0.5">Jam Operasional: 10:00 - 22:00</div>
             </div>
 
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="w-full flex items-center gap-2.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800/40 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
-                    <i class="bi bi-box-arrow-left text-sm"></i>
-                    <span>Keluar</span>
-                </button>
-            </form>
+            <button type="button" data-logout-trigger class="w-full flex items-center gap-2.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800/40 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
+                <i class="bi bi-box-arrow-left text-sm"></i>
+                <span>Keluar</span>
+            </button>
         </div>
     </aside>
 
@@ -713,5 +710,7 @@
         });
     </script>
 
+    <x-popup-login />
+    <x-konfirmasi-logout />
 </body>
 </html>

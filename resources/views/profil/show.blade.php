@@ -120,15 +120,13 @@
                         <span>Pesanan Saya</span>
                     </a>
 
-                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit"
-                                class="btn btn-outline-light rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-2"
-                                style="font-size: 0.84rem; border-color: rgba(255,255,255,0.25);">
-                            <i class="bi bi-box-arrow-right text-danger"></i>
-                            <span>Keluar</span>
-                        </button>
-                    </form>
+                    <button type="button"
+                            data-logout-trigger
+                            class="btn btn-outline-light rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-2"
+                            style="font-size: 0.84rem; border-color: rgba(255,255,255,0.25);">
+                        <i class="bi bi-box-arrow-right text-danger"></i>
+                        <span>Keluar</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -170,6 +168,7 @@
                             <div class="profile-info-item h-100">
                                 <span class="text-muted d-block small mb-1" style="font-size: 0.75rem;">Username</span>
                                 <div class="fw-bold text-dark" style="font-size: 0.92rem;">{{ $user->username }}</div>
+                                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Dibuat otomatis, dapat dipakai untuk login.</small>
                             </div>
                         </div>
 
@@ -228,7 +227,8 @@
                                 <label class="form-label fw-bold small text-secondary mb-1">
                                     Username <span class="badge bg-secondary-subtle text-secondary fw-normal" style="font-size: 0.65rem;">Tidak dapat diubah</span>
                                 </label>
-                                <input type="text" value="{{ $user->username }}" class="form-control profile-form-control" disabled readonly>
+                                <div class="profile-form-control" style="background-color: #f1f5f9; color: #64748b; cursor: not-allowed;">{{ $user->username }}</div>
+                                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Dibuat otomatis, dapat dipakai untuk login.</small>
                             </div>
 
                             <div class="col-sm-6">
@@ -369,24 +369,22 @@
                             <i class="bi bi-chevron-right text-secondary"></i>
                         </a>
 
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit"
-                                    class="w-100 d-flex align-items-center justify-content-between p-3 rounded-4 border bg-white text-start"
-                                    style="border-color: #fecdd3 !important;">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
-                                         style="width: 38px; height: 38px; background: #fff1f2; color: #e11d48;">
-                                        <i class="bi bi-box-arrow-right"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-bold text-danger small">Keluar dari Akun</div>
-                                        <div class="text-muted" style="font-size: 0.75rem;">Akhiri sesi login Anda saat ini</div>
-                                    </div>
+                        <button type="button"
+                                data-logout-trigger
+                                class="w-100 d-flex align-items-center justify-content-between p-3 rounded-4 border bg-white text-start"
+                                style="border-color: #fecdd3 !important;">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                     style="width: 38px; height: 38px; background: #fff1f2; color: #e11d48;">
+                                    <i class="bi bi-box-arrow-right"></i>
                                 </div>
-                                <i class="bi bi-chevron-right text-danger"></i>
-                            </button>
-                        </form>
+                                <div>
+                                    <div class="fw-bold text-danger small">Keluar dari Akun</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">Akhiri sesi login Anda saat ini</div>
+                                </div>
+                            </div>
+                            <i class="bi bi-chevron-right text-danger"></i>
+                        </button>
                     </div>
                 </div>
 
