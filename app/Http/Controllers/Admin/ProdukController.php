@@ -152,16 +152,17 @@ class ProdukController extends Controller
                 'status_produk' => $validated['status_produk'],
             ]);
 
-            // Simpan Foto yang diunggah (jika ada)
+            // Simpan Foto yang diunggah (jika ada) langsung ke database sebagai Base64 Data URI
             if ($request->hasFile('foto')) {
                 $isUtama = true;
                 $urutan = 1;
                 foreach ($request->file('foto') as $file) {
                     if ($file->isValid()) {
-                        $path = $file->store('produk', 'public');
+                        $mime = $file->getClientMimeType() ?: 'image/jpeg';
+                        $base64 = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
                         GaleriProduk::create([
                             'produk_id'  => $produk->produk_id,
-                            'foto'       => $path,
+                            'foto'       => $base64,
                             'keterangan' => $produk->nama_produk,
                             'foto_utama' => $isUtama ? 1 : 0,
                             'urutan'     => $urutan++,
@@ -296,11 +297,12 @@ class ProdukController extends Controller
         if ($request->hasFile('foto')) {
             foreach ($request->file('foto') as $file) {
                 if ($file->isValid()) {
-                    $path = $file->store('produk', 'public');
+                    $mime = $file->getClientMimeType() ?: 'image/jpeg';
+                    $base64 = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
                     $urutanMaksimal++;
                     GaleriProduk::create([
                         'produk_id'  => $produk->produk_id,
-                        'foto'       => $path,
+                        'foto'       => $base64,
                         'keterangan' => $produk->nama_produk,
                         'foto_utama' => (!$sudahAdaUtama) ? 1 : 0,
                         'urutan'     => $urutanMaksimal,
@@ -311,7 +313,7 @@ class ProdukController extends Controller
         }
 
         return redirect()->back()
-            ->with('success', 'Foto produk berhasil ditambahkan ke galeri.');
+            ->with('success', 'Foto produk berhasil disimpan langsung ke database galeri.');
     }
 
     /**
@@ -323,8 +325,8 @@ class ProdukController extends Controller
         $produkId = $foto->produk_id;
         $wasUtama = (bool) $foto->foto_utama;
 
-        // Hapus berkas fisik dari storage
-        if ($foto->foto && Storage::disk('public')->exists($foto->foto)) {
+        // Hapus berkas fisik jika sebelumnya disimpan di storage
+        if ($foto->foto && !str_starts_with($foto->foto, 'data:') && Storage::disk('public')->exists($foto->foto)) {
             Storage::disk('public')->delete($foto->foto);
         }
 

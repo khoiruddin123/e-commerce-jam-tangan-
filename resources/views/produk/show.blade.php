@@ -56,7 +56,7 @@
                 <div class="position-relative d-flex align-items-center justify-content-center bg-light rounded-4 overflow-hidden mb-3" style="height: 400px;">
                     @if($fotoUtama && $fotoUtama->foto)
                         <img id="mainProductImage" 
-                             src="{{ asset('storage/' . $fotoUtama->foto) }}" 
+                             src="{{ $fotoUtama->url }}" 
                              alt="{{ $produk->nama_produk }}" 
                              class="w-100 h-100 object-fit-contain p-3 transition-transform">
                     @else
@@ -74,8 +74,8 @@
                             <button type="button" 
                                     class="btn p-0 border rounded-3 overflow-hidden thumbnail-btn {{ $loop->first ? 'border-primary border-2' : 'border-light-subtle' }}" 
                                     style="width: 70px; height: 70px; flex-shrink: 0;"
-                                    onclick="changeMainImage('{{ asset('storage/' . $foto->foto) }}', this)">
-                                <img src="{{ asset('storage/' . $foto->foto) }}" 
+                                    onclick="changeMainImage('{{ $foto->url }}', this)">
+                                <img src="{{ $foto->url }}" 
                                      alt="Galeri {{ $index + 1 }}" 
                                      class="w-100 h-100 object-fit-cover">
                             </button>
@@ -416,7 +416,7 @@
                             <!-- Gambar Asli Storage / Placeholder Bersih -->
                             <a href="{{ route('produk.detail', $relItem->produk_id) }}" class="d-block bg-light overflow-hidden text-center text-decoration-none" style="height: 180px;">
                                 @if($relFoto && $relFoto->foto)
-                                    <img src="{{ asset('storage/' . $relFoto->foto) }}" alt="{{ $relItem->nama_produk }}" class="w-100 h-100 object-fit-contain p-2">
+                                    <img src="{{ $relFoto->url }}" alt="{{ $relItem->nama_produk }}" class="w-100 h-100 object-fit-contain p-2">
                                 @else
                                     <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-muted">
                                         <i class="bi bi-watch display-6 opacity-50 mb-1"></i>

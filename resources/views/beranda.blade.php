@@ -190,8 +190,8 @@
                     $katFoto = null;
                     if ($sampleProduk && $sampleProduk->galeri->isNotEmpty()) {
                         $fObj = $sampleProduk->galeri->where('foto_utama', 1)->first() ?? $sampleProduk->galeri->first();
-                        if ($fObj && file_exists(public_path('storage/' . $fObj->foto))) {
-                            $katFoto = asset('storage/' . $fObj->foto);
+                        if ($fObj) {
+                            $katFoto = $fObj->url;
                         }
                     }
                     $katSlug = strtolower(trim($kat->nama_kategori));
@@ -290,7 +290,7 @@
                     $fotoItem = null;
                     if ($item->galeri->isNotEmpty()) {
                         $fObj = $item->galeri->where('foto_utama', 1)->first() ?? $item->galeri->first();
-                        $fotoItem = $fObj ? asset('storage/' . $fObj->foto) : null;
+                        $fotoItem = $fObj ? $fObj->url : null;
                     }
                     $ratingVal = $item->ulasan_avg_rating ? round($item->ulasan_avg_rating, 1) : 4.9;
                 @endphp

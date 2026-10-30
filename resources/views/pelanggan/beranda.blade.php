@@ -208,7 +208,7 @@
                                 $fotoItem = null;
                                 if($item->varian && $item->varian->produk && $item->varian->produk->galeri->isNotEmpty()) {
                                     $fotoUtama = $item->varian->produk->galeri->where('foto_utama', 1)->first() ?? $item->varian->produk->galeri->first();
-                                    $fotoItem = $fotoUtama ? asset('storage/' . $fotoUtama->foto) : null;
+                                    $fotoItem = $fotoUtama ? $fotoUtama->url : null;
                                 }
                             @endphp
                             <div class="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

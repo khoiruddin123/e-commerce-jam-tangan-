@@ -315,7 +315,7 @@
                             @forelse($daftarProduk as $produk)
                                 @php
                                     $fotoUtama = $produk->galeri->where('foto_utama', 1)->first() ?? $produk->galeri->first();
-                                    $urlFoto = $fotoUtama ? asset('storage/' . $fotoUtama->foto) : null;
+                                    $urlFoto = $fotoUtama ? $fotoUtama->url : null;
                                     $jumlahVarian = $produk->varian->count();
                                     $totalStok = $produk->varian->sum('stok');
                                     $hargaMin = $produk->varian->min('harga_varian');
@@ -427,7 +427,7 @@
                                         <div class="inline-flex items-center gap-1.5">
                                             <!-- Tombol Kelola Foto -->
                                             <button type="button" 
-                                                    onclick="openModalFoto('{{ $produk->produk_id }}', '{{ addslashes($produk->nama_produk) }}', {{ json_encode($produk->galeri->map(function($g) { return ['galeri_id' => $g->galeri_id, 'foto' => asset('storage/' . $g->foto), 'foto_utama' => (bool)$g->foto_utama, 'keterangan' => $g->keterangan]; })) }})" 
+                                                    onclick="openModalFoto('{{ $produk->produk_id }}', '{{ addslashes($produk->nama_produk) }}', {{ json_encode($produk->galeri->map(function($g) { return ['galeri_id' => $g->galeri_id, 'foto' => $g->url, 'foto_utama' => (bool)$g->foto_utama, 'keterangan' => $g->keterangan]; })) }})" 
                                                     class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition" 
                                                     title="Kelola Galeri Foto">
                                                 <i class="bi bi-images text-xs"></i>

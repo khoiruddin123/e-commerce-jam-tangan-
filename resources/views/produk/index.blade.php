@@ -267,7 +267,7 @@
                                 <!-- Foto Produk Murni Storage Lokal / Placeholder Lokal Bersih -->
                                 <a href="{{ route('produk.detail', $item->produk_id) }}" class="d-block overflow-hidden bg-light position-relative text-decoration-none" style="height: 230px;">
                                     @if($fotoUtama && $fotoUtama->foto)
-                                        <img src="{{ asset('storage/' . $fotoUtama->foto) }}" 
+                                        <img src="{{ $fotoUtama->url }}" 
                                              alt="{{ $item->nama_produk }}" 
                                              class="w-100 h-100 object-fit-contain p-2 transition-transform">
                                     @else
