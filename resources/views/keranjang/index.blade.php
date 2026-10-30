@@ -103,7 +103,7 @@
                             <div class="col-auto">
                                 <div class="position-relative rounded-3 overflow-hidden bg-light border d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; flex-shrink: 0;">
                                     @if($fotoUtama && $fotoUtama->foto)
-                                        <img src="{{ asset('storage/' . $fotoUtama->foto) }}" alt="{{ $produk->nama_produk ?? 'Jam' }}" class="w-100 h-100 object-fit-cover">
+                                        <img src="{{ $fotoUtama->url }}" alt="{{ $produk->nama_produk ?? 'Jam' }}" class="w-100 h-100 object-fit-cover">
                                     @else
                                         <i class="bi bi-watch text-secondary fs-2"></i>
                                     @endif

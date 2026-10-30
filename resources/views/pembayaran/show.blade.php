@@ -167,7 +167,7 @@
                             <div class="d-flex align-items-center gap-3 py-3 border-bottom">
                                 <div class="rounded-3 bg-light border overflow-hidden d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; flex-shrink: 0;">
                                     @if($fotoUtama && $fotoUtama->foto)
-                                        <img src="{{ asset('storage/' . $fotoUtama->foto) }}" alt="{{ $item->nama_produk }}" class="w-100 h-100 object-fit-cover">
+                                        <img src="{{ $fotoUtama->url }}" alt="{{ $item->nama_produk }}" class="w-100 h-100 object-fit-cover">
                                     @else
                                         <i class="bi bi-watch text-secondary fs-4"></i>
                                     @endif
