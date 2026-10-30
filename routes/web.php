@@ -20,6 +20,7 @@ use App\Http\Controllers\ProfilController;
 
 // --- Rute Publik / Beranda & Katalog ---
 Route::get('/', [ProdukController::class, 'beranda'])->name('produk.index');
+Route::get('/beranda', [ProdukController::class, 'beranda'])->name('beranda');
 Route::get('/produk', [ProdukController::class, 'index'])->name('produk.katalog');
 Route::get('/produk/{id}', [ProdukController::class, 'show'])->name('produk.detail');
 
