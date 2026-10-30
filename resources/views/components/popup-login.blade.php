@@ -162,7 +162,7 @@
             @if($isAdmin)
                 Selamat datang, <strong>{{ $namaUser }}</strong>. Anda masuk sebagai Admin.
             @else
-                Selamat datang kembali, <strong>{{ $namaUser }}</strong>! Selamat berbelanja di Kronos Watch.
+                Selamat datang kembali, <strong>{{ $namaUser }}</strong>! Selamat berbelanja di A1ORA Watch.
             @endif
         </p>
 

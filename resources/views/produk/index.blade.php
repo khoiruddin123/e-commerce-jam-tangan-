@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Katalog Jam Tangan Eksklusif - Kronos Watch')
+@section('title', 'Katalog Jam Tangan Eksklusif - A1ORA Watch')
 
 @section('content')
 <div class="container py-4">
@@ -29,7 +29,7 @@
 
         <!-- Big Capsule Search Bar -->
         <div id="searchSection" class="card border-0 shadow-sm rounded-4 bg-white p-2 mb-4">
-            <form action="{{ route('produk.index') }}" method="GET" class="d-flex align-items-center gap-2">
+            <form action="{{ route('produk.katalog') }}" method="GET" class="d-flex align-items-center gap-2">
                 @if(request('kategori_id'))
                     <input type="hidden" name="kategori_id" value="{{ request('kategori_id') }}">
                 @endif
@@ -65,13 +65,13 @@
                         <i class="bi bi-sliders2"></i> Filter Produk
                     </h6>
                     @if(request()->hasAny(['q', 'kategori_id', 'merek_id', 'harga_min', 'harga_max', 'sort']))
-                        <a href="{{ route('produk.index') }}" class="text-danger small fw-semibold text-decoration-none">
+                        <a href="{{ route('produk.katalog') }}" class="text-danger small fw-semibold text-decoration-none">
                             Reset
                         </a>
                     @endif
                 </div>
 
-                <form action="{{ route('produk.index') }}" method="GET" id="filterForm">
+                <form action="{{ route('produk.katalog') }}" method="GET" id="filterForm">
                     @if(request('q'))
                         <input type="hidden" name="q" value="{{ request('q') }}">
                     @endif
@@ -157,17 +157,17 @@
                             Terapkan Filter
                         </button>
                         @if(request()->hasAny(['q', 'kategori_id', 'merek_id', 'harga_min', 'harga_max', 'sort']))
-                            <a href="{{ route('produk.index') }}" class="btn btn-outline-secondary rounded-3 py-2 small fw-semibold">
+                            <a href="{{ route('produk.katalog') }}" class="btn btn-outline-secondary rounded-3 py-2 small fw-semibold">
                                 RESET SEMUA
                             </a>
                         @endif
                     </div>
                 </form>
 
-                <!-- Card Garansi Kronos (Bawah Sidebar) -->
+                <!-- Card Garansi A1ORA (Bawah Sidebar) -->
                 <div class="p-3 mt-4 rounded-3 border bg-primary bg-opacity-10 border-primary border-opacity-25">
                     <div class="d-flex align-items-center gap-2 mb-1 text-primary fw-bold small">
-                        <i class="bi bi-shield-check fs-6"></i> GARANSI KRONOS
+                        <i class="bi bi-shield-check fs-6"></i> GARANSI A1ORA
                     </div>
                     <p class="text-secondary small mb-0" style="font-size: 0.75rem; line-height: 1.5;">
                         Setiap arloji dilengkapi sertifikat keaslian resmi & garansi penggantian baterai seumur hidup di butik resmi Jakarta.
@@ -219,7 +219,7 @@
                         <p class="text-muted small mb-4" style="max-width: 450px; margin: 0 auto;">
                             Tidak ada produk yang cocok dengan kriteria filter atau kata kunci pencarian Anda. Silakan coba atur ulang filter.
                         </p>
-                        <a href="{{ route('produk.index') }}" class="btn btn-luxury-primary rounded-pill px-4 py-2 small fw-semibold">
+                        <a href="{{ route('produk.katalog') }}" class="btn btn-luxury-primary rounded-pill px-4 py-2 small fw-semibold">
                             Tampilkan Seluruh Koleksi
                         </a>
                     </div>
@@ -290,7 +290,7 @@
                                 <div class="card-body p-3 d-flex flex-column text-center">
                                     <!-- Merek -->
                                     <span class="text-uppercase text-muted fw-bold small mb-1" style="font-size: 0.68rem; letter-spacing: 1.2px;">
-                                        {{ $item->merek->nama_merek ?? 'Kronos Horology' }}
+                                        {{ $item->merek->nama_merek ?? 'A1ORA Horology' }}
                                     </span>
 
                                     <!-- Judul Produk -->

@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cetak Laporan Omzet - {{ $namaBulan }} {{ $tahun }}</title>
+    <!-- Favicon Logo A1ORA -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-icon.png') }}">
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -143,7 +145,7 @@
 
     <!-- Kop Laporan -->
     <div class="header">
-        <h1>KRONOS WATCH</h1>
+        <img src="{{ asset('images/logo.png') }}" alt="A1ORA" style="height: 38px; width: auto; object-fit: contain; margin-bottom: 6px;"><br>
         <p>Sistem Informasi & E-Commerce Jam Tangan Original</p>
         <p><strong>LAPORAN REKAPITULASI OMZET PENJUALAN BULANAN</strong></p>
     </div>
@@ -238,7 +240,7 @@
             <p>Surakarta, {{ date('d F Y') }}<br>Penanggung Jawab Toko,</p>
             <div class="signature-line">
                 {{ Auth::user()->nama ?? 'Admin Toko' }}<br>
-                <span style="font-size: 10px; font-weight: normal; color: #64748b;">Administrator Kronos Watch</span>
+                <span style="font-size: 10px; font-weight: normal; color: #64748b;">Administrator A1ORA Watch</span>
             </div>
         </div>
     </div>

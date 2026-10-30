@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Keranjang Belanja - Kronos Official Boutique')
+@section('title', 'Keranjang Belanja - A1ORA Official Boutique')
 
 @section('content')
 <div class="container py-4">
@@ -53,7 +53,7 @@
         <!-- Header Halaman -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
             <div>
-                <div class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.72rem; letter-spacing: 1.5px;">KRONOS OFFICIAL BOUTIQUE</div>
+                <div class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.72rem; letter-spacing: 1.5px;">A1ORA OFFICIAL BOUTIQUE</div>
                 <h2 class="fw-bold text-dark mb-0">Keranjang Belanja Anda</h2>
             </div>
             <div>
@@ -90,7 +90,7 @@
                     @php
                         $produk = $item->varian->produk ?? null;
                         $fotoUtama = $produk && $produk->galeri ? ($produk->galeri->where('foto_utama', 1)->first() ?? $produk->galeri->first()) : null;
-                        $eyebrow = strtoupper($produk->merek->nama_merek ?? ($produk->kategori->nama_kategori ?? 'KRONOS COLLECTION'));
+                        $eyebrow = strtoupper($produk->merek->nama_merek ?? ($produk->kategori->nama_kategori ?? 'A1ORA COLLECTION'));
                     @endphp
                     <div class="card border-0 rounded-4 shadow-xs bg-white p-3 p-md-4 mb-3" style="border: 1px solid #e2e8f0 !important;" id="item-card-{{ $item->detail_keranjang_id }}">
                         <div class="row align-items-center g-3">
@@ -117,7 +117,7 @@
                                 </div>
                                 <h6 class="fw-bold text-dark mb-1">
                                     <a href="{{ route('produk.detail', $produk->produk_id ?? 0) }}" class="text-decoration-none text-dark">
-                                        {{ $produk->nama_produk ?? 'Jam Tangan Kronos' }}
+                                        {{ $produk->nama_produk ?? 'Jam Tangan A1ORA' }}
                                     </a>
                                 </h6>
                                 <div class="text-muted small mb-1" style="font-size: 0.8rem;">
@@ -200,7 +200,7 @@
                                 <div>
                                     <h6 class="fw-bold text-dark mb-1" style="font-size: 0.9rem;">100% Jam Tangan Original</h6>
                                     <p class="text-muted small mb-0" style="font-size: 0.78rem; line-height: 1.45;">
-                                        Sertifikat keaslian resmi pabrikan horologi & Garansi Internasional Kronos 2 Tahun penuh.
+                                        Sertifikat keaslian resmi pabrikan horologi & Garansi Internasional A1ORA 2 Tahun penuh.
                                     </p>
                                 </div>
                             </div>
@@ -294,7 +294,7 @@
 
                 <!-- Card Bantuan WhatsApp Konsultan Horologi -->
                 <div class="card border-0 rounded-4 shadow-xs mt-3" style="background: #f0f6ff; border: 1px solid #dbeafe !important;">
-                    <a href="https://wa.me/6281234567890?text=Halo%20Kronos%20Watch,%20saya%20ingin%20berkonsultasi%20mengenai%20pesanan%20keranjang%20saya." target="_blank" class="text-decoration-none p-3 d-flex align-items-center gap-3">
+                    <a href="https://wa.me/6281234567890?text=Halo%20A1ORA%20Watch,%20saya%20ingin%20berkonsultasi%20mengenai%20pesanan%20keranjang%20saya." target="_blank" class="text-decoration-none p-3 d-flex align-items-center gap-3">
                         <div class="rounded-circle bg-white text-primary d-flex align-items-center justify-content-center shadow-xs" style="width: 42px; height: 42px; flex-shrink: 0;">
                             <i class="bi bi-headset fs-4"></i>
                         </div>

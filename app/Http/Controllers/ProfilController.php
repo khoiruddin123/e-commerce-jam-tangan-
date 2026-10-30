@@ -43,7 +43,8 @@ class ProfilController extends Controller
         }
 
         $validated = $request->validate([
-            'nama_username' => [
+            'nama' => ['required', 'string', 'max:100'],
+            'username' => [
                 'required',
                 'string',
                 'min:3',
@@ -72,11 +73,13 @@ class ProfilController extends Controller
             ],
             'alamat' => ['nullable', 'string', 'max:500'],
         ], [
-            'nama_username.required' => 'Nama / Username wajib diisi.',
-            'nama_username.min' => 'Minimal 3 karakter.',
-            'nama_username.max' => 'Maksimal 30 karakter.',
-            'nama_username.regex' => 'Hanya boleh huruf, angka, titik, dan underscore (tanpa spasi).',
-            'nama_username.unique' => 'Nama / Username sudah dipakai. Silakan pilih yang lain.',
+            'nama.required' => 'Nama lengkap wajib diisi.',
+            'nama.max' => 'Nama lengkap maksimal 100 karakter.',
+            'username.required' => 'Username wajib diisi.',
+            'username.min' => 'Username minimal 3 karakter.',
+            'username.max' => 'Username maksimal 30 karakter.',
+            'username.regex' => 'Username hanya boleh berisi huruf, angka, titik, dan underscore (tanpa spasi).',
+            'username.unique' => 'Username sudah digunakan oleh akun lain.',
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format alamat email tidak valid.',
             'email.max' => 'Alamat email maksimal 255 karakter.',
@@ -86,9 +89,9 @@ class ProfilController extends Controller
         ]);
 
         $user->update([
-            'nama' => $validated['nama_username'],
-            'username' => $validated['nama_username'],
-            'email' => $validated['email'],
+            'nama' => trim($validated['nama']),
+            'username' => strtolower(trim($validated['username'])),
+            'email' => strtolower($validated['email']),
             'no_telepon' => $validated['no_telepon'] ?: null,
             'alamat' => $validated['alamat'] ?: null,
         ]);

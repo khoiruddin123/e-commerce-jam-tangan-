@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $produk->nama_produk . ' - Kronos Watch')
+@section('title', $produk->nama_produk . ' - A1ORA Watch')
 
 @section('content')
 <div class="container py-3">
@@ -118,7 +118,7 @@
                 <!-- Header Merek & Kategori Asli -->
                 <div class="d-flex align-items-center gap-2 mb-2">
                     <span class="text-primary fw-bold text-uppercase small" style="font-size: 0.78rem; letter-spacing: 1px;">
-                        {{ $produk->merek->nama_merek ?? 'Kronos' }}
+                        {{ $produk->merek->nama_merek ?? 'A1ORA' }}
                     </span>
                     <span class="text-muted small">&bull;</span>
                     <span class="badge bg-light text-secondary border small">
@@ -245,7 +245,7 @@
 
                         <!-- Tombol Konsultasi WhatsApp (Tetap Ada) -->
                         <div>
-                            <a href="https://wa.me/6281234567890?text=Halo%20Admin%20Kronos%20Watch,%20saya%20tertarik%20dengan%20jam%20tangan%20{{ urlencode($produk->nama_produk) }}" 
+                            <a href="https://wa.me/6281234567890?text=Halo%20Admin%20A1ORA%20Watch,%20saya%20tertarik%20dengan%20jam%20tangan%20{{ urlencode($produk->nama_produk) }}" 
                                target="_blank" 
                                class="btn btn-outline-success w-100 py-2 rounded-3 small fw-semibold d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-whatsapp fs-5"></i> Konsultasi Produk via WhatsApp
@@ -428,7 +428,7 @@
                             <!-- Detail Asli -->
                             <div class="card-body p-3 d-flex flex-column text-center">
                                 <span class="text-uppercase text-muted fw-bold small mb-1" style="font-size: 0.65rem;">
-                                    {{ $relItem->merek->nama_merek ?? 'Kronos' }}
+                                    {{ $relItem->merek->nama_merek ?? 'A1ORA' }}
                                 </span>
                                 <h6 class="card-title fw-bold text-dark text-truncate mb-2" title="{{ $relItem->nama_produk }}" style="font-size: 0.85rem;">
                                     <a href="{{ route('produk.detail', $relItem->produk_id) }}" class="text-decoration-none text-dark">

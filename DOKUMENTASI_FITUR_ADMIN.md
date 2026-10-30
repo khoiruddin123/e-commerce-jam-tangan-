@@ -1,6 +1,6 @@
-# DOKUMENTASI LENGKAP FITUR PANEL ADMIN (KRONOS WATCH)
+# DOKUMENTASI LENGKAP FITUR PANEL ADMIN (A1ORA WATCH)
 
-Dokumen ini berisi rangkuman arsitektur, rute, komponen logika **Backend**, dan antarmuka **Frontend** yang telah diimplementasikan pada Panel Admin Toko Jam Tangan KRONOS.
+Dokumen ini berisi rangkuman arsitektur, rute, komponen logika **Backend**, dan antarmuka **Frontend** yang telah diimplementasikan pada Panel Admin Toko Jam Tangan A1ORA.
 
 ---
 

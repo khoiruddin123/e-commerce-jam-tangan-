@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Kronos Watch - Horology Jakarta')</title>
+    <title>@yield('title', 'A1ORA Watch - Luxury Timepiece')</title>
+
+    <!-- Favicon Logo A1ORA -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-icon.png') }}">
 
     <!-- Google Fonts Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,23 +45,11 @@
         }
         .top-navbar .navbar-container {
             width: 100% !important;
-            max-width: 1320px !important;
+            max-width: 1440px !important;
             margin-left: auto !important;
             margin-right: auto !important;
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-        @media (max-width: 1399.98px) {
-            .top-navbar .navbar-container { max-width: 1140px !important; }
-        }
-        @media (max-width: 1199.98px) {
-            .top-navbar .navbar-container { max-width: 960px !important; }
-        }
-        @media (max-width: 991.98px) {
-            .top-navbar .navbar-container { max-width: 720px !important; }
-        }
-        @media (max-width: 767.98px) {
-            .top-navbar .navbar-container { max-width: 540px !important; }
+            padding-left: clamp(1rem, 3.5vw, 2.5rem) !important;
+            padding-right: clamp(1rem, 3.5vw, 2.5rem) !important;
         }
 
         /* 3-Kolom CSS Grid: Kolom Kiri Pinned, Kolom Tengah Centered, Kolom Kanan Pinned */
@@ -153,6 +144,23 @@
             box-shadow: 0 12px 24px -10px rgba(15, 23, 42, 0.12) !important;
             border-color: #cbd5e1;
         }
+        .category-card {
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid #e2e8f0 !important;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px -8px rgba(15, 23, 42, 0.1) !important;
+            border-color: #93c5fd !important;
+        }
+        .category-card:hover .category-img {
+            transform: scale(1.06);
+        }
+        .category-card:hover .category-arrow-btn {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            transform: translateX(3px);
+        }
         .badge-luxury {
             background: linear-gradient(135deg, #1e293b, #0f172a);
             color: #ffffff;
@@ -200,13 +208,11 @@
 
                 <!-- 1. Kolom Kiri: Brand & Logo (Anchor ke Kiri) -->
                 <div class="navbar-brand-col">
-                    <a class="d-flex align-items-center gap-2.5 text-decoration-none text-dark flex-shrink-0" href="{{ route('produk.index') }}">
-                        <div class="brand-logo-box bg-dark text-white rounded-3 d-flex align-items-center justify-content-center shadow-xs">
-                            <i class="bi bi-watch fs-5"></i>
-                        </div>
-                        <div class="d-flex flex-column justify-content-center">
-                            <div class="navbar-brand-title">KRONOS WATCH</div>
-                            <div class="navbar-brand-sub">HOROLOGY JAKARTA</div>
+                    <a class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0" href="{{ route('produk.index') }}" title="A1ORA Watch">
+                        <img src="{{ asset('images/logo.png') }}" alt="A1ORA" style="height: 36px; width: auto; object-fit: contain;">
+                        <div class="d-none d-xl-flex flex-column border-start ps-2" style="border-color: #cbd5e1 !important;">
+                            <span style="font-size: 0.65rem; letter-spacing: 1.5px; font-weight: 700; color: #475569; line-height: 1;">HOROLOGY</span>
+                            <span style="font-size: 0.58rem; letter-spacing: 1px; color: #94a3b8; line-height: 1; margin-top: 2px;">JAKARTA</span>
                         </div>
                     </a>
                 </div>
@@ -220,36 +226,34 @@
                         <a href="{{ route('produk.katalog') }}" class="nav-capsule-link {{ request()->routeIs('produk.katalog') || request()->hasAny(['kategori_id', 'merek_id']) ? 'active' : '' }}">
                             Katalog
                         </a>
-                        @auth
-                            <a href="{{ route('pelanggan.beranda') }}" class="nav-capsule-link {{ request()->routeIs('pelanggan.*') ? 'active' : '' }}">
-                                Pesanan
-                            </a>
-                        @endauth
+                        <a href="{{ Auth::check() ? route('pelanggan.beranda') : route('login') }}" class="nav-capsule-link {{ request()->routeIs('pelanggan.*') ? 'active' : '' }}">
+                            Pesanan
+                        </a>
                     </nav>
                 </div>
 
-                <!-- 3. Kolom Kanan: Pencarian, Keranjang, Akun (Anchor ke Kanan) -->
+                <!-- 3. Kolom Kanan: Pencarian, Keranjang, Akun Sesuai Figma -->
                 <div class="navbar-actions-col">
                     <a href="{{ route('produk.katalog') }}#searchSection" class="btn btn-light rounded-circle border-0 d-none d-sm-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" title="Cari Jam Tangan">
                         <i class="bi bi-search text-dark"></i>
                     </a>
 
-                    <!-- Tombol Keranjang Belanja dengan Badge -->
-                    <a href="{{ route('keranjang.index') }}" class="btn btn-light rounded-pill position-relative px-3 py-2 border d-flex align-items-center gap-2 text-decoration-none text-dark" title="Keranjang Belanja">
+                    <!-- Tombol Keranjang Belanja Bulat dengan Badge Sesuai Figma -->
+                    <a href="{{ route('keranjang.index') }}" class="btn btn-light rounded-circle position-relative border d-flex align-items-center justify-content-center text-dark" style="width: 40px; height: 40px;" title="Keranjang Belanja">
                         <i class="bi bi-bag"></i>
-                        @if($cartCount > 0)
-                            <span class="badge bg-primary rounded-pill fw-bold" style="font-size: 0.75rem;">{{ $cartCount }}</span>
-                        @endif
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary fw-bold" style="font-size: 0.65rem; padding: 0.3em 0.5em;">
+                            {{ $cartCount }}
+                        </span>
                     </a>
 
-                    <!-- User Account / Profil -->
+                    <!-- User Account / Profil Sesuai Figma -->
                     @guest
-                        <a href="{{ route('login') }}" class="btn btn-dark rounded-pill px-3 py-1.5 fw-semibold small">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Masuk
+                        <a href="{{ route('login') }}" class="btn btn-light rounded-circle border d-flex align-items-center justify-content-center text-dark" style="width: 40px; height: 40px;" title="Masuk / Akun Saya">
+                            <i class="bi bi-person fs-5"></i>
                         </a>
                     @else
                         <a href="{{ route('profil.show') }}" class="btn {{ request()->routeIs('profil.*') ? 'btn-primary text-white border-primary' : 'btn-light text-dark border' }} rounded-circle p-0 d-flex align-items-center justify-content-center overflow-hidden text-decoration-none" style="width: 40px; height: 40px;" title="Profil {{ Auth::user()->nama ?? Auth::user()->username }}">
-                            <i class="bi bi-person-circle fs-4"></i>
+                            <i class="bi bi-person-circle fs-5"></i>
                         </a>
                     @endguest
                 </div>
@@ -265,19 +269,13 @@
 
     <!-- Footer Horologi Mewah Sesuai Mockup -->
     <footer class="footer-dark pt-5 pb-4 mt-5">
-        <div class="container">
+        <div class="container-fluid" style="max-width: 1440px; padding-left: clamp(1rem, 3.5vw, 2.5rem); padding-right: clamp(1rem, 3.5vw, 2.5rem);">
             <div class="row g-4 pb-4 border-bottom border-secondary border-opacity-25">
                 
                 <!-- Kolom 1: Brand & Filosofi -->
                 <div class="col-lg-4">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <div class="bg-white text-dark rounded-3 d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
-                            <i class="bi bi-watch fs-5"></i>
-                        </div>
-                        <div>
-                            <span class="fw-bold text-white fs-6 tracking-wide d-block">KRONOS WATCH</span>
-                            <span class="text-secondary small" style="font-size: 0.65rem; letter-spacing: 1.5px;">HOROLOGY JAKARTA</span>
-                        </div>
+                        <img src="{{ asset('images/logo-white.png') }}" alt="A1ORA" style="height: 34px; width: auto; object-fit: contain;">
                     </div>
                     <p class="small text-secondary mb-3 pe-lg-4" style="line-height: 1.6;">
                         Kurasi horologi presisi tinggi dan jam tangan mewah autentik untuk kolektor dan antusias terkemuka Indonesia. Standar pengerjaan Swiss dengan jaminan keaslian seumur hidup.
@@ -332,7 +330,7 @@
 
             <!-- Bottom Copyright Bar -->
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-3 small text-secondary" style="font-size: 0.75rem;">
-                <p class="mb-2 mb-md-0">&copy; {{ date('Y') }} Kronos Watch. Hak Cipta Dilindungi. Horology Jakarta, Indonesia.</p>
+                <p class="mb-2 mb-md-0">&copy; {{ date('Y') }} A1ORA Watch. Hak Cipta Dilindungi. Horology Jakarta, Indonesia.</p>
                 <p class="mb-0 text-secondary">JAKARTA PUSAT &bull; PLAZA SENAYAN LEVEL 3</p>
             </div>
         </div>
@@ -343,5 +341,7 @@
 
     <x-popup-login />
     <x-konfirmasi-logout />
+
+    @stack('scripts')
 </body>
 </html>
