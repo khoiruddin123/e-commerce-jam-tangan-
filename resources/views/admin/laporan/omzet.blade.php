@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Omzet Bulanan - Kronos Watch</title>
+    <title>Laporan Omzet Bulanan - A1ORA Watch</title>
+    <!-- Favicon Logo A1ORA -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-icon.png') }}">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -43,7 +45,7 @@
                 </h1>
                 <!-- Subtitle -->
                 <p class="text-slate-500 text-sm mt-1 max-w-2xl">
-                    Pantau rekapitulasi penjualan bersih dan riwayat transaksi lunas toko jam tangan Kronos Watch.
+                    Pantau rekapitulasi penjualan bersih dan riwayat transaksi lunas toko jam tangan A1ORA Watch.
                 </p>
             </div>
 
@@ -306,7 +308,7 @@
                                 <!-- 4. ITEM PRODUK -->
                                 <td class="py-4 px-4 max-w-xs">
                                     <div class="font-bold text-slate-900 text-xs">
-                                        {{ $detail->nama_produk ?? 'Kronos Luxury Watch' }}
+                                        {{ $detail->nama_produk ?? 'A1ORA Luxury Watch' }}
                                     </div>
                                     <div class="text-[11px] text-slate-400 mt-0.5">
                                         {{ $detail->nama_varian ?? 'Automatic Movement' }}

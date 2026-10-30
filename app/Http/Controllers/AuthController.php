@@ -87,17 +87,20 @@ class AuthController extends Controller
 
         // Validasi kelengkapan dan keunikan data dalam bahasa Indonesia
         $validated = $request->validate([
-            'nama_username' => ['required', 'string', 'min:3', 'max:30', 'regex:/^[A-Za-z0-9._]+$/', 'unique:users,username'],
+            'nama' => ['required', 'string', 'max:100'],
+            'username' => ['required', 'string', 'min:3', 'max:30', 'regex:/^[A-Za-z0-9._]+$/', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'no_telepon' => ['required', 'string', 'regex:/^[0-9]+$/', 'digits_between:9,13'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'terms' => ['accepted'],
         ], [
-            'nama_username.required' => 'Nama / Username wajib diisi.',
-            'nama_username.min' => 'Minimal 3 karakter.',
-            'nama_username.max' => 'Maksimal 30 karakter.',
-            'nama_username.regex' => 'Hanya boleh huruf, angka, titik, dan underscore (tanpa spasi).',
-            'nama_username.unique' => 'Nama / Username sudah dipakai. Silakan pilih yang lain.',
+            'nama.required' => 'Nama lengkap wajib diisi.',
+            'nama.max' => 'Nama lengkap maksimal 100 karakter.',
+            'username.required' => 'Username wajib diisi.',
+            'username.min' => 'Username minimal 3 karakter.',
+            'username.max' => 'Username maksimal 30 karakter.',
+            'username.regex' => 'Username hanya boleh berisi huruf, angka, titik, dan underscore (tanpa spasi).',
+            'username.unique' => 'Username sudah dipakai. Silakan pilih username lain.',
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format alamat email tidak valid.',
             'email.max' => 'Alamat email maksimal 255 karakter.',
@@ -111,10 +114,10 @@ class AuthController extends Controller
             'terms.accepted' => 'Anda wajib menyetujui Syarat & Ketentuan serta Kebijakan Privasi.',
         ]);
 
-        // Simpan ke database (nama dan username diisi nilai yang sama, role selalu pelanggan)
+        // Simpan ke database (role selalu pelanggan, username disimpan huruf kecil)
         User::create([
-            'nama' => $validated['nama_username'],
-            'username' => $validated['nama_username'],
+            'nama' => trim($validated['nama']),
+            'username' => strtolower(trim($validated['username'])),
             'email' => strtolower($validated['email']),
             'password' => Hash::make($validated['password']),
             'role' => 'pelanggan',

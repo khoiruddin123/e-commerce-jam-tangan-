@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Autentikasi - Kronos Watch')</title>
+    <title>@yield('title', 'Autentikasi - A1ORA Watch')</title>
+
+    <!-- Favicon Logo A1ORA -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-icon.png') }}">
 
     <!-- Google Fonts: Plus Jakarta Sans (Sama dengan Beranda) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -268,15 +271,9 @@
     <!-- Top Bar Putih Setinggi ~56px -->
     <header class="auth-topbar d-flex align-items-center">
         <div class="container-fluid px-3 px-lg-5 d-flex justify-content-between align-items-center">
-            <!-- Kiri: Logo Kotak Biru Membulat + KRONOS & HOROLOGY JAKARTA -->
-            <a href="{{ route('produk.index') }}" class="d-flex align-items-center gap-2.5 text-decoration-none">
-                <div class="brand-box-blue me-2">
-                    <i class="bi bi-watch fs-6"></i>
-                </div>
-                <div>
-                    <div class="brand-title">KRONOS</div>
-                    <div class="brand-subtitle">HOROLOGY JAKARTA</div>
-                </div>
+            <!-- Kiri: Logo A1ORA -->
+            <a href="{{ route('produk.index') }}" class="d-flex align-items-center text-decoration-none">
+                <img src="{{ asset('images/logo.png') }}" alt="A1ORA" style="height: 32px; width: auto; object-fit: contain;">
             </a>
 
             <!-- Kanan: Link Kembali ke Toko -->

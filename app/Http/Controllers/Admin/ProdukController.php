@@ -132,7 +132,7 @@ class ProdukController extends Controller
 
             // Jika belum ada merek sama sekali, buat merek default
             if (empty($merekId)) {
-                $merek = Merek::firstOrCreate(['nama_merek' => 'Kronos Signature']);
+                $merek = Merek::firstOrCreate(['nama_merek' => 'A1ORA Signature']);
                 $merekId = $merek->merek_id;
             }
 

@@ -1,184 +1,255 @@
 @extends('layouts.app')
 
-@section('title', 'Kronos Watch - Horology Jakarta | Temukan Jam Tangan Yang Tepat')
+@section('title', 'A1ORA Watch - Horology Jakarta | Temukan Jam Tangan Yang Tepat')
 
 @section('content')
-<div class="container py-3">
 
-    <!-- 1. HERO SECTION (Dark Luxury Gradient Card Sesuai Mockup) -->
-    <div class="rounded-5 overflow-hidden shadow-lg p-4 p-md-5 mb-5 text-white position-relative" 
-         style="background: radial-gradient(circle at 80% 25%, #1e293b 0%, #090e17 100%); border: 1px solid rgba(255,255,255,0.08);">
-        
-        <div class="row align-items-center g-4 py-2">
-            <!-- Kolom Kiri: Headline & Pencarian Cepat -->
+<!-- ==========================================
+     1. HERO SECTION: FULL WIDTH DARI KANAN KE KIRI (Edge to Edge)
+     Sesuai Mockup Desain Figma Desktop
+     ========================================== -->
+<section class="hero-section w-100 position-relative text-white overflow-hidden py-4 py-lg-5" 
+         style="background: radial-gradient(circle at 72% 35%, #182848 0%, #0c1427 48%, #060913 100%);">
+    
+    <!-- Ambient Lighting Glow Decorative Circle -->
+    <div class="position-absolute top-0 end-0 translate-middle-y rounded-circle pointer-events-none" 
+         style="width: 550px; height: 550px; background: radial-gradient(circle, rgba(37,99,235,0.18) 0%, rgba(37,99,235,0) 70%); filter: blur(50px); z-index: 1;"></div>
+
+    <div class="container-fluid position-relative" style="max-width: 1440px; padding-left: clamp(1rem, 3.5vw, 2.5rem); padding-right: clamp(1rem, 3.5vw, 2.5rem); z-index: 2;">
+        <div class="row align-items-center g-4 g-lg-5 py-2">
+            
+            <!-- Kolom Kiri: Headline & Pencarian Cepat Sesuai Figma -->
             <div class="col-lg-7">
-                <span class="badge rounded-pill px-3 py-1.5 fw-bold mb-3 d-inline-flex align-items-center gap-1.5" 
-                      style="background: rgba(37, 99, 235, 0.2); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); font-size: 0.72rem; letter-spacing: 1px;">
+                
+                <!-- Badge Koleksi Terbaru -->
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill mb-3" 
+                     style="background: rgba(37, 99, 235, 0.16); border: 1px solid rgba(59, 130, 246, 0.35); color: #60a5fa; font-size: 0.72rem; font-weight: 700; letter-spacing: 1.2px;">
                     <span class="rounded-circle d-inline-block" style="width: 6px; height: 6px; background: #3b82f6;"></span>
                     KOLEKSI TERBARU 2026
-                </span>
+                </div>
 
-                <h1 class="display-4 fw-bolder mb-3 text-white" style="letter-spacing: -1.2px; line-height: 1.15;">
+                <!-- Headline -->
+                <h1 class="display-4 fw-bolder text-white mb-3" style="letter-spacing: -1.5px; line-height: 1.15; font-size: clamp(2.3rem, 4vw, 3.5rem);">
                     Temukan Jam Tangan<br>
-                    <span style="background: linear-gradient(90deg, #ffffff 40%, #94a3b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    <span style="background: linear-gradient(90deg, #ffffff 40%, #cbd5e1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
                         Yang Tepat
                     </span>
                 </h1>
 
-                <p class="text-white-50 fs-6 mb-4" style="max-width: 520px; line-height: 1.6; font-size: 0.95rem;">
-                    Koleksi jam tangan analog, digital, dan smartwatch premium terbaik untuk menyempurnakan gaya dan kepribadian Anda setiap saat dengan presisi standar Swiss & Jepang.
+                <!-- Subtitle -->
+                <p class="text-white-50 mb-4" style="max-width: 520px; font-size: 0.95rem; line-height: 1.65; color: #94a3b8 !important;">
+                    Koleksi jam tangan analog, digital, dan smartwatch premium terbaik untuk menyempurnakan gaya dan kepribadian Anda setiap saat dengan presisi standar Swiss.
                 </p>
 
-                <!-- Input Pencarian Cepat ke Halaman Katalog -->
-                <form action="{{ route('produk.katalog') }}" method="GET" class="mb-4" style="max-width: 480px;">
-                    <div class="bg-white rounded-pill p-1.5 ps-3 d-flex align-items-center shadow-lg">
-                        <i class="bi bi-search text-muted me-2"></i>
-                        <input type="text" name="q" class="form-control border-0 bg-transparent text-dark shadow-none" 
-                               placeholder="Cari merek, model, atau seri jam tangan..." style="font-size: 0.88rem;">
-                        <button type="submit" class="btn btn-primary rounded-pill px-3.5 py-2 fw-bold d-flex align-items-center gap-1.5 flex-shrink-0" 
-                                style="background: #2563eb; font-size: 0.85rem;">
+                <!-- Input Pencarian Putih Kapsul Sesuai Figma -->
+                <form action="{{ route('produk.katalog') }}" method="GET" class="mb-4" style="max-width: 520px;">
+                    <div class="bg-white rounded-pill p-1.5 ps-3 d-flex align-items-center shadow-lg" style="box-shadow: 0 10px 25px rgba(0,0,0,0.4) !important;">
+                        <i class="bi bi-search text-muted me-2" style="font-size: 0.95rem;"></i>
+                        <input type="text" name="q" class="form-control border-0 bg-transparent text-dark shadow-none px-1" 
+                               placeholder="Cari nama, merek, atau seri jam tangan..." style="font-size: 0.88rem;">
+                        <button type="submit" class="btn btn-primary rounded-pill px-3.5 py-2 fw-semibold d-flex align-items-center gap-1.5 flex-shrink-0" 
+                                style="background: #2563eb; font-size: 0.85rem; border: none;">
                             <span>Cari Produk</span>
                             <i class="bi bi-arrow-right"></i>
                         </button>
                     </div>
                 </form>
 
-                <!-- 2 Badge Keunggulan di Bawah Pencarian -->
-                <div class="d-flex flex-wrap gap-4 text-white-50 small">
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; background: rgba(59, 130, 246, 0.2); color: #60a5fa;">
-                            <i class="bi bi-patch-check-fill" style="font-size: 0.8rem;"></i>
+                <!-- 2 Feature Pills Gelap di Bawah Pencarian Sesuai Figma -->
+                <div class="d-flex flex-wrap gap-3">
+                    <div class="d-flex align-items-center gap-2.5 p-2 px-3 rounded-4" 
+                         style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px);">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" 
+                             style="width: 32px; height: 32px; background: rgba(37, 99, 235, 0.2); color: #60a5fa;">
+                            <i class="bi bi-patch-check-fill" style="font-size: 0.95rem;"></i>
                         </div>
-                        <span style="font-size: 0.8rem;">100% Autentik & Bergaransi Resmi</span>
+                        <div>
+                            <div class="fw-bold text-white" style="font-size: 0.8rem; line-height: 1.2;">100% Autentik Resmi</div>
+                            <div class="text-white-50" style="font-size: 0.7rem;">Bergaransi Resmi 2 Tahun</div>
+                        </div>
                     </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; background: rgba(16, 185, 129, 0.2); color: #34d399;">
-                            <i class="bi bi-truck" style="font-size: 0.8rem;"></i>
+
+                    <div class="d-flex align-items-center gap-2.5 p-2 px-3 rounded-4" 
+                         style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px);">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" 
+                             style="width: 32px; height: 32px; background: rgba(16, 185, 129, 0.2); color: #34d399;">
+                            <i class="bi bi-truck" style="font-size: 0.95rem;"></i>
                         </div>
-                        <span style="font-size: 0.8rem;">Pengiriman Kilat & Aman Seluruh Indonesia</span>
+                        <div>
+                            <div class="fw-bold text-white" style="font-size: 0.8rem; line-height: 1.2;">Pengiriman Kilat & Aman</div>
+                            <div class="text-white-50" style="font-size: 0.7rem;">Cakupan Seluruh Indonesia</div>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
-            <!-- Kolom Kanan: Showcase Arloji Utama & Kartu Harga Melayang -->
-            <div class="col-lg-5 text-center position-relative">
-                @php
-                    $heroFoto = null;
-                    if ($heroProduct && $heroProduct->galeri->isNotEmpty()) {
-                        $heroFotoObj = $heroProduct->galeri->where('foto_utama', 1)->first() ?? $heroProduct->galeri->first();
-                        $heroFoto = $heroFotoObj ? asset('storage/' . $heroFotoObj->foto) : null;
-                    }
-                @endphp
+            <!-- Kolom Kanan: Showcase Arloji Sesuai Figma -->
+            <div class="col-lg-5">
+                <div class="position-relative">
+                    
+                    @php
+                        // Prioritaskan arloji Figma resmi transparan kualitas tinggi (HD Casio Watch)
+                        $heroWatchImg = asset('images/hero-watch.png') . '?v=' . (file_exists(public_path('images/hero-watch.png')) ? filemtime(public_path('images/hero-watch.png')) : time());
+                        $heroDetailRoute = route('produk.katalog');
+                        $heroPriceDisplay = 'Rp 4.850.000';
 
-                <div class="position-relative d-inline-block">
-                    <!-- Foto Jam Hero -->
-                    <div class="rounded-circle overflow-hidden mx-auto d-flex align-items-center justify-content-center shadow-lg" 
-                         style="width: 320px; height: 320px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 70%); border: 1px solid rgba(255,255,255,0.12);">
-                        @if($heroFoto)
-                            <img src="{{ $heroFoto }}" alt="{{ $heroProduct->nama_produk ?? 'Arloji Pilihan' }}" class="w-100 h-100 object-fit-contain p-3" style="filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));">
-                        @else
-                            <i class="bi bi-watch text-white-50" style="font-size: 8rem;"></i>
-                        @endif
-                    </div>
+                        if ($heroProduct) {
+                            $heroDetailRoute = route('produk.detail', $heroProduct->produk_id);
+                            if ($heroProduct->harga_terendah) {
+                                $heroPriceDisplay = 'Rp ' . number_format($heroProduct->harga_terendah, 0, ',', '.');
+                            }
+                        }
+                    @endphp
 
-                    <!-- Floating Badge Harga & Detail -->
-                    @if($heroProduct)
-                        <div class="position-absolute bottom-0 end-0 bg-white text-dark rounded-4 p-2.5 px-3 shadow-lg d-flex align-items-center gap-3 border" 
-                             style="transform: translate(10px, 15px); border-radius: 16px;">
+                    <!-- Foto Jam Arloji & Badge Harga Melayang -->
+                    <div class="position-relative text-center py-2" style="min-height: 280px; display: flex; align-items: center; justify-content: center;">
+                        <img src="{{ $heroWatchImg }}" 
+                             alt="A1ORA Luxury Watch" 
+                             class="img-fluid position-relative" 
+                             style="max-height: 330px; object-fit: contain; filter: drop-shadow(0 25px 35px rgba(0,0,0,0.85));">
+                        
+                        <!-- Floating Badge Harga Kanan Bawah Sesuai Figma -->
+                        <div class="position-absolute bg-white text-dark rounded-4 p-2 px-3 shadow-lg d-flex align-items-center gap-3 border" 
+                             style="bottom: 5px; right: 5px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.35) !important;">
                             <div class="text-start">
-                                <span class="text-muted d-block font-monospace" style="font-size: 0.65rem; letter-spacing: 0.8px;">ARLOJI TERLARIS 2026</span>
+                                <span class="text-muted d-block fw-bold font-monospace" style="font-size: 0.62rem; letter-spacing: 0.8px;">SERI UTAMA 2026</span>
                                 <strong class="fs-6 d-block" style="color: #0f172a; line-height: 1.1;">
-                                    Rp {{ number_format($heroProduct->harga_terendah ?? 0, 0, ',', '.') }}
+                                    {{ $heroPriceDisplay }}
                                 </strong>
                             </div>
-                            <a href="{{ route('produk.detail', $heroProduct->produk_id) }}" 
+                            <a href="{{ $heroDetailRoute }}" 
                                class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center shadow-xs flex-shrink-0" 
                                style="width: 34px; height: 34px; background: #2563eb;" title="Lihat Arloji Ini">
                                 <i class="bi bi-arrow-right text-white"></i>
                             </a>
                         </div>
-                    @endif
-                </div>
+                    </div>
 
-                <!-- 3 Box Keunggulan Mesin Horologi di Bawah Foto -->
-                <div class="row g-2 mt-4 pt-2">
-                    <div class="col-4">
-                        <div class="p-2 rounded-3 border" style="background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08) !important;">
-                            <i class="bi bi-award text-primary d-block mb-1"></i>
-                            <div class="small fw-semibold text-white" style="font-size: 0.72rem;">100% Autentik</div>
+                    <!-- 3 Box Spesifikasi Teknis di Bawah Arloji Sesuai Figma -->
+                    <div class="row g-2 mt-3 pt-2">
+                        <div class="col-4">
+                            <div class="p-2.5 rounded-3 text-center" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                                <i class="bi bi-gear-wide-connected text-primary d-block mb-1" style="font-size: 1rem;"></i>
+                                <div class="text-white-50 text-uppercase fw-semibold" style="font-size: 0.6rem; letter-spacing: 0.5px;">MOVEMENT</div>
+                                <div class="text-white fw-bold" style="font-size: 0.75rem;">Swiss Calibre</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2.5 rounded-3 text-center" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                                <i class="bi bi-shield-shaded text-info d-block mb-1" style="font-size: 1rem;"></i>
+                                <div class="text-white-50 text-uppercase fw-semibold" style="font-size: 0.6rem; letter-spacing: 0.5px;">CASE MATERIAL</div>
+                                <div class="text-white fw-bold" style="font-size: 0.75rem;">316L Solid Steel</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2.5 rounded-3 text-center" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                                <i class="bi bi-droplet-fill text-primary d-block mb-1" style="font-size: 1rem;"></i>
+                                <div class="text-white-50 text-uppercase fw-semibold" style="font-size: 0.6rem; letter-spacing: 0.5px;">WATER RESIST</div>
+                                <div class="text-white fw-bold" style="font-size: 0.75rem;">10ATM / 100M</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div class="p-2 rounded-3 border" style="background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08) !important;">
-                            <i class="bi bi-clock-history text-info d-block mb-1"></i>
-                            <div class="small fw-semibold text-white" style="font-size: 0.72rem;">Kaliber Presisi</div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="p-2 rounded-3 border" style="background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08) !important;">
-                            <i class="bi bi-shield-check text-success d-block mb-1"></i>
-                            <div class="small fw-semibold text-white" style="font-size: 0.72rem;">Garansi 2 Thn</div>
-                        </div>
-                    </div>
-                </div>
 
+                </div>
             </div>
+
         </div>
     </div>
+</section>
 
+<!-- ==========================================
+     KONTEN HALAMAN BERANDA (Full-Bleed Container 1440px)
+     ========================================== -->
+<div class="container-fluid py-5" style="max-width: 1440px; padding-left: clamp(1rem, 3.5vw, 2.5rem); padding-right: clamp(1rem, 3.5vw, 2.5rem);">
 
-    <!-- 2. KATEGORI PILIHAN JAM TANGAN -->
-    <div class="mb-5">
+    <!-- 2. KATEGORI PILIHAN JAM TANGAN (Bentuk Card Rapi Horizontal) -->
+    <div class="mb-5 pb-2">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-2 mb-4">
             <div>
-                <span class="text-primary fw-bold text-uppercase small d-block mb-1" style="font-size: 0.75rem; letter-spacing: 1px;">
-                    JELAJAHI PILIHAN
+                <span class="text-primary fw-bold text-uppercase small d-block mb-1" style="font-size: 0.75rem; letter-spacing: 1.2px;">
+                    <i class="bi bi-grid me-1"></i>JELAJAHI PILIHAN
                 </span>
-                <h3 class="fw-bolder text-dark mb-0" style="letter-spacing: -0.5px;">Kategori Pilihan Jam Tangan</h3>
+                <h3 class="fw-bolder text-dark mb-0" style="letter-spacing: -0.6px; font-size: clamp(1.4rem, 2.5vw, 1.85rem);">
+                    Kategori Pilihan Jam Tangan
+                </h3>
             </div>
-            <p class="text-muted small mb-0 text-md-end" style="max-width: 420px; font-size: 0.82rem;">
-                Pilihan kurasi lengkap dari jam tangan estetika classic, unik, hingga smart wearable teknologi tinggi.
+            <p class="text-muted small mb-0 text-md-end" style="max-width: 460px; font-size: 0.84rem; line-height: 1.5;">
+                Pilihan kurasi terlengkap dari berbagai estetika desain, mekanik presisi, dan teknologi pintar terdepan.
             </p>
         </div>
 
-        <div class="row g-3">
+        <div class="row g-3 g-lg-4">
             @forelse($daftarKategori as $kat)
                 @php
-                    // Ambil salah satu foto produk aktif dari kategori ini sebagai cover
                     $sampleProduk = \App\Models\Produk::where('kategori_id', $kat->kategori_id)
                         ->where('status_produk', 'aktif')
+                        ->whereHas('galeri')
                         ->with('galeri')
                         ->first();
                     $katFoto = null;
                     if ($sampleProduk && $sampleProduk->galeri->isNotEmpty()) {
                         $fObj = $sampleProduk->galeri->where('foto_utama', 1)->first() ?? $sampleProduk->galeri->first();
-                        $katFoto = $fObj ? asset('storage/' . $fObj->foto) : null;
+                        if ($fObj && file_exists(public_path('storage/' . $fObj->foto))) {
+                            $katFoto = asset('storage/' . $fObj->foto);
+                        }
                     }
+                    $katSlug = strtolower(trim($kat->nama_kategori));
                 @endphp
-                <div class="col-6 col-md-4 col-lg-4">
+                <div class="col-12 col-md-4">
                     <a href="{{ route('produk.katalog', ['kategori_id' => $kat->kategori_id]) }}" class="text-decoration-none">
-                        <div class="card border-0 rounded-4 bg-white p-3.5 shadow-xs h-100 transition-all hover-translate" 
-                             style="border: 1px solid #e2e8f0 !important; transition: all 0.25s ease;">
-                            
-                            <!-- Foto / Visual Kategori -->
-                            <div class="rounded-3 bg-light overflow-hidden d-flex align-items-center justify-content-center mb-3" style="height: 140px;">
-                                @if($katFoto)
-                                    <img src="{{ $katFoto }}" alt="{{ $kat->nama_kategori }}" class="w-100 h-100 object-fit-contain p-2">
-                                @else
-                                    <i class="bi bi-watch text-secondary" style="font-size: 3.5rem;"></i>
-                                @endif
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <h6 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">Jam Tangan {{ $kat->nama_kategori }}</h6>
-                                <i class="bi bi-arrow-right text-primary"></i>
-                            </div>
-                            <div class="text-muted small" style="font-size: 0.75rem;">
-                                Koleksi Kurasi Pilihan &bull; <span class="text-primary fw-semibold">{{ $kat->produk_count }} Produk</span>
+                        <div class="card border rounded-4 bg-white p-3 shadow-xs h-100 category-card" 
+                             style="border-color: #e2e8f0 !important; transition: all 0.25s ease;">
+                            <div class="d-flex align-items-center gap-3">
+                                <!-- Square Image Thumbnail -->
+                                <div class="rounded-4 overflow-hidden flex-shrink-0 d-flex align-items-center justify-content-center position-relative" 
+                                     style="width: 100px; height: 100px; background: radial-gradient(circle, #ffffff 0%, #f1f5f9 100%); border: 1px solid #e2e8f0;">
+                                    @if($katFoto)
+                                        <img src="{{ $katFoto }}" alt="{{ $kat->nama_kategori }}" class="w-100 h-100 object-fit-cover category-img" style="transition: transform 0.3s ease;">
+                                    @else
+                                        @if($katSlug === 'analog')
+                                            <i class="bi bi-clock text-primary fs-2"></i>
+                                        @elseif($katSlug === 'digital')
+                                            <i class="bi bi-smartwatch text-info fs-2"></i>
+                                        @elseif($katSlug === 'sport')
+                                            <i class="bi bi-stopwatch text-warning fs-2"></i>
+                                        @else
+                                            <i class="bi bi-watch text-primary fs-2"></i>
+                                        @endif
+                                    @endif
+                                </div>
+                                <!-- Content -->
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <span class="badge bg-primary-subtle text-primary rounded-pill px-2.5 py-0.5 fw-bold" style="font-size: 0.68rem;">
+                                            {{ $kat->produk_count }} KOLEKSI
+                                        </span>
+                                    </div>
+                                    <h6 class="fw-bold text-dark text-truncate mb-1" style="font-size: 1.02rem; letter-spacing: -0.2px;">
+                                        Jam Tangan {{ $kat->nama_kategori }}
+                                    </h6>
+                                    <p class="text-muted small mb-0 text-truncate" style="font-size: 0.78rem;">
+                                        {{ $kat->deskripsi ?? 'Kurasi presisi horologi resmi' }}
+                                    </p>
+                                </div>
+                                <!-- Action Button -->
+                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 category-arrow-btn" 
+                                     style="width: 34px; height: 34px; background: #eff6ff; color: #2563eb; transition: all 0.2s ease;">
+                                    <i class="bi bi-arrow-right fs-6"></i>
+                                </div>
                             </div>
                         </div>
                     </a>
                 </div>
+                        <!-- Pesan jika tidak ada produk yang cocok dengan kategori filter -->
+            <div class="col-12 d-none" id="noFilterResults">
+                <div class="alert alert-light border rounded-4 text-center py-5 text-muted">
+                    <i class="bi bi-watch fs-1 d-block mb-2 text-secondary"></i>
+                    <h6 class="fw-bold text-dark">Belum Ada Jam Tangan di Kategori Ini</h6>
+                    <p class="small text-muted mb-0">Silakan pilih kategori lainnya atau lihat seluruh koleksi kami.</p>
+                </div>
+            </div>
+
             @empty
                 <div class="col-12">
                     <div class="alert alert-light border rounded-4 text-center py-4 text-muted small">
@@ -188,9 +259,7 @@
             @endforelse
         </div>
     </div>
-
-
-    <!-- 3. PRODUK TERBARU & TERLARIS (8 Card Grid Sesuai Mockup) -->
+<!-- 3. PRODUK TERBARU & TERLARIS (8 Card Grid Sesuai Mockup) -->
     <div class="mb-5">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
@@ -200,22 +269,22 @@
                 <h3 class="fw-bolder text-dark mb-0" style="letter-spacing: -0.5px;">Produk Terbaru & Terlaris</h3>
             </div>
 
-            <!-- Tab Filter Kategori Cepat -->
-            <div class="d-flex flex-wrap gap-1.5">
-                <a href="{{ route('produk.katalog') }}" class="btn btn-sm btn-dark rounded-pill px-3 py-1.5 fw-semibold" style="font-size: 0.78rem;">
+            <!-- Tab Filter Kategori Cepat (Interaktif) -->
+            <div class="d-flex flex-wrap gap-1.5" id="productFilterTabs">
+                <button type="button" class="btn btn-sm btn-dark rounded-pill px-3 py-1.5 fw-semibold filter-tab-btn active" data-filter="all" style="font-size: 0.78rem;">
                     Semua Produk
-                </a>
-                @foreach($daftarKategori->take(4) as $kPill)
-                    <a href="{{ route('produk.katalog', ['kategori_id' => $kPill->kategori_id]) }}" 
-                       class="btn btn-sm btn-light border rounded-pill px-3 py-1.5 fw-semibold text-secondary" style="font-size: 0.78rem;">
+                </button>
+                @foreach($daftarKategori as $kPill)
+                    <button type="button" class="btn btn-sm btn-light border rounded-pill px-3 py-1.5 fw-semibold text-secondary filter-tab-btn" 
+                            data-filter="{{ $kPill->kategori_id }}" style="font-size: 0.78rem;">
                         {{ $kPill->nama_kategori }}
-                    </a>
+                    </button>
                 @endforeach
             </div>
         </div>
 
         <!-- Grid 8 Kartu Jam Tangan -->
-        <div class="row g-3 g-md-4">
+        <div class="row g-3 g-md-4" id="productGridContainer">
             @forelse($produkTerbaru as $item)
                 @php
                     $fotoItem = null;
@@ -225,7 +294,7 @@
                     }
                     $ratingVal = $item->ulasan_avg_rating ? round($item->ulasan_avg_rating, 1) : 4.9;
                 @endphp
-                <div class="col-6 col-md-4 col-lg-3">
+                <div class="col-6 col-md-4 col-lg-3 product-grid-item" data-category="{{ $item->kategori_id }}" style="transition: all 0.25s ease;">
                     <div class="card border-0 rounded-4 bg-white shadow-xs overflow-hidden h-100 d-flex flex-column position-relative" 
                          style="border: 1px solid #e2e8f0 !important; transition: all 0.25s ease;">
                         
@@ -251,7 +320,7 @@
                         <!-- Informasi Produk -->
                         <div class="p-3 d-flex flex-column flex-grow-1">
                             <span class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.68rem; letter-spacing: 0.5px;">
-                                {{ $item->merek->nama_merek ?? 'KRONOS WATCH' }}
+                                {{ $item->merek->nama_merek ?? 'A1ORA WATCH' }}
                             </span>
 
                             <h6 class="fw-bold text-dark text-truncate mb-1.5" style="font-size: 0.9rem;" title="{{ $item->nama_produk }}">
@@ -285,6 +354,15 @@
 
                     </div>
                 </div>
+                        <!-- Pesan jika tidak ada produk yang cocok dengan kategori filter -->
+            <div class="col-12 d-none" id="noFilterResults">
+                <div class="alert alert-light border rounded-4 text-center py-5 text-muted">
+                    <i class="bi bi-watch fs-1 d-block mb-2 text-secondary"></i>
+                    <h6 class="fw-bold text-dark">Belum Ada Jam Tangan di Kategori Ini</h6>
+                    <p class="small text-muted mb-0">Silakan pilih kategori lainnya atau lihat seluruh koleksi kami.</p>
+                </div>
+            </div>
+
             @empty
                 <div class="col-12">
                     <div class="alert alert-light border rounded-4 text-center py-5 text-muted">
@@ -341,7 +419,7 @@
                     <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; background: rgba(37,99,235,0.2); color: #60a5fa;">
                         <i class="bi bi-watch fs-2"></i>
                     </div>
-                    <h5 class="fw-bold text-white mb-1">KRONOS ATELIER</h5>
+                    <h5 class="fw-bold text-white mb-1">A1ORA ATELIER</h5>
                     <p class="text-white-50 small mb-0" style="font-size: 0.78rem;">Kurasi Arloji Berstandar Internasional</p>
                 </div>
             </div>
@@ -426,7 +504,7 @@
                         </span>
                     </div>
                     <p class="text-dark small mb-3 flex-grow-1" style="font-size: 0.82rem; line-height: 1.6;">
-                        "Lume BGW9-nya terang banget waktu gelap. Kartu garansi NFC terverifikasi langsung di website resmi. Sangat puas belanja di Kronos!"
+                        "Lume BGW9-nya terang banget waktu gelap. Kartu garansi NFC terverifikasi langsung di website resmi. Sangat puas belanja di A1ORA!"
                     </p>
                     <div class="d-flex align-items-center gap-2.5 pt-2 border-top">
                         <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 36px; height: 36px; background: #059669; font-size: 0.8rem;">
@@ -483,3 +561,52 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const filterTabs = document.querySelectorAll('.filter-tab-btn');
+    const productItems = document.querySelectorAll('.product-grid-item');
+    const emptyState = document.getElementById('noFilterResults');
+
+    filterTabs.forEach(btn => {
+        btn.addEventListener('click', function () {
+            // Update active state styling
+            filterTabs.forEach(b => {
+                b.classList.remove('btn-dark', 'text-white', 'active');
+                b.classList.add('btn-light', 'text-secondary');
+            });
+            this.classList.remove('btn-light', 'text-secondary');
+            this.classList.add('btn-dark', 'text-white', 'active');
+
+            const filterValue = this.getAttribute('data-filter');
+            let visibleCount = 0;
+
+            productItems.forEach(item => {
+                const itemCategory = item.getAttribute('data-category');
+                if (filterValue === 'all' || itemCategory === filterValue) {
+                    item.style.display = '';
+                    item.style.opacity = '0';
+                    item.style.transform = 'scale(0.96)';
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'scale(1)';
+                    }, 40);
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            if (emptyState) {
+                if (visibleCount === 0) {
+                    emptyState.classList.remove('d-none');
+                } else {
+                    emptyState.classList.add('d-none');
+                }
+            }
+        });
+    });
+});
+</script>
+@endpush

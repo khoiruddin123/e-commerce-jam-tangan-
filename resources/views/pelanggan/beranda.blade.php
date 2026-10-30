@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Riwayat Pesanan Saya - Kronos Watch')
+@section('title', 'Riwayat Pesanan Saya - A1ORA Watch')
 
 @section('content')
 
@@ -232,7 +232,7 @@
                                         @endif
                                     </div>
                                     <div>
-                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">KRONOS WATCH</div>
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">A1ORA WATCH</div>
                                         <h3 class="text-sm font-bold text-slate-900">{{ $item->nama_produk }}</h3>
                                         <div class="text-xs text-slate-500 mt-0.5">
                                             Varian: {{ $item->nama_varian ?? 'Standard Edition' }} • Qty: {{ $item->jumlah }}
@@ -277,7 +277,7 @@
                     <div class="px-6 py-3.5 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs">
                         <div class="text-slate-400 flex items-center gap-1.5">
                             <i class="bi bi-shield-check text-blue-600"></i>
-                            <span>Dilindungi Asuransi Kronos Care & Garansi 24 Bulan</span>
+                            <span>Dilindungi Asuransi A1ORA Care & Garansi 24 Bulan</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <div class="font-semibold text-slate-700">

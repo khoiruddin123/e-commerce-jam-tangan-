@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Masuk ke Akun Anda - Kronos Watch')
+@section('title', 'Masuk ke Akun Anda - A1ORA Watch')
 
 @section('left_panel')
     <!-- Bagian Atas Panel Kiri: Brand & Pill Boutique Resmi -->
@@ -12,7 +12,7 @@
             </div>
             <div>
                 <div class="fw-extrabold text-white" style="font-size: 0.85rem; font-weight: 800; letter-spacing: 0.5px; line-height: 1.1;">
-                    KRONOS WATCH
+                    A1ORA WATCH
                 </div>
                 <div style="font-size: 0.6rem; letter-spacing: 1.5px; color: #94a3b8; font-weight: 600;">
                     HAUTE HOROLOGERIE SUISSE
@@ -37,7 +37,7 @@
             --}}
             @if(file_exists(public_path('images/auth-watch.jpg')))
                 <img src="{{ asset('images/auth-watch.jpg') }}"
-                     alt="Kronos Watch Luxury Timepiece"
+                     alt="A1ORA Watch Luxury Timepiece"
                      class="w-100 h-100 object-fit-cover position-absolute top-0 start-0"
                      style="opacity: 0.85;">
             @else

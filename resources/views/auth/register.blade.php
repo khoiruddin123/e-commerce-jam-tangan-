@@ -1,13 +1,13 @@
 @extends('layouts.auth')
 
-@section('title', 'Daftar Akun Baru - Kronos Watch')
+@section('title', 'Daftar Akun Baru - A1ORA Watch')
 
 @section('left_panel')
-    <!-- Bagian Atas Panel Kiri: Pill KRONOS HOROLOGY PRIVÉ & Teks SWISS HERITAGE • JAKARTA -->
+    <!-- Bagian Atas Panel Kiri: Pill A1ORA HOROLOGY PRIVÉ & Teks SWISS HERITAGE • JAKARTA -->
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <span class="badge rounded-pill px-3 py-1.5 fw-bold"
               style="background: rgba(37, 99, 235, 0.22); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.35); font-size: 0.65rem; letter-spacing: 1px;">
-            KRONOS HOROLOGY PRIV&Eacute;
+            A1ORA HOROLOGY PRIV&Eacute;
         </span>
         <span class="fw-bold text-uppercase" style="font-size: 0.62rem; letter-spacing: 1.4px; color: #94a3b8;">
             SWISS HERITAGE &bull; JAKARTA
@@ -25,7 +25,7 @@
             --}}
             @if(file_exists(public_path('images/auth-watch.jpg')))
                 <img src="{{ asset('images/auth-watch.jpg') }}"
-                     alt="Kronos Watch Calibre 9901"
+                     alt="A1ORA Watch Calibre 9901"
                      class="w-100 h-100 object-fit-cover position-absolute top-0 start-0"
                      style="opacity: 0.85;">
             @else
@@ -110,7 +110,7 @@
             Daftar Akun Baru
         </h1>
         <p class="text-secondary mb-3" style="font-size: 0.83rem;">
-            Lengkapi informasi di bawah ini untuk membuat akun Kronos Watch.
+            Lengkapi informasi di bawah ini untuk membuat akun A1ORA Watch.
         </p>
     </div>
 
@@ -118,28 +118,64 @@
     <form action="{{ route('register') }}" method="POST" novalidate>
         @csrf
 
-        <!-- 1. Nama / Username -->
+        <!-- 1. Nama Lengkap -->
         <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-1">
-                <label for="nama_username" class="form-label fw-bold text-dark mb-0" style="font-size: 0.78rem;">
-                    Nama / Username
+                <label for="nama" class="form-label fw-bold text-dark mb-0" style="font-size: 0.78rem;">
+                    Nama Lengkap
                 </label>
-                @error('nama_username')
+                @error('nama')
                     <span class="fw-bold" style="font-size: 0.68rem; color: #e11d48;">Periksa Kembali</span>
                 @else
                     <span class="text-secondary fw-semibold" style="font-size: 0.68rem;">Wajib</span>
                 @enderror
             </div>
 
-            <div class="auth-input-group @error('nama_username') is-error @enderror">
+            <div class="auth-input-group @error('nama') is-error @enderror">
                 <span class="auth-input-icon">
                     <i class="bi bi-person"></i>
                 </span>
-                <input type="text" id="nama_username" name="nama_username" value="{{ old('nama_username') }}"
+                <input type="text" id="nama" name="nama" value="{{ old('nama') }}"
                        class="auth-input"
-                       placeholder="Nama atau username Anda"
+                       placeholder="Nama lengkap sesuai identitas / KTP"
                        required autofocus>
-                @error('nama_username')
+                @error('nama')
+                    <div class="auth-input-suffix">
+                        <i class="bi bi-exclamation-circle-fill text-danger"></i>
+                    </div>
+                @enderror
+            </div>
+
+            @error('nama')
+                <div class="d-flex align-items-center gap-1.5 mt-1" style="color: #e11d48; font-size: 0.74rem;">
+                    <i class="bi bi-x-circle-fill me-1"></i>
+                    <span>{{ $message }}</span>
+                </div>
+            @enderror
+        </div>
+
+        <!-- 2. Username -->
+        <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="username" class="form-label fw-bold text-dark mb-0" style="font-size: 0.78rem;">
+                    Username
+                </label>
+                @error('username')
+                    <span class="fw-bold" style="font-size: 0.68rem; color: #e11d48;">Periksa Kembali</span>
+                @else
+                    <span class="text-secondary fw-semibold" style="font-size: 0.68rem;">Untuk Login</span>
+                @enderror
+            </div>
+
+            <div class="auth-input-group @error('username') is-error @enderror">
+                <span class="auth-input-icon">
+                    <i class="bi bi-at"></i>
+                </span>
+                <input type="text" id="username" name="username" value="{{ old('username') }}"
+                       class="auth-input"
+                       placeholder="Contoh: budi_santoso"
+                       required>
+                @error('username')
                     <div class="auth-input-suffix">
                         <i class="bi bi-exclamation-circle-fill text-danger"></i>
                     </div>
@@ -147,10 +183,10 @@
             </div>
 
             <div class="text-secondary mt-1" style="font-size: 0.72rem;">
-                Huruf, angka, titik, atau underscore. Dipakai untuk login.
+                Huruf, angka, titik, atau underscore (tanpa spasi).
             </div>
 
-            @error('nama_username')
+            @error('username')
                 <div class="d-flex align-items-center gap-1.5 mt-1" style="color: #e11d48; font-size: 0.74rem;">
                     <i class="bi bi-x-circle-fill me-1"></i>
                     <span>{{ $message }}</span>
@@ -316,7 +352,7 @@
                     <a href="javascript:void(0)" class="fw-semibold text-decoration-none" style="color: #2563eb; cursor: default;">Syarat &amp; Ketentuan</a>
                     serta
                     <a href="javascript:void(0)" class="fw-semibold text-decoration-none" style="color: #2563eb; cursor: default;">Kebijakan Privasi</a>
-                    Kronos Watch.
+                    A1ORA Watch.
                 </label>
             </div>
             @error('terms')

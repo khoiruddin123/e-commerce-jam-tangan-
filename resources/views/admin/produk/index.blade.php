@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Produk & Galeri Horologi | Panel Admin KRONOS</title>
+    <title>Kelola Produk & Galeri Horologi | Panel Admin A1ORA</title>
+    <!-- Favicon Logo A1ORA -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-icon.png') }}">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -20,15 +22,12 @@
     <!-- 1. SIDEBAR NAVIGASI HITAM PEKAT / DARK NAVY -->
     <aside class="w-64 bg-[#0B1120] text-slate-300 flex flex-col justify-between shrink-0 min-h-screen border-r border-slate-900 sticky top-0 h-screen overflow-y-auto">
         <div class="p-5">
-            <!-- Brand Logo KRONOS ADMIN PORTAL -->
-            <div class="flex items-center gap-3 mb-8 px-1">
-                <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-lg shadow-sm shadow-blue-500/30">
-                    <i class="bi bi-watch"></i>
-                </div>
-                <div>
-                    <div class="text-sm font-extrabold tracking-widest text-white">KRONOS</div>
-                    <div class="text-[10px] tracking-widest text-slate-400 font-semibold uppercase">ADMIN PORTAL</div>
-                </div>
+            <!-- Brand Logo A1ORA ADMIN PORTAL -->
+            <div class="mb-8 px-1">
+                <a href="{{ route('admin.dashboard') }}" class="block">
+                    <img src="{{ asset('images/logo-white.png') }}" alt="A1ORA" class="h-8 w-auto object-contain">
+                    <div class="text-[10px] tracking-widest text-slate-400 font-semibold uppercase mt-1.5">ADMIN PORTAL</div>
+                </a>
             </div>
 
             <!-- Menu Heading -->
@@ -359,7 +358,7 @@
                                         <div>
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200">
                                                 <i class="bi bi-tag-fill"></i>
-                                                {{ $produk->merek->nama_merek ?? 'Kronos' }}
+                                                {{ $produk->merek->nama_merek ?? 'A1ORA' }}
                                             </span>
                                         </div>
                                         <div>

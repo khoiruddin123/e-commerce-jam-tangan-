@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pembayaran Berhasil #' . $pesanan->nomor_pesanan . ' - Kronos Watch')
+@section('title', 'Pembayaran Berhasil #' . $pesanan->nomor_pesanan . ' - A1ORA Watch')
 
 @section('content')
 <div class="container py-3">
@@ -85,7 +85,7 @@
 
         <h2 class="fw-bolder text-dark mb-2" style="font-size: 2rem; letter-spacing: -0.5px;">Pembayaran Berhasil Diverifikasi!</h2>
         <p class="text-muted small mx-auto mb-0" style="max-width: 620px; font-size: 0.95rem; line-height: 1.6;">
-            Terima kasih! Pesanan Anda telah terbayar penuh dan saat ini sedang disiapkan oleh tim kurator horologi <strong class="text-dark">Kronos Watch Jakarta</strong>.
+            Terima kasih! Pesanan Anda telah terbayar penuh dan saat ini sedang disiapkan oleh tim kurator horologi <strong class="text-dark">A1ORA Watch Jakarta</strong>.
         </p>
     </div>
 
@@ -335,7 +335,7 @@
                 <div>
                     <h6 class="fw-bold text-dark mb-1" style="font-size: 0.85rem;">Garansi Resmi 2 Tahun & Asuransi 100%</h6>
                     <p class="text-muted small mb-0" style="font-size: 0.75rem; line-height: 1.45;">
-                        Setiap pembelian di Kronos Watch dilindungi garansi mekanis penuh dan jaminan penggantian unit baru apabila terjadi kerusakan saat pengiriman.
+                        Setiap pembelian di A1ORA Watch dilindungi garansi mekanis penuh dan jaminan penggantian unit baru apabila terjadi kerusakan saat pengiriman.
                     </p>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pembayaran Pesanan #' . $pesanan->nomor_pesanan . ' - Kronos Watch')
+@section('title', 'Pembayaran Pesanan #' . $pesanan->nomor_pesanan . ' - A1ORA Watch')
 
 @section('content')
 <div class="container py-3">

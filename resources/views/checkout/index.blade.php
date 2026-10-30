@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Checkout Pengiriman - Kronos Watch')
+@section('title', 'Checkout Pengiriman - A1ORA Watch')
 
 @section('content')
 <div class="container py-4">
@@ -206,7 +206,7 @@
                     <div class="d-flex align-items-start gap-2.5 p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
                         <i class="bi bi-shield-lock-fill text-primary fs-5 mt-0.5"></i>
                         <span class="text-muted small" style="font-size: 0.78rem; line-height: 1.45;">
-                            Seluruh pengiriman Kronos Watch dilengkapi segel <i>tamper-evident digital</i>. Buka paket wajib direkam video unboxing untuk klaim validitas penuh garansi 2 tahun.
+                            Seluruh pengiriman A1ORA Watch dilengkapi segel <i>tamper-evident digital</i>. Buka paket wajib direkam video unboxing untuk klaim validitas penuh garansi 2 tahun.
                         </span>
                     </div>
                 </div>
@@ -229,7 +229,7 @@
                             @php
                                 $produk = $item->varian->produk ?? null;
                                 $fotoUtama = $produk && $produk->galeri ? ($produk->galeri->where('foto_utama', 1)->first() ?? $produk->galeri->first()) : null;
-                                $eyebrow = strtoupper($produk->merek->nama_merek ?? ($produk->kategori->nama_kategori ?? 'KRONOS HOROLOGY'));
+                                $eyebrow = strtoupper($produk->merek->nama_merek ?? ($produk->kategori->nama_kategori ?? 'A1ORA HOROLOGY'));
                             @endphp
                             <div class="d-flex align-items-center gap-3 py-2.5 border-bottom">
                                 <div class="rounded-3 overflow-hidden bg-light border d-flex align-items-center justify-content-center" style="width: 58px; height: 58px; flex-shrink: 0;">
@@ -327,7 +327,7 @@
                                 <div class="text-muted" style="font-size: 0.75rem;">WhatsApp Concierge aktif 24/7</div>
                             </div>
                         </div>
-                        <a href="https://wa.me/6281234567890?text=Halo%20Kronos%20Watch,%20saya%20butuh%20panduan%20pengisian%20alamat%20checkout." target="_blank" class="btn btn-sm btn-light border text-dark fw-bold px-3 py-1.5 rounded-pill" style="font-size: 0.75rem;">
+                        <a href="https://wa.me/6281234567890?text=Halo%20A1ORA%20Watch,%20saya%20butuh%20panduan%20pengisian%20alamat%20checkout." target="_blank" class="btn btn-sm btn-light border text-dark fw-bold px-3 py-1.5 rounded-pill" style="font-size: 0.75rem;">
                             HUBUNGI
                         </a>
                     </div>

@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Panel Admin - Kronos Watch')</title>
+    <title>@yield('title', 'Panel Admin - A1ORA Watch')</title>
+    <!-- Favicon Logo A1ORA -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-icon.png') }}">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -21,14 +23,12 @@
     <!-- SIDEBAR NAVIGASI ADMIN -->
     <aside class="w-64 bg-[#0B1120] text-slate-300 flex flex-col justify-between shrink-0 min-h-screen border-r border-slate-900 sticky top-0 h-screen overflow-y-auto">
         <div class="p-5">
-            <div class="flex items-center gap-3 mb-8 px-1">
-                <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-lg shadow-sm shadow-blue-500/30">
-                    <i class="bi bi-watch"></i>
-                </div>
-                <div>
-                    <div class="text-sm font-extrabold tracking-widest text-white">KRONOS</div>
-                    <div class="text-[10px] tracking-widest text-slate-400 font-semibold uppercase">ADMIN PORTAL</div>
-                </div>
+            <!-- Brand Logo A1ORA ADMIN PORTAL -->
+            <div class="mb-8 px-1">
+                <a href="{{ route('admin.dashboard') }}" class="block">
+                    <img src="{{ asset('images/logo-white.png') }}" alt="A1ORA" class="h-8 w-auto object-contain">
+                    <div class="text-[10px] tracking-widest text-slate-400 font-semibold uppercase mt-1.5">ADMIN PORTAL</div>
+                </a>
             </div>
 
             <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-3">
