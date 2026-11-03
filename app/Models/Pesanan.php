@@ -66,4 +66,33 @@ class Pesanan extends Model
             'pesanan_id'
         );
     }
+
+    /**
+     * Membatalkan seluruh pesanan yang melewati batas waktu pembayaran (kedaluwarsa).
+     */
+    public static function batalkanPesananKedaluwarsa(): int
+    {
+        $expiredPembayaran = Pembayaran::where('status_pembayaran', 'menunggu')
+            ->whereNotNull('batas_pembayaran')
+            ->where('batas_pembayaran', '<', now())
+            ->get();
+
+        if ($expiredPembayaran->isEmpty()) {
+            return 0;
+        }
+
+        $pesananIds = $expiredPembayaran->pluck('pesanan_id')->unique()->toArray();
+
+        // 1. Update status pembayaran menjadi 'kedaluwarsa'
+        Pembayaran::whereIn('pesanan_id', $pesananIds)
+            ->where('status_pembayaran', 'menunggu')
+            ->update(['status_pembayaran' => 'kedaluwarsa']);
+
+        // 2. Update status pesanan terkait menjadi 'dibatalkan'
+        static::whereIn('pesanan_id', $pesananIds)
+            ->where('status_pesanan', 'menunggu_pembayaran')
+            ->update(['status_pesanan' => 'dibatalkan']);
+
+        return count($pesananIds);
+    }
 }

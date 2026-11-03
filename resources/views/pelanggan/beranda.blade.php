@@ -196,7 +196,7 @@
                                 </div>
                             </div>
 
-                            <!-- Tombol Lacak Pesanan & Konfirmasi Terima -->
+                            <!-- Tombol Lacak Pesanan -->
                             <div class="flex items-center gap-2">
                                 <button type="button" 
                                         onclick="openModalLacak('{{ $pesanan->nomor_pesanan }}', '{{ $kurirPelanggan ?? 'Ekspedisi' }}', '{{ $nomorResiPelanggan }}', '{{ $pesanan->status_pesanan }}', '{{ addslashes($pesanan->nama_penerima ?? $user->nama) }}', '{{ addslashes($pesanan->alamat_pengiriman ?? '-') }}', '{{ addslashes($pesanan->kota ?? '-') }}')" 
@@ -204,16 +204,6 @@
                                     <i class="bi bi-geo-alt-fill text-sky-600 group-hover:text-white"></i>
                                     <span>Lacak Pengiriman</span>
                                 </button>
-
-                                @if($pesanan->status_pesanan === 'dikirim')
-                                    <button type="button" 
-                                            onclick="openModalKonfirmasiTerima('{{ $pesanan->pesanan_id }}', '{{ $pesanan->nomor_pesanan }}', '{{ addslashes($kurirPelanggan ?? 'Ekspedisi') }}', '{{ addslashes($nomorResiPelanggan ?? '-') }}')" 
-                                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs hover:shadow transition active:scale-95 cursor-pointer"
-                                            title="Konfirmasi bahwa barang pesanan telah diterima (F10-07)">
-                                        <i class="bi bi-check2-circle text-sm"></i>
-                                        <span>Pesanan Diterima</span>
-                                    </button>
-                                @endif
                             </div>
                         </div>
                     @elseif(in_array($pesanan->status_pesanan, ['diproses', 'dikirim']))

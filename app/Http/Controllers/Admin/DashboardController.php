@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pesanan;
 use App\Models\DetailPesanan;
+use App\Models\Kategori;
+use App\Models\Pesanan;
 use App\Models\Produk;
 use App\Models\VarianProduk;
-use App\Models\Kategori;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -18,19 +17,22 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
+        // 0. Otomatis batalkan pesanan yang melewati batas waktu pembayaran
+        Pesanan::batalkanPesananKedaluwarsa();
+
         // 1. Data Riil Total Produk & Varian (SKU)
         $totalSKU = VarianProduk::count();
         $aktifSKU = VarianProduk::where('status_varian', 'aktif')->count();
-        $drafSKU  = VarianProduk::where('status_varian', '!=', 'aktif')->count();
+        $drafSKU = VarianProduk::where('status_varian', '!=', 'aktif')->count();
 
         // 2. Data Riil Pesanan Perlu Diproses
         $perluDiprosesCount = Pesanan::whereIn('status_pesanan', ['menunggu_pembayaran', 'dibayar', 'diproses'])->count();
-        $menungguQC         = Pesanan::where('status_pesanan', 'diproses')->count();
-        $siapKirim          = Pesanan::where('status_pesanan', 'dikirim')->count();
+        $menungguQC = Pesanan::where('status_pesanan', 'diproses')->count();
+        $siapKirim = Pesanan::where('status_pesanan', 'dikirim')->count();
 
         // 3. Data Riil Omzet Bulan Ini
         $currentMonth = now()->month;
-        $currentYear  = now()->year;
+        $currentYear = now()->year;
 
         $omzetBulanIni = Pesanan::where('status_pesanan', 'selesai')
             ->whereMonth('tanggal_pesanan', $currentMonth)
@@ -46,34 +48,34 @@ class DashboardController extends Controller
 
         if ($omzetBulanLalu > 0) {
             $growthValue = round((($omzetBulanIni - $omzetBulanLalu) / $omzetBulanLalu) * 100, 1);
-            $omzetGrowth = ($growthValue >= 0 ? '+' : '') . $growthValue . '%';
+            $omzetGrowth = ($growthValue >= 0 ? '+' : '').$growthValue.'%';
         } else {
             $omzetGrowth = $omzetBulanIni > 0 ? '+100%' : '0%';
         }
 
         // Format tampilan ringkas omzet
         if ($omzetBulanIni >= 1000000000) {
-            $omzetFormatted = 'Rp' . number_format($omzetBulanIni / 1000000000, 2, ',', '.') . ' M';
+            $omzetFormatted = 'Rp'.number_format($omzetBulanIni / 1000000000, 2, ',', '.').' M';
         } elseif ($omzetBulanIni >= 1000000) {
-            $omzetFormatted = 'Rp' . number_format($omzetBulanIni / 1000000, 1, ',', '.') . ' Jt';
+            $omzetFormatted = 'Rp'.number_format($omzetBulanIni / 1000000, 1, ',', '.').' Jt';
         } else {
-            $omzetFormatted = 'Rp' . number_format($omzetBulanIni, 0, ',', '.');
+            $omzetFormatted = 'Rp'.number_format($omzetBulanIni, 0, ',', '.');
         }
 
         // 4. Data Riil Transaksi Berhasil
         $transaksiBerhasilCount = Pesanan::where('status_pesanan', 'selesai')->count();
-        $totalOmzetKeseluruhan  = Pesanan::where('status_pesanan', 'selesai')->sum('total_harga');
-        $rataRataTransaksi      = $transaksiBerhasilCount > 0 ? ($totalOmzetKeseluruhan / $transaksiBerhasilCount) : 0;
+        $totalOmzetKeseluruhan = Pesanan::where('status_pesanan', 'selesai')->sum('total_harga');
+        $rataRataTransaksi = $transaksiBerhasilCount > 0 ? ($totalOmzetKeseluruhan / $transaksiBerhasilCount) : 0;
 
         if ($rataRataTransaksi >= 1000000) {
-            $rataRataFormatted = 'Rp' . number_format($rataRataTransaksi / 1000000, 1, ',', '.') . ' Juta';
+            $rataRataFormatted = 'Rp'.number_format($rataRataTransaksi / 1000000, 1, ',', '.').' Juta';
         } else {
-            $rataRataFormatted = 'Rp' . number_format($rataRataTransaksi, 0, ',', '.');
+            $rataRataFormatted = 'Rp'.number_format($rataRataTransaksi, 0, ',', '.');
         }
 
         // 5. Data Riil Grafik Tren Omzet 6 Bulan Terakhir
-        $chartLabels   = [];
-        $chartValues   = [];
+        $chartLabels = [];
+        $chartValues = [];
         $totalSemester = 0;
 
         for ($i = 5; $i >= 0; $i--) {
@@ -91,10 +93,10 @@ class DashboardController extends Controller
         }
 
         $totalSemesterFormatted = $totalSemester >= 1000000000
-            ? 'Rp' . number_format($totalSemester / 1000000000, 2, ',', '.') . ' Miliar'
-            : ($totalSemester >= 1000000 
-                ? 'Rp' . number_format($totalSemester / 1000000, 1, ',', '.') . ' Juta' 
-                : 'Rp' . number_format($totalSemester, 0, ',', '.'));
+            ? 'Rp'.number_format($totalSemester / 1000000000, 2, ',', '.').' Miliar'
+            : ($totalSemester >= 1000000
+                ? 'Rp'.number_format($totalSemester / 1000000, 1, ',', '.').' Juta'
+                : 'Rp'.number_format($totalSemester, 0, ',', '.'));
 
         // 6. Data Riil Kontribusi Kategori Penjualan
         $daftarKategori = Kategori::withCount('produk')->get();
@@ -111,16 +113,16 @@ class DashboardController extends Controller
 
             $persen = $totalOmzetKeseluruhan > 0 ? round(($katOmzet / $totalOmzetKeseluruhan) * 100, 1) : 0;
 
-            $revFormatted = $katOmzet >= 1000000 
-                ? 'Rp' . number_format($katOmzet / 1000000, 1, ',', '.') . ' Jt' 
-                : 'Rp' . number_format($katOmzet, 0, ',', '.');
+            $revFormatted = $katOmzet >= 1000000
+                ? 'Rp'.number_format($katOmzet / 1000000, 1, ',', '.').' Jt'
+                : 'Rp'.number_format($katOmzet, 0, ',', '.');
 
             $kategoriPenjualan[] = [
-                'nama'         => $kat->nama_kategori,
-                'persentase'   => $persen,
-                'revenue'      => $revFormatted,
+                'nama' => $kat->nama_kategori,
+                'persentase' => $persen,
+                'revenue' => $revFormatted,
                 'produk_count' => $kat->produk_count,
-                'warna'        => $colors[$idx % count($colors)]
+                'warna' => $colors[$idx % count($colors)],
             ];
         }
 

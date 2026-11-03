@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Pelanggan;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pesanan;
 use App\Models\Pengiriman;
+use App\Models\Pesanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,6 +15,9 @@ class PelangganController extends Controller
      */
     public function index(Request $request)
     {
+        // 0. Otomatis batalkan pesanan kedaluwarsa milik pelanggan
+        Pesanan::batalkanPesananKedaluwarsa();
+
         $user = Auth::user();
         $tab = $request->input('tab', 'semua');
 

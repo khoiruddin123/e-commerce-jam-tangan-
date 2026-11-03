@@ -473,33 +473,51 @@
                                                     {{ $namaKurir }}: {{ $nomorResi }}
                                                 </div>
                                             @endif
+                                        @elseif($pesanan->status_pesanan === 'menunggu_pembayaran')
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                Menunggu Pembayaran
+                                            </span>
+                                            <div class="text-[11px] text-amber-600 italic mt-1">Batas Bayar 2 Jam</div>
                                         @else
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
-                                                {{ ucfirst($pesanan->status_pesanan) }}
+                                                Dibatalkan
                                             </span>
                                         @endif
                                     </div>
                                 </td>
 
-                                <!-- Kolom 6: Aksi Cepat (Input Resi & Ubah Status) -->
+                                <!-- Kolom 6: Aksi Cepat Terarah (Guided Workflow Sesuai SOP) -->
                                 <td class="py-4 px-6 align-top text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        @if(in_array($pesanan->status_pesanan, ['diproses', 'dibayar']))
+                                        @if($pesanan->status_pesanan === 'dibayar')
+                                            <!-- Tombol Mulai Proses (QC & Packing) -->
+                                            <form action="{{ route('admin.pesanan.updateStatus', $pesanan->pesanan_id) }}" method="POST" class="inline" onsubmit="return confirm('Mulai proses QC dan pengepakan butik untuk pesanan #{{ $pesanan->nomor_pesanan }}?')">
+                                                @csrf
+                                                <input type="hidden" name="status_pesanan" value="diproses">
+                                                <button type="submit" 
+                                                        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition"
+                                                        title="Mulai proses QC dan pengepakan butik">
+                                                    <i class="bi bi-box-seam-fill"></i>
+                                                    <span>Mulai Proses</span>
+                                                </button>
+                                            </form>
+                                        @elseif($pesanan->status_pesanan === 'diproses')
                                             <!-- Tombol Input / Edit Resi (Bebas diedit saat diproses/packing) -->
                                             <button type="button" 
                                                     onclick="openModalResi('{{ $pesanan->pesanan_id }}', '{{ $pesanan->nomor_pesanan }}', '{{ addslashes($namaKurir ?? 'JNE Express') }}', '{{ addslashes($nomorResi ?? '') }}', '{{ $pesanan->status_pesanan }}')"
-                                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white border border-blue-200 transition"
-                                                    title="Input / Update Resi Pengiriman (Draf Packing)">
+                                                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition"
+                                                    title="Input nomor resi kurir logistik (otomatis beralih ke status Dikirim)">
                                                 <i class="bi bi-truck"></i>
                                                 <span>{{ $nomorResi ? 'Ubah Resi' : 'Input Resi' }}</span>
                                             </button>
                                         @elseif($pesanan->status_pesanan === 'dikirim')
                                             <!-- Resi Terkunci Saat Paket Sudah Dikirim -->
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200 cursor-not-allowed"
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-200"
                                                   title="Nomor resi telah TERKUNCI PERMANEN karena paket sudah diserahkan ke kurir logistik">
-                                                <i class="bi bi-lock-fill text-slate-400"></i>
-                                                <span>Resi Terkunci</span>
+                                                <i class="bi bi-truck text-sky-600"></i>
+                                                <span>Dalam Pengiriman</span>
                                             </span>
                                         @elseif($pesanan->status_pesanan === 'selesai')
                                             <!-- Selesai Dikonfirmasi Pembeli -->
@@ -508,23 +526,21 @@
                                                 <i class="bi bi-patch-check-fill text-emerald-600"></i>
                                                 <span>Selesai (Pembeli)</span>
                                             </span>
+                                        @elseif($pesanan->status_pesanan === 'menunggu_pembayaran')
+                                            <!-- Menunggu Pembeli Bayar -->
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200"
+                                                  title="Pesanan belum dibayar oleh pembeli. Admin menunggu verifikasi sistem atau kedaluwarsa.">
+                                                <i class="bi bi-hourglass-split text-amber-600"></i>
+                                                <span>Menunggu Pembeli</span>
+                                            </span>
                                         @else
-                                            <!-- Belum Bayar / Batal -->
-                                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 text-slate-400 border border-slate-100 cursor-not-allowed"
-                                                  title="Resi tidak tersedia untuk status ini">
-                                                <i class="bi bi-dash-circle"></i>
-                                                <span>Terkunci</span>
+                                            <!-- Dibatalkan -->
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200"
+                                                  title="Pesanan telah dibatalkan / kedaluwarsa">
+                                                <i class="bi bi-x-circle text-rose-600"></i>
+                                                <span>Dibatalkan</span>
                                             </span>
                                         @endif
-
-                                        <!-- Tombol Ubah Status -->
-                                        <button type="button" 
-                                                onclick="openModalStatus('{{ $pesanan->pesanan_id }}', '{{ $pesanan->nomor_pesanan }}', '{{ $pesanan->status_pesanan }}', '{{ addslashes($pesanan->catatan ?? '') }}')"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 transition"
-                                                title="Perbarui Status Pesanan">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                            <span>Status</span>
-                                        </button>
                                     </div>
                                 </td>
 
@@ -629,62 +645,7 @@
         </div>
     </div>
 
-
-    <!-- MODAL 2: UBAH STATUS PESANAN -->
-    <div id="modalStatusPesanan" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in-95 duration-200">
-            <div class="flex items-start justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg flex-shrink-0">
-                        <i class="bi bi-arrow-repeat"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-black text-slate-900 leading-tight">Ubah Status Pesanan</h3>
-                        <p class="text-xs text-slate-500 mt-0.5" id="modalStatusOrderNo">Pesanan #...</p>
-                    </div>
-                </div>
-                <button type="button" onclick="closeModalStatus()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
-                    <i class="bi bi-x-lg text-xs"></i>
-                </button>
-            </div>
-
-            <form id="formStatus" method="POST" action="">
-                @csrf
-                <div class="space-y-4 text-xs">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1.5">Pilih Status Baru <span class="text-rose-500">*</span></label>
-                        <select name="status_pesanan" id="selectStatusPesanan" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 font-bold text-slate-800 focus:bg-white focus:border-blue-500 outline-none">
-                            <option value="menunggu_pembayaran">Menunggu Pembayaran</option>
-                            <option value="dibayar">Dibayar (Verifikasi Vault)</option>
-                            <option value="diproses">Diproses (QC & Packing Butik)</option>
-                            <option value="dikirim">Dikirim (Diserahkan ke Kurir)</option>
-                            <option value="selesai" disabled class="text-slate-400">Selesai (Khusus Konfirmasi Pembeli)</option>
-                            <option value="dibatalkan">Dibatalkan</option>
-                        </select>
-                        <span class="text-[11px] text-slate-400 mt-1 block">Sesuai SOP, status 'Selesai' dikonfirmasi langsung oleh pembeli setelah barang tiba.</span>
-                    </div>
-
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1.5">Catatan Pemrosesan (Opsional)</label>
-                        <textarea name="catatan" id="inputCatatanStatus" rows="3" placeholder="Contoh: QC Lulus, kartu garansi dimasukkan, paket disegel aman..."
-                                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-blue-500 outline-none resize-none"></textarea>
-                    </div>
-                </div>
-
-                <div class="mt-6 flex items-center justify-end gap-2.5">
-                    <button type="button" onclick="closeModalStatus()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition">
-                        Batal
-                    </button>
-                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition">
-                        Perbarui Status
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-
-    <!-- JavaScript Aksi Modal & Clipboard -->
+    <!-- JavaScript Aksi Modal Resi & Clipboard -->
     <script>
         // Modal Input Resi
         function openModalResi(id, nomorPesanan, kurir, resi, status) {
@@ -697,28 +658,6 @@
 
         function closeModalResi() {
             document.getElementById('modalInputResi').classList.add('hidden');
-        }
-
-        // Modal Ubah Status
-        function openModalStatus(id, nomorPesanan, status, catatan) {
-            document.getElementById('modalStatusOrderNo').textContent = `Pesanan #${nomorPesanan}`;
-            document.getElementById('formStatus').action = `/admin/pesanan/${id}/status`;
-            
-            const selectStatus = document.getElementById('selectStatusPesanan');
-            selectStatus.value = status;
-            
-            // Opsi 'selesai' hanya bisa dipilih jika pesanan memang sudah selesai
-            const optSelesai = selectStatus.querySelector("option[value='selesai']");
-            if (optSelesai) {
-                optSelesai.disabled = (status !== 'selesai');
-            }
-
-            document.getElementById('inputCatatanStatus').value = catatan || '';
-            document.getElementById('modalStatusPesanan').classList.remove('hidden');
-        }
-
-        function closeModalStatus() {
-            document.getElementById('modalStatusPesanan').classList.add('hidden');
         }
 
         // Copy Text Helper
@@ -737,7 +676,6 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeModalResi();
-                closeModalStatus();
             }
         });
     </script>

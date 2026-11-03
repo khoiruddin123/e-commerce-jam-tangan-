@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pesanan;
 use App\Models\Pembayaran;
+use App\Models\Pesanan;
 use App\Models\VarianProduk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,10 +24,10 @@ class PembayaranController extends Controller
             'detail.varian.produk.galeri' => function ($q) {
                 $q->orderByDesc('foto_utama')->orderBy('urutan', 'asc');
             },
-            'pembayaran'
+            'pembayaran',
         ])
-        ->where('pesanan_id', $id)
-        ->firstOrFail();
+            ->where('pesanan_id', $id)
+            ->firstOrFail();
 
         // 2. Otorisasi Keamanan (Aturan C.1): Hanya pemilik pesanan yang boleh melihat tagihan
         if ($pesanan->user_id !== $userId) {
@@ -43,15 +43,15 @@ class PembayaranController extends Controller
         // Jangan membuat baris pembayaran kedua jika sudah pernah dibuat
         $pembayaran = Pembayaran::where('pesanan_id', $pesanan->pesanan_id)->first();
 
-        if (!$pembayaran) {
+        if (! $pembayaran) {
             // Buat kode pembayaran acak baru (format: KW-BAYAR-XXXX) dan tenggat waktu 2 jam ke depan
-            $kodeAcak = 'KW-BAYAR-' . strtoupper(Str::random(6));
+            $kodeAcak = 'KW-BAYAR-'.strtoupper(Str::random(6));
             $pembayaran = Pembayaran::create([
-                'pesanan_id'        => $pesanan->pesanan_id,
+                'pesanan_id' => $pesanan->pesanan_id,
                 'metode_pembayaran' => 'Simulasi Transfer Virtual',
-                'nomor_referensi'   => $kodeAcak,
-                'jumlah_bayar'      => $pesanan->total_harga,
-                'batas_pembayaran'  => now()->addHours(2), // Berlaku 2 jam
+                'nomor_referensi' => $kodeAcak,
+                'jumlah_bayar' => $pesanan->total_harga,
+                'batas_pembayaran' => now()->addMinutes(15), // Berlaku 2 jam
                 'status_pembayaran' => 'menunggu',
             ]);
         }
@@ -93,13 +93,13 @@ class PembayaranController extends Controller
 
         // 3. Pastikan pesanan memang berstatus menunggu pembayaran (Aturan C.9 & C.14)
         if ($pesanan->status_pesanan !== 'menunggu_pembayaran') {
-            return back()->with('error', 'Pesanan ini tidak dapat dibayar karena berstatus: ' . ucfirst(str_replace('_', ' ', $pesanan->status_pesanan)));
+            return back()->with('error', 'Pesanan ini tidak dapat dibayar karena berstatus: '.ucfirst(str_replace('_', ' ', $pesanan->status_pesanan)));
         }
 
         $pembayaran = $pesanan->pembayaran;
 
         // 4. Validasi status pembayaran & batas waktu kedaluwarsa (Aturan C.7)
-        if (!$pembayaran || $pembayaran->status_pembayaran !== 'menunggu') {
+        if (! $pembayaran || $pembayaran->status_pembayaran !== 'menunggu') {
             return back()->with('error', 'Sesi pembayaran ini sudah tidak aktif atau telah dibatalkan.');
         }
 
@@ -139,7 +139,7 @@ class PembayaranController extends Controller
                         ->lockForUpdate()
                         ->first();
 
-                    if (!$varian) {
+                    if (! $varian) {
                         throw new \Exception("Data varian untuk item {$item->nama_produk} tidak ditemukan di sistem.");
                     }
 
@@ -163,7 +163,7 @@ class PembayaranController extends Controller
                     ->first();
 
                 $pembayaranLock->status_pembayaran = 'berhasil';
-                $pembayaranLock->waktu_pembayaran   = now();
+                $pembayaranLock->waktu_pembayaran = now();
                 if ($request->filled('metode_pembayaran')) {
                     $pembayaranLock->metode_pembayaran = $request->input('metode_pembayaran');
                 }
@@ -224,10 +224,10 @@ class PembayaranController extends Controller
 
         $pesanan = Pesanan::with([
             'detail.varian.produk',
-            'pembayaran'
+            'pembayaran',
         ])
-        ->where('pesanan_id', $id)
-        ->firstOrFail();
+            ->where('pesanan_id', $id)
+            ->firstOrFail();
 
         // Otorisasi
         if ($pesanan->user_id !== $userId) {

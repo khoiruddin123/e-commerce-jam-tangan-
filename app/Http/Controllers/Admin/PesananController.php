@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pesanan;
 use App\Models\Pengiriman;
+use App\Models\Pesanan;
 use Illuminate\Http\Request;
 
 class PesananController extends Controller
@@ -14,6 +14,9 @@ class PesananController extends Controller
      */
     public function index(Request $request)
     {
+        // 0. Otomatis batalkan pesanan yang telah melewati batas waktu pembayaran
+        Pesanan::batalkanPesananKedaluwarsa();
+
         $status = $request->input('status', 'semua');
         $search = $request->input('search');
         $kurir = $request->input('kurir');
@@ -40,16 +43,16 @@ class PesananController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('nomor_pesanan', 'like', "%{$search}%")
-                  ->orWhere('nama_penerima', 'like', "%{$search}%")
-                  ->orWhere('telepon_penerima', 'like', "%{$search}%")
-                  ->orWhereHas('pengiriman', function ($pq) use ($search) {
-                      $pq->where('nomor_resi', 'like', "%{$search}%")
-                         ->orWhere('nama_kurir', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('nama', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
-                  });
+                    ->orWhere('nama_penerima', 'like', "%{$search}%")
+                    ->orWhere('telepon_penerima', 'like', "%{$search}%")
+                    ->orWhereHas('pengiriman', function ($pq) use ($search) {
+                        $pq->where('nomor_resi', 'like', "%{$search}%")
+                            ->orWhere('nama_kurir', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('nama', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -65,7 +68,7 @@ class PesananController extends Controller
             $parts = explode('-', $periode);
             if (count($parts) === 2) {
                 $query->whereYear('tanggal_pesanan', $parts[0])
-                      ->whereMonth('tanggal_pesanan', $parts[1]);
+                    ->whereMonth('tanggal_pesanan', $parts[1]);
             }
         }
 
@@ -155,7 +158,7 @@ class PesananController extends Controller
             $pesanan->status_pesanan = 'dikirim';
             $pesanan->save();
 
-            if (!$pengiriman->tanggal_dikirim) {
+            if (! $pengiriman->tanggal_dikirim) {
                 $pengiriman->tanggal_dikirim = now();
             }
         } elseif ($pesanan->status_pesanan === 'dibayar') {
@@ -166,9 +169,9 @@ class PesananController extends Controller
 
         $pengiriman->save();
 
-        $pesanStatus = $pesanan->status_pesanan === 'dikirim' 
-            ? "Paket resmi berstatus DIKIRIM dan nomor resi terkunci permanen." 
-            : "Nomor resi tersimpan sebagai draf (status Diproses).";
+        $pesanStatus = $pesanan->status_pesanan === 'dikirim'
+            ? 'Paket resmi berstatus DIKIRIM dan nomor resi terkunci permanen.'
+            : 'Nomor resi tersimpan sebagai draf (status Diproses).';
 
         return redirect()->back()->with('success', "Nomor resi pesanan #{$pesanan->nomor_pesanan} ({$request->kurir} - {$nomorResiBersih}) berhasil disimpan. {$pesanStatus}");
     }
@@ -186,29 +189,34 @@ class PesananController extends Controller
 
         $pesanan = Pesanan::findOrFail($id);
 
-        // 1. Proteksi Status Final: Pesanan yang sudah selesai atau dibatalkan tidak boleh diubah lagi
-        if (in_array($pesanan->status_pesanan, ['selesai', 'dibatalkan']) && $request->status_pesanan !== $pesanan->status_pesanan) {
-            return redirect()->back()->with('error', "Pesanan dengan status '{$pesanan->status_pesanan}' bersifat final dan tidak dapat diubah statusnya lagi.");
+        // 1. Proteksi Pesanan Belum Bayar: Hanya sistem & pembeli yang berhak memproses pembayaran atau pembatalan
+        if ($pesanan->status_pesanan === 'menunggu_pembayaran') {
+            return redirect()->back()->with('error', "Pesanan #{$pesanan->nomor_pesanan} masih berstatus 'Menunggu Pembayaran'. Admin tidak dapat mengubah status pesanan sebelum pembayaran diverifikasi oleh sistem.");
         }
 
-        // 2. Proteksi Hak Pembeli: Admin tidak boleh sembarangan mengubah ke 'selesai' (F10-07 / BB-73)
+        // 2. Proteksi Status Terkunci: Pesanan yang sudah dikirim, selesai, atau dibatalkan bersifat terkunci permanen
+        if (in_array($pesanan->status_pesanan, ['dikirim', 'selesai', 'dibatalkan'])) {
+            return redirect()->back()->with('error', "Status pesanan #{$pesanan->nomor_pesanan} ({$pesanan->status_pesanan}) sudah terkunci permanen dan tidak dapat diubah lagi.");
+        }
+
+        // 3. Proteksi Alur Berjenjang: Pesanan yang sudah dibayar hanya dapat dialihkan ke status 'diproses' (QC & Packing)
+        if ($pesanan->status_pesanan === 'dibayar' && $request->status_pesanan !== 'diproses') {
+            return redirect()->back()->with('error', "Pesanan yang sudah dibayar hanya dapat diproses ke status 'Diproses' untuk mulai QC dan pengepakan butik.");
+        }
+
+        // 4. Proteksi Hak Pembeli: Admin tidak boleh sembarangan mengubah ke 'selesai' (F10-07 / BB-73)
         if ($request->status_pesanan === 'selesai' && $pesanan->status_pesanan !== 'selesai') {
             return redirect()->back()->with('error', "Status 'Selesai' adalah hak konfirmasi akhir pembeli setelah jam tangan diterima fisik (Sesuai F10-07 & BB-73).");
         }
 
-        // 3. Proteksi Regresi: Pesanan yang sudah dikirim tidak boleh diturunkan kembali ke diproses/dibayar
-        if ($pesanan->status_pesanan === 'dikirim' && in_array($request->status_pesanan, ['dibayar', 'diproses', 'menunggu_pembayaran'])) {
-            return redirect()->back()->with('error', "Pesanan yang sudah berstatus 'Dikirim' tidak dapat diturunkan kembali ke status sebelumnya.");
-        }
-
-        // 4. Jika mengubah status menjadi 'dikirim', pastikan resi sudah diinput terlebih dahulu
+        // 5. Jika mengubah status menjadi 'dikirim', pastikan resi sudah diinput terlebih dahulu
         if ($request->status_pesanan === 'dikirim') {
-            if (!$pesanan->pengiriman || empty($pesanan->pengiriman->nomor_resi)) {
+            if (! $pesanan->pengiriman || empty($pesanan->pengiriman->nomor_resi)) {
                 return redirect()->back()->with('error', "Pesanan tidak dapat diubah ke status 'Dikirim' tanpa nomor resi. Silakan gunakan tombol 'Input Resi'.");
             }
 
             // Catat tanggal_dikirim jika belum ada
-            if (!$pesanan->pengiriman->tanggal_dikirim) {
+            if (! $pesanan->pengiriman->tanggal_dikirim) {
                 $pesanan->pengiriman->tanggal_dikirim = now();
                 $pesanan->pengiriman->save();
             }
@@ -223,6 +231,7 @@ class PesananController extends Controller
         $pesanan->save();
 
         $namaStatus = ucfirst(str_replace('_', ' ', $pesanan->status_pesanan));
+
         return redirect()->back()->with('success', "Status pesanan #{$pesanan->nomor_pesanan} berhasil diubah menjadi: {$namaStatus}.");
     }
 }
