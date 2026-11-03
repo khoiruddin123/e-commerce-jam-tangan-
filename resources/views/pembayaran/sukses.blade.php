@@ -307,10 +307,16 @@
                         </div>
                     </div>
 
-                    <!-- Tombol Unduh Kuitansi (Window Print / PDF) -->
-                    <button type="button" onclick="window.print()" class="btn btn-outline-secondary w-100 py-2.5 fw-semibold small mt-2 d-flex align-items-center justify-content-center gap-2 d-print-none" style="border: 1.5px solid #cbd5e1; border-radius: 12px; color: #334155;">
-                        <i class="bi bi-download"></i>
-                        <span>Unduh Bukti Transaksi (PDF)</span>
+                    <!-- Tombol Unduh Bukti Transaksi (Langsung Download PDF) -->
+                    <button type="button" id="btnUnduhBukti" onclick="unduhBuktiPdf()" class="btn btn-dark w-100 py-2.5 fw-bold small mt-2 d-flex align-items-center justify-content-center gap-2 d-print-none shadow-sm" style="background: #0f172a; border-radius: 12px; height: 46px;">
+                        <i class="bi bi-file-earmark-arrow-down-fill text-emerald-400 fs-5"></i>
+                        <span id="btnUnduhBuktiText">Unduh Bukti Transaksi (PDF)</span>
+                    </button>
+
+                    <!-- Tombol Cetak Dokumen Fisik Alternatif -->
+                    <button type="button" onclick="window.print()" class="btn btn-light w-100 py-1.5 fw-semibold small d-flex align-items-center justify-content-center gap-2 d-print-none border" style="border: 1.5px solid #e2e8f0; border-radius: 12px; color: #64748b; font-size: 0.78rem;">
+                        <i class="bi bi-printer"></i>
+                        <span>Cetak Dokumen Fisik</span>
                     </button>
                 </div>
             </div>
@@ -346,7 +352,164 @@
 
 </div>
 
-<!-- Mode Cetak Khusus Saat Pengguna Menekan 'Unduh Bukti Transaksi (PDF)' -->
+@php
+    $logoPath = public_path('images/logo.png');
+    $logoBase64 = file_exists($logoPath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath)) : asset('images/logo.png');
+    $nomorCoa = 'KW-COA-' . strtoupper(substr(md5($pesanan->nomor_pesanan), 0, 4)) . '-' . strtoupper(substr($pesanan->nomor_pesanan, -3));
+@endphp
+
+<!-- ELEMEN KHUSUS GENERASI PDF BUKTI PEMBAYARAN RESMI (OFF-SCREEN) -->
+<div id="buktiTransaksiPdf" style="display: none; position: fixed; top: 0; left: 0; width: 794px; background: #ffffff; color: #0f172a; font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 40px 45px; box-sizing: border-box; z-index: -9999;">
+    
+    <!-- Header Kuitansi -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 22px; border-bottom: 2px solid #0f172a;">
+        <div>
+            <img src="{{ $logoBase64 }}" alt="A1ORA Watch" style="height: 44px; width: auto; object-fit: contain; margin-bottom: 8px;">
+            <div style="font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: #0f172a; text-transform: uppercase;">A1ORA WATCH BOUTIQUE & HOROLOGY</div>
+            <div style="font-size: 11px; color: #64748b; line-height: 1.4; margin-top: 2px;">
+                Plaza Senayan Level 3, Jakarta Pusat, Indonesia<br>
+                Layanan Pelanggan: concierge@a1orawatch.id | +62 21 5790 0123
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: #0f172a;">BUKTI PEMBAYARAN RESMI</div>
+            <div style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;">OFFICIAL PAYMENT RECEIPT</div>
+            <div style="margin-top: 10px; display: inline-block; background: #ecfdf5; border: 1.5px solid #10b981; color: #065f46; font-size: 11px; font-weight: 800; padding: 4px 14px; border-radius: 999px; letter-spacing: 0.5px;">
+                ✓ LUNAS & TERVERIFIKASI
+            </div>
+        </div>
+    </div>
+
+    <!-- Informasi Faktur & Penerima (Grid 2 Kolom) -->
+    <div style="display: flex; justify-content: space-between; margin-top: 22px; padding: 18px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <!-- Kolom Data Pemesan / Tujuan Kirim -->
+        <div style="width: 48%;">
+            <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-bottom: 6px;">DITERBITKAN KEPADA</div>
+            <div style="font-size: 14px; font-weight: 700; color: #0f172a;">{{ $pesanan->nama_penerima }}</div>
+            <div style="font-size: 12px; color: #475569; margin-top: 3px;">Telepon: <strong>{{ $pesanan->telepon_penerima }}</strong></div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 4px; line-height: 1.45;">
+                {{ $pesanan->alamat_pengiriman }}<br>
+                {{ $pesanan->kota }} - {{ $pesanan->kode_pos }}
+            </div>
+        </div>
+
+        <!-- Kolom Data Transaksi -->
+        <div style="width: 48%; border-left: 1px dashed #cbd5e1; padding-left: 20px;">
+            <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-bottom: 6px;">INFORMASI TRANSAKSI</div>
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                <tr>
+                    <td style="color: #64748b; padding: 2px 0;">Nomor Pesanan</td>
+                    <td style="text-align: right; font-weight: 800; font-family: monospace; color: #0f172a;">#{{ $pesanan->nomor_pesanan }}</td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b; padding: 2px 0;">Waktu Pembayaran</td>
+                    <td style="text-align: right; font-weight: 600; color: #0f172a;">
+                        {{ $pesanan->pembayaran?->waktu_pembayaran ? $pesanan->pembayaran->waktu_pembayaran->translatedFormat('d F Y, H:i') : now()->translatedFormat('d F Y, H:i') }} WIB
+                    </td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b; padding: 2px 0;">Metode Pembayaran</td>
+                    <td style="text-align: right; font-weight: 700; color: #0f172a;">{{ $pesanan->pembayaran?->metode_pembayaran ?? 'BCA Virtual Account' }}</td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b; padding: 2px 0;">Kode Referensi</td>
+                    <td style="text-align: right; font-weight: 700; font-family: monospace; color: #0f172a;">{{ $pesanan->pembayaran?->nomor_referensi ?? '-' }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tabel Rincian Jam Tangan -->
+    <div style="margin-top: 22px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            <thead>
+                <tr style="background: #0f172a; color: #ffffff;">
+                    <th style="padding: 10px 12px; text-align: center; border-radius: 8px 0 0 0; width: 40px; font-weight: 700;">No</th>
+                    <th style="padding: 10px 12px; text-align: left; font-weight: 700;">Model Jam Tangan</th>
+                    <th style="padding: 10px 12px; text-align: left; font-weight: 700;">Varian & SKU</th>
+                    <th style="padding: 10px 12px; text-align: center; width: 50px; font-weight: 700;">Qty</th>
+                    <th style="padding: 10px 12px; text-align: right; width: 130px; font-weight: 700;">Harga Satuan</th>
+                    <th style="padding: 10px 12px; text-align: right; border-radius: 0 8px 0 0; width: 130px; font-weight: 700;">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($pesanan->detail as $index => $item)
+                    <tr style="border-bottom: 1px solid #e2e8f0; background: {{ $index % 2 === 0 ? '#ffffff' : '#f8fafc' }};">
+                        <td style="padding: 12px; text-align: center; color: #64748b;">{{ $index + 1 }}</td>
+                        <td style="padding: 12px; font-weight: 700; color: #0f172a;">{{ $item->nama_produk }}</td>
+                        <td style="padding: 12px; color: #475569;">
+                            <div>{{ $item->nama_varian }}</div>
+                            <div style="font-size: 10px; color: #94a3b8; font-family: monospace;">SKU: {{ $item->kode_sku }}</div>
+                        </td>
+                        <td style="padding: 12px; text-align: center; font-weight: 600; color: #0f172a;">{{ $item->jumlah }}</td>
+                        <td style="padding: 12px; text-align: right; color: #475569;">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
+                        <td style="padding: 12px; text-align: right; font-weight: 700; color: #0f172a;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Ringkasan Perhitungan Total Biaya (Kanan Bawah) -->
+    <div style="display: flex; justify-content: flex-end; margin-top: 18px;">
+        <div style="width: 340px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 8px;">
+                <span>Subtotal Produk</span>
+                <span style="font-weight: 600; color: #0f172a;">Rp {{ number_format($pesanan->subtotal, 0, ',', '.') }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 8px;">
+                <span>Ongkos Kirim (Asuransi Penuh)</span>
+                <span style="font-weight: 600; color: #0f172a;">Rp {{ number_format($pesanan->ongkir, 0, ',', '.') }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 12px;">
+                <span>Biaya Layanan & VA</span>
+                <span style="font-weight: 700; color: #10b981;">GRATIS</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 2px solid #0f172a; padding-top: 10px;">
+                <div>
+                    <div style="font-size: 13px; font-weight: 800; color: #0f172a; text-transform: uppercase;">Total Pembayaran</div>
+                    <div style="font-size: 10px; color: #10b981; font-weight: 700;">STATUS: LUNAS (PAID)</div>
+                </div>
+                <div style="font-size: 18px; font-weight: 800; color: #059669; letter-spacing: -0.5px;">
+                    Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Garansi Resmi & Sertifikat Keaslian -->
+    <div style="margin-top: 22px; padding: 14px 18px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <div style="font-size: 11px; font-weight: 800; color: #166534; text-transform: uppercase; letter-spacing: 0.5px;">
+                JAMINAN KEASLIAN 100% & GARANSI RESMI 2 TAHUN
+            </div>
+            <div style="font-size: 11px; color: #15803d; margin-top: 2px;">
+                Dilindungi sertifikat keaslian digital A1ORA COA & garansi mesin internasional resmi.
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 10px; color: #166534; font-weight: 600;">Nomor Seri Digital COA:</div>
+            <div style="font-size: 12px; font-weight: 800; font-family: monospace; color: #0f172a;">{{ $nomorCoa }}</div>
+        </div>
+    </div>
+
+    <!-- Catatan Penutup & Stempel Digital -->
+    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div style="font-size: 10px; color: #94a3b8; line-height: 1.5; max-width: 520px;">
+            * Kuitansi elektronik ini merupakan bukti transaksi yang sah dan diterbitkan otomatis oleh sistem A1ORA Watch tanpa memerlukan tanda tangan basah.<br>
+            * Simpan bukti ini untuk keperluan klaim garansi, servis resmi butik, atau penukaran unit sesuai ketentuan berlaku.<br>
+            * Waktu Cetak Dokumen: {{ now()->translatedFormat('d F Y, H:i:s') }} WIB
+        </div>
+        <div style="text-align: center; border: 1.5px solid #0f172a; padding: 6px 14px; border-radius: 8px; background: #ffffff;">
+            <div style="font-size: 9px; font-weight: 800; letter-spacing: 1px; color: #0f172a; text-transform: uppercase;">A1ORA WATCH</div>
+            <div style="font-size: 8px; font-weight: 700; color: #10b981;">OFFICIAL RECEIPT</div>
+            <div style="font-size: 8px; color: #64748b; font-family: monospace;">VERIFIED SECURE</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Mode Cetak Khusus Saat Pengguna Menekan 'Cetak Dokumen Fisik' -->
 <style>
     @media print {
         header, footer, .d-print-none {
@@ -366,4 +529,70 @@
         }
     }
 </style>
+
+@push('scripts')
+<!-- Library html2pdf lokal dengan fallback CDN -->
+<script src="{{ asset('js/html2pdf.bundle.min.js') }}"></script>
+<script>
+    if (typeof html2pdf === 'undefined') {
+        const cdnScript = document.createElement('script');
+        cdnScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        document.head.appendChild(cdnScript);
+    }
+
+    function unduhBuktiPdf() {
+        const btn = document.getElementById('btnUnduhBukti');
+        const btnText = document.getElementById('btnUnduhBuktiText');
+        const originalContent = btnText.innerHTML;
+
+        btn.disabled = true;
+        btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Menyiapkan PDF...';
+
+        const element = document.getElementById('buktiTransaksiPdf');
+
+        // Tampilkan elemen secara off-screen aman
+        element.style.display = 'block';
+
+        const opt = {
+            margin:       [8, 8, 8, 8],
+            filename:     'Bukti-Pembayaran-{{ $pesanan->nomor_pesanan }}.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                letterRendering: true,
+                windowWidth: 800
+            },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        setTimeout(() => {
+            if (typeof html2pdf !== 'function') {
+                element.style.display = 'none';
+                btn.disabled = false;
+                btnText.innerHTML = originalContent;
+                if (confirm('Library PDF sedang dimuat atau diblokir browser. Ingin membuka dialog cetak dokumen?')) {
+                    window.print();
+                }
+                return;
+            }
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.style.display = 'none';
+                btn.disabled = false;
+                btnText.innerHTML = '<i class="bi bi-check2-circle text-emerald-400 me-1"></i>Unduh Ulang Bukti (PDF)';
+            }).catch(err => {
+                console.error('Gagal mengunduh PDF:', err);
+                element.style.display = 'none';
+                btn.disabled = false;
+                btnText.innerHTML = originalContent;
+                if (confirm('Unduhan otomatis mengalami kendala. Apakah Anda ingin mencetak dokumen secara langsung?')) {
+                    window.print();
+                }
+            });
+        }, 150);
+    }
+</script>
+@endpush
 @endsection

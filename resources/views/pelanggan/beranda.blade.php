@@ -113,11 +113,23 @@
                                     <i class="bi bi-check-circle-fill text-blue-600"></i>
                                     Pesanan Selesai / Terkirim
                                 </span>
+                                <a href="{{ route('pembayaran.sukses', $pesanan->pesanan_id) }}" 
+                                   class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs transition"
+                                   title="Lihat / Unduh Bukti Pembayaran Resmi">
+                                    <i class="bi bi-file-earmark-arrow-down-fill text-blue-600"></i>
+                                    <span>Unduh Bukti</span>
+                                </a>
                             @elseif($pesanan->status_pesanan === 'dikirim')
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200">
                                     <i class="bi bi-truck text-sky-600"></i>
                                     Dalam Pengiriman
                                 </span>
+                                <a href="{{ route('pembayaran.sukses', $pesanan->pesanan_id) }}" 
+                                   class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs transition"
+                                   title="Lihat / Unduh Bukti Pembayaran Resmi">
+                                    <i class="bi bi-file-earmark-arrow-down-fill text-blue-600"></i>
+                                    <span>Unduh Bukti</span>
+                                </a>
                             @elseif($pesanan->status_pesanan === 'menunggu_pembayaran')
                                 <a href="{{ route('pembayaran.show', $pesanan->pesanan_id) }}" 
                                    class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-sm transition active:scale-95">
@@ -129,6 +141,12 @@
                                     <i class="bi bi-patch-check-fill text-emerald-600"></i>
                                     Dibayar & Lunas
                                 </span>
+                                <a href="{{ route('pembayaran.sukses', $pesanan->pesanan_id) }}" 
+                                   class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs transition"
+                                   title="Lihat / Unduh Bukti Pembayaran Resmi">
+                                    <i class="bi bi-file-earmark-arrow-down-fill text-emerald-600"></i>
+                                    <span>Unduh Bukti</span>
+                                </a>
                             @elseif($pesanan->status_pesanan === 'dibatalkan')
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
                                     <i class="bi bi-x-circle text-rose-600"></i>
