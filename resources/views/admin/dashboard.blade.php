@@ -21,21 +21,175 @@
             font-family: 'Inter', sans-serif;
         }
 
-        @media print {
+        .print-only {
+            display: none !important;
+        }
 
+        @media print {
+            /* 1. Pengaturan Halaman A4 Portrait Bersih */
+            @page {
+                size: A4 portrait;
+                margin: 8mm 12mm 10mm 12mm;
+            }
+
+            /* 2. Sembunyikan Elemen Antarmuka Web (Sidebar, Header, Tombol, Search, Navigasi) */
             aside,
             header,
-            .no-print {
+            nav,
+            .no-print,
+            .no-print * {
                 display: none !important;
             }
 
-            body {
-                background: white !important;
+            /* 3. Tampilkan Elemen Khusus Cetak (Kop Surat, Pengesahan, Footer Dokumen) */
+            .print-only {
+                display: block !important;
+            }
+            .print-flex {
+                display: flex !important;
+            }
+            .print-grid {
+                display: grid !important;
+            }
+
+            /* 4. TOTAL ELIMINASI SCROLLBAR DARI DOKUMEN CETAK */
+            *, *::before, *::after {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                box-sizing: border-box !important;
+            }
+
+            ::-webkit-scrollbar {
+                display: none !important;
+                width: 0 !important;
+                height: 0 !important;
+                background: transparent !important;
+            }
+
+            html, body {
+                width: 100% !important;
+                height: auto !important;
+                min-height: 0 !important;
+                max-height: none !important;
+                overflow: visible !important;
+                overflow-x: visible !important;
+                overflow-y: visible !important;
+                background: #ffffff !important;
+                color: #0f172a !important;
+                font-size: 11px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                display: block !important;
+                scrollbar-width: none !important;
+                -ms-overflow-style: none !important;
+            }
+
+            /* Main wrapper full-width tanpa overflow scrollbar */
+            .flex-1,
+            .admin-main-scroll,
+            .overflow-y-auto,
+            .overflow-x-auto {
+                display: block !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: 0 !important;
+                max-height: none !important;
+                overflow: visible !important;
+                overflow-x: visible !important;
+                overflow-y: visible !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                flex: none !important;
             }
 
             main {
+                display: block !important;
                 padding: 0 !important;
+                margin: 0 !important;
                 max-width: 100% !important;
+                width: 100% !important;
+                overflow: visible !important;
+            }
+
+            /* 5. Judul Dashboard saat Cetak */
+            h1 {
+                font-size: 18px !important;
+                line-height: 1.2 !important;
+                margin-bottom: 2px !important;
+                color: #0f172a !important;
+            }
+
+            /* 6. Susunan 4 Kartu Metrik Sejajar (1 Baris Rapi) */
+            .grid-cols-4-print {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 8px !important;
+                width: 100% !important;
+                margin-bottom: 12px !important;
+            }
+
+            .print-card {
+                background: #ffffff !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 8px !important;
+                padding: 10px 12px !important;
+                box-shadow: none !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            .print-card .text-2xl {
+                font-size: 16px !important;
+                line-height: 1.2 !important;
+                font-weight: 800 !important;
+            }
+
+            /* 7. Bagian Tengah: Tren Omzet & Kategori Penjualan */
+            .middle-grid-print {
+                display: grid !important;
+                grid-template-columns: 7fr 5fr !important;
+                gap: 10px !important;
+                margin-top: 8px !important;
+                margin-bottom: 12px !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            .chart-canvas-container {
+                height: 175px !important;
+            }
+
+            /* 8. Format Tabel Pesanan Resmi Berbingkai */
+            .table-print {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                margin-top: 6px !important;
+            }
+            .table-print th {
+                background-color: #f1f5f9 !important;
+                font-weight: 700 !important;
+                color: #0f172a !important;
+                text-transform: uppercase !important;
+                font-size: 9px !important;
+                border: 1px solid #cbd5e1 !important;
+                padding: 6px 8px !important;
+            }
+            .table-print td {
+                border: 1px solid #cbd5e1 !important;
+                padding: 6px 8px !important;
+                font-size: 9.5px !important;
+                color: #1e293b !important;
+            }
+            .table-print tr {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            /* 9. Blok Pengesahan Tanda Tangan */
+            .print-signatures {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                margin-top: 20px !important;
             }
         }
     </style>
@@ -129,7 +283,7 @@
     </aside>
 
     <!-- 2. MAIN CONTENT AREA (KANAN) -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto admin-main-scroll">
 
         <!-- Top Header Bar -->
         <header class="bg-white border-b border-slate-200/80 sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between gap-4">
@@ -179,7 +333,7 @@
                     <!-- Tombol Ekspor Laporan (Mencetak / Menyimpan Laporan Dashboard) -->
                     <button type="button" onclick="window.print()"
                         class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold text-xs px-3.5 py-2.5 rounded-xl shadow-sm transition cursor-pointer">
-                        <i class="bi bi-download"></i>
+                        <i class="bi bi-printer text-blue-600"></i>
                         <span>Ekspor Laporan</span>
                     </button>
 
@@ -193,9 +347,9 @@
             </div>
 
             <!-- 4 METRIC CARDS (DATA RIIL DATABASE) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 grid-cols-4-print">
                 <!-- Card 1: TOTAL PRODUK -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm print-card">
                     <div class="flex items-center justify-between text-slate-400">
                         <span class="text-[10px] font-bold uppercase tracking-wider">TOTAL PRODUK</span>
                         <i class="bi bi-watch text-sm"></i>
@@ -207,7 +361,7 @@
                 </div>
 
                 <!-- Card 2: PERLU DIPROSES -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm print-card">
                     <div class="flex items-center justify-between text-slate-400">
                         <span class="text-[10px] font-bold uppercase tracking-wider">PERLU DIPROSES</span>
                         <i class="bi bi-hourglass-split text-sm"></i>
@@ -219,7 +373,7 @@
                 </div>
 
                 <!-- Card 3: OMZET BULAN INI -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm print-card">
                     <div class="flex items-center justify-between text-slate-400">
                         <span class="text-[10px] font-bold uppercase tracking-wider">OMZET BULAN INI</span>
                         <i class="bi bi-eye text-sm"></i>
@@ -232,7 +386,7 @@
                 </div>
 
                 <!-- Card 4: TRANSAKSI BERHASIL -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm print-card">
                     <div class="flex items-center justify-between text-slate-400">
                         <span class="text-[10px] font-bold uppercase tracking-wider">TRANSAKSI BERHASIL</span>
                         <i class="bi bi-check-circle text-sm"></i>
@@ -245,9 +399,9 @@
             </div>
 
             <!-- MIDDLE SECTION: TREN OMZET & KATEGORI PENJUALAN (DATA RIIL) -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 middle-grid-print">
                 <!-- Kiri: Tren Omzet 6 Bulan (Line Chart Riil) -->
-                <div class="lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                <div class="lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between print-card">
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <div>
@@ -255,7 +409,7 @@
                                 <div class="text-[11px] text-slate-400">{{ $chartLabels[0] ?? '' }} – {{ $chartLabels[count($chartLabels)-1] ?? '' }}</div>
                             </div>
                             <!-- Period Tabs -->
-                            <div class="flex items-center gap-2 text-xs font-semibold text-slate-400">
+                            <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 no-print">
                                 <span class="text-slate-800 bg-slate-100 px-2.5 py-1 rounded-lg">6 Bulan</span>
                                 <span class="hover:text-slate-700 cursor-pointer px-1">1 Tahun</span>
                                 <span class="hover:text-slate-700 cursor-pointer px-1">YTD</span>
@@ -263,7 +417,7 @@
                         </div>
 
                         <!-- Canvas Grafik Line Chart -->
-                        <div class="mt-4 relative" style="height: 220px;">
+                        <div class="mt-4 relative chart-canvas-container" style="height: 220px;">
                             <canvas id="chartTrenOmzet"></canvas>
                         </div>
                     </div>
@@ -281,7 +435,7 @@
                 </div>
 
                 <!-- Kanan: Kategori Penjualan & Produk Terlaris (Data Riil) -->
-                <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between print-card">
                     <div>
                         <h3 class="font-bold text-sm text-slate-900">Kategori Penjualan</h3>
                         <div class="text-[11px] text-slate-400 mb-4">Kontribusi revenue menurut seri</div>
@@ -330,7 +484,7 @@
             </div>
 
             <!-- BOTTOM SECTION: PESANAN TERBARU (DATA RIIL DATABASE) -->
-            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4 print-card">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div class="flex items-center gap-2">
                         <h3 class="font-bold text-sm text-slate-900">Pesanan Terbaru</h3>
@@ -346,7 +500,7 @@
 
                 <!-- Tabel Transaksi Riil Database -->
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse table-print">
                         <thead>
                             <tr class="border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                                 <th class="py-3 px-4">NO. PESANAN</th>
@@ -354,7 +508,7 @@
                                 <th class="py-3 px-4">PRODUK</th>
                                 <th class="py-3 px-4">TOTAL NILAI</th>
                                 <th class="py-3 px-4">STATUS</th>
-                                <th class="py-3 px-4 text-right">AKSI</th>
+                                <th class="py-3 px-4 text-right no-print">AKSI</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-xs">
@@ -408,7 +562,7 @@
                                     </span>
                                     @endif
                                 </td>
-                                <td class="py-3.5 px-4 text-right">
+                                <td class="py-3.5 px-4 text-right no-print">
                                     <a href="{{ route('admin.pesanan.index') }}" class="text-blue-600 hover:text-blue-800 font-semibold text-xs transition">
                                         Detail
                                     </a>
@@ -430,7 +584,7 @@
                 </div>
 
                 <!-- Footer Tabel -->
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 no-print">
                     <div>Menampilkan {{ $pesananTerbaru->count() }} pesanan</div>
                     <a href="{{ route('admin.pesanan.index') }}" class="text-blue-600 hover:text-blue-700 font-semibold text-xs flex items-center gap-1">
                         <span>Buka Semua Pesanan</span>
@@ -440,7 +594,7 @@
             </div>
 
             <!-- SYSTEM FOOTER -->
-            <div class="pt-4 pb-2 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-400">
+            <div class="pt-4 pb-2 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-400 no-print">
                 <div class="flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                     <span>Sistem & Gateway Pembayaran Terhubung Normal (SSL 256-bit)</span>
@@ -460,7 +614,7 @@
             gradient.addColorStop(0, 'rgba(37, 99, 235, 0.15)');
             gradient.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
 
-            new Chart(ctx, {
+            window.myTrenChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: @json($chartLabels),
@@ -515,6 +669,12 @@
                             min: 0
                         }
                     }
+                }
+            });
+
+            window.addEventListener('beforeprint', function() {
+                if (window.myTrenChart) {
+                    window.myTrenChart.resize();
                 }
             });
         });
