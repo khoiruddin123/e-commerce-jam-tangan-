@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Pengiriman;
 use App\Models\Pesanan;
+use App\Models\VarianProduk;
 use Illuminate\Http\Request;
 
 class PesananController extends Controller
@@ -219,6 +220,18 @@ class PesananController extends Controller
             if (! $pesanan->pengiriman->tanggal_dikirim) {
                 $pesanan->pengiriman->tanggal_dikirim = now();
                 $pesanan->pengiriman->save();
+            }
+        }
+
+        // 6. Jika pesanan dibatalkan setelah pembayaran diverifikasi (status dibayar/diproses), kembalikan stok barang ke inventaris
+        if ($request->status_pesanan === 'dibatalkan' && in_array($pesanan->status_pesanan, ['dibayar', 'diproses'])) {
+            foreach ($pesanan->detail as $item) {
+                if ($item->varian_id) {
+                    $varian = VarianProduk::find($item->varian_id);
+                    if ($varian) {
+                        $varian->increment('stok', $item->jumlah);
+                    }
+                }
             }
         }
 

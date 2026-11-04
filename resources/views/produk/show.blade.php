@@ -23,7 +23,7 @@
         </nav>
         <div class="small text-muted">
             <span class="badge bg-light text-dark border px-2.5 py-1" id="topSkuBadge">
-                SKU: {{ $produk->varian->first()->kode_sku ?? ($produk->kode_produk ?? '-') }}
+                SKU: {{ $produk->varian->first()?->kode_sku ?? ($produk->kode_produk ?? '-') }}
             </span>
         </div>
     </div>
@@ -148,7 +148,7 @@
 
                 <!-- Kotak Harga Murni (Tanpa Coretan Dummy) -->
                 @php
-                    $hargaAwal = $produk->varian->first()->harga_varian ?? 0;
+                    $hargaAwal = $produk->varian->first()?->harga_varian ?? 0;
                 @endphp
                 <div class="p-3 rounded-4 bg-light bg-opacity-75 border mb-3">
                     <div class="text-muted small mb-1">Harga:</div>

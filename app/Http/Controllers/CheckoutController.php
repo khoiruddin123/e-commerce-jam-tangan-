@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailPesanan;
 use App\Models\Keranjang;
 use App\Models\Pesanan;
-use App\Models\DetailPesanan;
-use App\Models\VarianProduk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -27,17 +26,18 @@ class CheckoutController extends Controller
             ->first();
 
         // 2. Jika keranjang kosong, kembalikan ke halaman keranjang
-        if (!$keranjang || $keranjang->detail->isEmpty()) {
+        if (! $keranjang || $keranjang->detail->isEmpty()) {
             return redirect()->route('keranjang.index')
                 ->with('error', 'Keranjang belanja Anda masih kosong. Silakan pilih produk terlebih dahulu.');
         }
 
         // 3. Validasi stok masing-masing varian sebelum lanjut checkout
         foreach ($keranjang->detail as $item) {
-            if (!$item->varian || $item->varian->stok < $item->jumlah) {
+            if (! $item->varian || $item->varian->stok < $item->jumlah) {
                 $namaProduk = $item->varian->produk->nama_produk ?? 'Produk';
                 $namaVarian = $item->varian->nama_varian ?? '';
                 $stokAda = $item->varian->stok ?? 0;
+
                 return redirect()->route('keranjang.index')
                     ->with('error', "Stok untuk {$namaProduk} ({$namaVarian}) tidak mencukupi (sisa stok: {$stokAda}). Silakan sesuaikan jumlah barang.");
             }
@@ -62,17 +62,19 @@ class CheckoutController extends Controller
 
         // 1. Validasi Input Pengiriman
         $request->validate([
-            'nama_penerima'    => 'required|string|max:100',
-            'telepon_penerima' => 'required|string|max:20',
-            'alamat_pengiriman'=> 'required|string',
-            'kota'             => 'required|string|max:100',
-            'kode_pos'         => 'nullable|string|max:15',
-            'catatan'          => 'nullable|string|max:500',
+            'nama_penerima' => 'required|string|max:100',
+            'telepon_penerima' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
+            'alamat_pengiriman' => 'required|string',
+            'kota' => 'required|string|max:100',
+            'kode_pos' => ['nullable', 'string', 'max:15', 'regex:/^[0-9]+$/'],
+            'catatan' => 'nullable|string|max:500',
         ], [
-            'nama_penerima.required'    => 'Nama penerima wajib diisi.',
+            'nama_penerima.required' => 'Nama penerima wajib diisi.',
             'telepon_penerima.required' => 'Nomor telepon penerima wajib diisi.',
-            'alamat_pengiriman.required'=> 'Alamat lengkap pengiriman wajib diisi.',
-            'kota.required'             => 'Kota tujuan pengiriman wajib diisi.',
+            'telepon_penerima.regex' => 'Nomor telepon hanya boleh berisi angka, tanda +, spasi, atau tanda strip.',
+            'alamat_pengiriman.required' => 'Alamat lengkap pengiriman wajib diisi.',
+            'kota.required' => 'Kota tujuan pengiriman wajib diisi.',
+            'kode_pos.regex' => 'Kode pos harus berupa angka.',
         ]);
 
         // 2. Ambil Keranjang Aktif
@@ -81,7 +83,7 @@ class CheckoutController extends Controller
             ->where('status', 'aktif')
             ->first();
 
-        if (!$keranjang || $keranjang->detail->isEmpty()) {
+        if (! $keranjang || $keranjang->detail->isEmpty()) {
             return redirect()->route('keranjang.index')
                 ->with('error', 'Keranjang belanja Anda kosong.');
         }
@@ -94,7 +96,7 @@ class CheckoutController extends Controller
                 // Hitung ulang subtotal dan cek stok langsung dari database
                 foreach ($keranjang->detail as $item) {
                     $varian = $item->varian;
-                    if (!$varian || $varian->stok < $item->jumlah) {
+                    if (! $varian || $varian->stok < $item->jumlah) {
                         $nama = $varian ? $varian->produk->nama_produk : 'Produk';
                         throw new \Exception("Stok untuk {$nama} tidak mencukupi.");
                     }
@@ -106,23 +108,23 @@ class CheckoutController extends Controller
 
                 // Buat Nomor Pesanan Unik (contoh: KW-20261027-ABC12)
                 do {
-                    $nomorPesanan = 'KW-' . date('Ymd') . '-' . strtoupper(Str::random(5));
+                    $nomorPesanan = 'KW-'.date('Ymd').'-'.strtoupper(Str::random(5));
                 } while (Pesanan::where('nomor_pesanan', $nomorPesanan)->exists());
 
                 // Simpan ke tabel pesanan (status: menunggu_pembayaran)
                 $pesanan = Pesanan::create([
-                    'nomor_pesanan'     => $nomorPesanan,
-                    'user_id'           => $userId,
-                    'nama_penerima'     => $request->nama_penerima,
-                    'telepon_penerima'  => $request->telepon_penerima,
+                    'nomor_pesanan' => $nomorPesanan,
+                    'user_id' => $userId,
+                    'nama_penerima' => $request->nama_penerima,
+                    'telepon_penerima' => $request->telepon_penerima,
                     'alamat_pengiriman' => $request->alamat_pengiriman,
-                    'kota'              => $request->kota,
-                    'kode_pos'          => $request->kode_pos,
-                    'subtotal'          => $subtotal,
-                    'ongkir'            => $ongkir,
-                    'total_harga'       => $totalHarga,
-                    'status_pesanan'    => 'menunggu_pembayaran',
-                    'catatan'           => $request->catatan,
+                    'kota' => $request->kota,
+                    'kode_pos' => $request->kode_pos,
+                    'subtotal' => $subtotal,
+                    'ongkir' => $ongkir,
+                    'total_harga' => $totalHarga,
+                    'status_pesanan' => 'menunggu_pembayaran',
+                    'catatan' => $request->catatan,
                 ]);
 
                 // Simpan snapshot ke detail_pesanan
@@ -132,14 +134,14 @@ class CheckoutController extends Controller
                     $subtotalItem = $hargaSatuan * $item->jumlah;
 
                     DetailPesanan::create([
-                        'pesanan_id'   => $pesanan->pesanan_id,
-                        'varian_id'    => $varian->varian_id,
-                        'nama_produk'  => $varian->produk->nama_produk ?? 'Jam Tangan',
-                        'nama_varian'  => $varian->nama_varian,
-                        'kode_sku'     => $varian->kode_sku,
+                        'pesanan_id' => $pesanan->pesanan_id,
+                        'varian_id' => $varian->varian_id,
+                        'nama_produk' => $varian->produk->nama_produk ?? 'Jam Tangan',
+                        'nama_varian' => $varian->nama_varian,
+                        'kode_sku' => $varian->kode_sku,
                         'harga_satuan' => $hargaSatuan,
-                        'jumlah'       => $item->jumlah,
-                        'subtotal'     => $subtotalItem,
+                        'jumlah' => $item->jumlah,
+                        'subtotal' => $subtotalItem,
                     ]);
                 }
 
@@ -159,7 +161,7 @@ class CheckoutController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal memproses pesanan: ' . $e->getMessage());
+                ->with('error', 'Gagal memproses pesanan: '.$e->getMessage());
         }
     }
 }
