@@ -51,7 +51,7 @@ class PembayaranController extends Controller
                 'metode_pembayaran' => 'Simulasi Transfer Virtual',
                 'nomor_referensi' => $kodeAcak,
                 'jumlah_bayar' => $pesanan->total_harga,
-                'batas_pembayaran' => now()->addMinutes(15), // Berlaku 15 menit
+                'batas_pembayaran' => now()->addMinutes(15), // Berlaku 14 menit
                 'status_pembayaran' => 'menunggu',
             ]);
         }
