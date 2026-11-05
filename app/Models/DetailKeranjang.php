@@ -27,7 +27,6 @@ class DetailKeranjang extends Model
         );
     }
 
-
     public function varian()
     {
         return $this->belongsTo(
@@ -37,10 +36,10 @@ class DetailKeranjang extends Model
         );
     }
 
-
     public function getSubtotalAttribute(): float
     {
-        $harga = (float) ($this->varian->harga_varian ?? 0);
+        $harga = (float) ($this->varian?->harga_varian ?? 0);
+
         return $harga * (int) $this->jumlah;
     }
 }

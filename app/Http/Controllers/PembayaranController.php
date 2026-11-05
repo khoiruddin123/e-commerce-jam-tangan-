@@ -44,14 +44,14 @@ class PembayaranController extends Controller
         $pembayaran = Pembayaran::where('pesanan_id', $pesanan->pesanan_id)->first();
 
         if (! $pembayaran) {
-            // Buat kode pembayaran acak baru (format: KW-BAYAR-XXXX) dan tenggat waktu 2 jam ke depan
+            // Buat kode pembayaran acak baru (format: KW-BAYAR-XXXX) dan tenggat waktu 15 menit ke depan
             $kodeAcak = 'KW-BAYAR-'.strtoupper(Str::random(6));
             $pembayaran = Pembayaran::create([
                 'pesanan_id' => $pesanan->pesanan_id,
                 'metode_pembayaran' => 'Simulasi Transfer Virtual',
                 'nomor_referensi' => $kodeAcak,
                 'jumlah_bayar' => $pesanan->total_harga,
-                'batas_pembayaran' => now()->addMinutes(15), // Berlaku 2 jam
+                'batas_pembayaran' => now()->addMinutes(15), // Berlaku 14 menit
                 'status_pembayaran' => 'menunggu',
             ]);
         }
@@ -225,6 +225,7 @@ class PembayaranController extends Controller
         $pesanan = Pesanan::with([
             'detail.varian.produk',
             'pembayaran',
+            'pengiriman',
         ])
             ->where('pesanan_id', $id)
             ->firstOrFail();
@@ -234,6 +235,78 @@ class PembayaranController extends Controller
             abort(403, 'Akses ditolak.');
         }
 
+        // Proteksi: Cegah akses kuitansi sukses jika belum lunas atau dibatalkan
+        if ($pesanan->status_pesanan === 'menunggu_pembayaran') {
+            return redirect()->route('pembayaran.show', $pesanan->pesanan_id)
+                ->with('error', 'Silakan selesaikan pembayaran terlebih dahulu untuk melihat bukti kuitansi.');
+        }
+
+        if ($pesanan->status_pesanan === 'dibatalkan') {
+            return redirect()->route('pelanggan.beranda')
+                ->with('error', 'Pesanan ini telah dibatalkan, bukti pembayaran tidak tersedia.');
+        }
+
         return view('pembayaran.sukses', compact('pesanan'));
+    }
+
+    /**
+     * Menampilkan dokumen cetak / PDF kuitansi resmi pembayaran (Standar A4).
+     */
+    public function cetak($id)
+    {
+        $userId = Auth::id();
+
+        $pesanan = Pesanan::with([
+            'detail.varian.produk',
+            'pembayaran',
+            'pengiriman',
+        ])
+            ->where('pesanan_id', $id)
+            ->firstOrFail();
+
+        // Otorisasi: hanya pemilik pesanan atau admin yang dapat mencetak bukti
+        if ($pesanan->user_id !== $userId && Auth::user()->role !== 'admin') {
+            abort(403, 'Akses ditolak.');
+        }
+
+        // Proteksi: Cegah cetak kuitansi resmi jika belum dibayar atau dibatalkan
+        if ($pesanan->status_pesanan === 'menunggu_pembayaran') {
+            return redirect()->route('pembayaran.show', $pesanan->pesanan_id)
+                ->with('error', 'Pesanan belum dibayar. Kuitansi resmi hanya diterbitkan setelah pembayaran lunas.');
+        }
+
+        if ($pesanan->status_pesanan === 'dibatalkan') {
+            return redirect()->route('pelanggan.beranda')
+                ->with('error', 'Kuitansi resmi tidak tersedia untuk pesanan yang telah dibatalkan.');
+        }
+
+        return view('pembayaran.cetak', compact('pesanan'));
+    }
+
+    /**
+     * Endpoint API JSON untuk pengecekan status pesanan secara real-time.
+     */
+    public function cekStatus($id)
+    {
+        $userId = Auth::id();
+
+        $pesanan = Pesanan::with(['pengiriman', 'pembayaran'])
+            ->where('pesanan_id', $id)
+            ->firstOrFail();
+
+        // Otorisasi: hanya pemilik pesanan atau admin
+        if ($pesanan->user_id !== $userId && Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Akses ditolak.'], 403);
+        }
+
+        return response()->json([
+            'status_pesanan' => $pesanan->status_pesanan,
+            'status_label' => ucfirst(str_replace('_', ' ', $pesanan->status_pesanan)),
+            'kurir' => $pesanan->pengiriman?->nama_kurir,
+            'nomor_resi' => $pesanan->pengiriman?->nomor_resi,
+            'tanggal_dikirim' => $pesanan->pengiriman?->tanggal_dikirim ? $pesanan->pengiriman->tanggal_dikirim->translatedFormat('d M Y, H:i') : null,
+            'tanggal_diterima' => $pesanan->pengiriman?->tanggal_diterima ? $pesanan->pengiriman->tanggal_diterima->translatedFormat('d M Y, H:i') : null,
+            'updated_at' => now()->translatedFormat('H:i:s'),
+        ]);
     }
 }

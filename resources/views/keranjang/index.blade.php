@@ -88,7 +88,7 @@
                 <!-- Kartu Daftar Barang di Keranjang -->
                 @foreach($keranjang->detail as $item)
                     @php
-                        $produk = $item->varian->produk ?? null;
+                        $produk = $item->varian?->produk ?? null;
                         $fotoUtama = $produk && $produk->galeri ? ($produk->galeri->where('foto_utama', 1)->first() ?? $produk->galeri->first()) : null;
                         $eyebrow = strtoupper($produk->merek->nama_merek ?? ($produk->kategori->nama_kategori ?? 'A1ORA COLLECTION'));
                     @endphp
@@ -121,7 +121,7 @@
                                     </a>
                                 </h6>
                                 <div class="text-muted small mb-1" style="font-size: 0.8rem;">
-                                    {{ $item->varian->nama_varian ?? 'Standard' }}
+                                    {{ $item->varian?->nama_varian ?? 'Standard' }}
                                 </div>
                                 @if($item->varian && $item->varian->stok < $item->jumlah)
                                     <div class="badge bg-danger-subtle text-danger small">
@@ -134,7 +134,7 @@
                             <div class="col-6 col-md-auto text-md-center">
                                 <div class="text-muted" style="font-size: 0.72rem;">Harga Satuan</div>
                                 <div class="fw-bold text-dark" style="font-size: 0.92rem;">
-                                    Rp {{ number_format($item->varian->harga_varian ?? 0, 0, ',', '.') }}
+                                    Rp {{ number_format($item->varian?->harga_varian ?? 0, 0, ',', '.') }}
                                 </div>
                             </div>
 
@@ -150,11 +150,11 @@
                                                name="jumlah" 
                                                value="{{ $item->jumlah }}" 
                                                min="1" 
-                                               max="{{ $item->varian->stok ?? 99 }}" 
+                                               max="{{ $item->varian?->stok ?? 99 }}" 
                                                class="form-control form-control-sm text-center border-0 bg-transparent fw-bold p-0" 
                                                style="width: 32px;"
                                                onchange="this.form.submit()">
-                                        <button class="btn btn-sm btn-link text-dark text-decoration-none px-2.5 py-1 fw-bold" type="button" onclick="changeQty({{ $item->detail_keranjang_id }}, 1, {{ $item->varian->stok ?? 99 }})">+</button>
+                                        <button class="btn btn-sm btn-link text-dark text-decoration-none px-2.5 py-1 fw-bold" type="button" onclick="changeQty({{ $item->detail_keranjang_id }}, 1, {{ $item->varian?->stok ?? 99 }})">+</button>
                                     </div>
                                 </form>
                             </div>

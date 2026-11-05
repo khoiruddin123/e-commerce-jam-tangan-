@@ -161,7 +161,7 @@
                     <div>
                         @foreach($pesanan->detail as $item)
                             @php
-                                $produk = $item->varian->produk ?? null;
+                                $produk = $item->varian?->produk ?? null;
                                 $fotoUtama = $produk && $produk->galeri ? ($produk->galeri->where('foto_utama', 1)->first() ?? $produk->galeri->first()) : null;
                             @endphp
                             <div class="d-flex align-items-center gap-3 py-3 border-bottom">
@@ -238,7 +238,7 @@
                             <i class="bi bi-clock me-1"></i> SELESAIKAN PEMBAYARAN DALAM:
                         </div>
                         <div id="countdownTimer" class="font-monospace fw-bold mb-1" style="font-size: 2.5rem; color: #dc2626; letter-spacing: 3px; line-height: 1.1;">
-                            01 : 59 : 03
+                            -- : -- : --
                         </div>
                         <div class="text-muted small" style="font-size: 0.75rem;">
                             Batas Waktu: {{ $pembayaran->batas_pembayaran ? $pembayaran->batas_pembayaran->translatedFormat('d F Y, H:i:s') : '-' }} WIB
@@ -501,12 +501,13 @@
             }
             if (inputKode) {
                 inputKode.disabled = true;
+                setTimeout(() => { window.location.reload(); }, 1500);
             }
             return;
         }
 
         const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60)) / (1000 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
         const format = (num) => String(num).padStart(2, '0');
