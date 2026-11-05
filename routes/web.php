@@ -111,4 +111,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/pembayaran/{id}/batal', [PembayaranController::class, 'batal'])->name('pembayaran.batal');
     Route::get('/pembayaran/{id}/sukses', [PembayaranController::class, 'sukses'])->name('pembayaran.sukses');
     Route::get('/pembayaran/{id}/cetak', [PembayaranController::class, 'cetak'])->name('pembayaran.cetak');
+    Route::get('/pembayaran/{id}/status', [PembayaranController::class, 'cekStatus'])->name('pembayaran.status');
 });

@@ -396,6 +396,20 @@
                                             <div class="font-bold text-slate-900 text-xs">{{ $namaPelanggan }}</div>
                                             <div class="text-[11px] text-slate-400 mt-0.5">{{ $emailPelanggan }}</div>
                                             <div class="text-[11px] text-slate-400 font-mono">{{ $teleponPelanggan }}</div>
+                                            
+                                            <!-- Ringkasan Alamat Tujuan -->
+                                            <div class="text-[11px] text-slate-600 mt-1 flex items-start gap-1 font-medium bg-slate-100/90 px-2 py-0.5 rounded-lg max-w-[220px]" title="{{ $pesanan->alamat_pengiriman }}, {{ $pesanan->kota }} {{ $pesanan->kode_pos }}">
+                                                <i class="bi bi-geo-alt text-blue-600 flex-shrink-0 mt-0.5 text-[10px]"></i>
+                                                <span class="truncate">{{ $pesanan->kota ?? 'Kota' }} &bull; {{ $pesanan->alamat_pengiriman ?? '-' }}</span>
+                                            </div>
+
+                                            <!-- Catatan Pembeli (Jika Ada) -->
+                                            @if($pesanan->catatan)
+                                                <div class="text-[10px] text-amber-700 mt-0.5 italic flex items-center gap-1 font-medium" title="Catatan: {{ $pesanan->catatan }}">
+                                                    <i class="bi bi-chat-left-text text-amber-600 flex-shrink-0"></i>
+                                                    <span class="truncate max-w-[200px]">"{{ $pesanan->catatan }}"</span>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
@@ -478,7 +492,9 @@
                                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                                 Menunggu Pembayaran
                                             </span>
-                                            <div class="text-[11px] text-amber-600 italic mt-1">Batas Bayar 2 Jam</div>
+                                            <div class="text-[11px] text-amber-600 italic mt-1">
+                                                Batas: {{ $pesanan->pembayaran?->batas_pembayaran ? $pesanan->pembayaran->batas_pembayaran->translatedFormat('H:i') . ' WIB' : '15 Menit' }}
+                                            </div>
                                         @else
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
@@ -491,6 +507,49 @@
                                 <!-- Kolom 6: Aksi Cepat Terarah (Guided Workflow Sesuai SOP) -->
                                 <td class="py-4 px-6 align-top text-center">
                                     <div class="flex items-center justify-center gap-2">
+                                        <!-- Tombol Lihat Rincian Lengkap, Alamat & Catatan -->
+                                        <button type="button" 
+                                                onclick="openModalDetail({{ $pesanan->pesanan_id }})" 
+                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs transition active:scale-95"
+                                                title="Lihat Alamat Lengkap, Catatan & Rincian Pesanan">
+                                            <i class="bi bi-eye text-blue-600"></i>
+                                            <span>Detail</span>
+                                        </button>
+
+                                        <!-- Hidden Data JSON Pesanan -->
+                                        <script type="application/json" id="data-pesanan-{{ $pesanan->pesanan_id }}">
+                                            {!! json_encode([
+                                                'id' => $pesanan->pesanan_id,
+                                                'nomor' => $pesanan->nomor_pesanan,
+                                                'status' => $pesanan->status_pesanan,
+                                                'tanggal' => $pesanan->tanggal_pesanan ? $pesanan->tanggal_pesanan->translatedFormat('d F Y, H:i') . ' WIB' : '-',
+                                                'nama_penerima' => $namaPelanggan,
+                                                'telepon_penerima' => $teleponPelanggan,
+                                                'email' => $emailPelanggan,
+                                                'alamat' => $pesanan->alamat_pengiriman ?? '-',
+                                                'kota' => $pesanan->kota ?? '-',
+                                                'kode_pos' => $pesanan->kode_pos ?? '-',
+                                                'catatan' => $pesanan->catatan ?? '',
+                                                'subtotal' => 'Rp ' . number_format($pesanan->subtotal, 0, ',', '.'),
+                                                'ongkir' => 'Rp ' . number_format($pesanan->ongkir, 0, ',', '.'),
+                                                'total' => 'Rp ' . number_format($pesanan->total_harga, 0, ',', '.'),
+                                                'metode_bayar' => $metodeBayar,
+                                                'status_bayar' => $pesanan->pembayaran?->status_pembayaran ?? 'menunggu',
+                                                'kurir' => $namaKurir ?? '-',
+                                                'resi' => $nomorResi ?? '-',
+                                                'cetak_url' => route('pembayaran.cetak', $pesanan->pesanan_id),
+                                                'items' => $pesanan->detail->map(function($d) {
+                                                    return [
+                                                        'nama_produk' => $d->nama_produk,
+                                                        'nama_varian' => $d->nama_varian ?? 'Standard',
+                                                        'kode_sku' => $d->kode_sku ?? '-',
+                                                        'qty' => $d->jumlah,
+                                                        'harga' => 'Rp ' . number_format($d->harga_satuan, 0, ',', '.'),
+                                                        'subtotal' => 'Rp ' . number_format($d->subtotal, 0, ',', '.'),
+                                                    ];
+                                                })->values()
+                                            ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!}
+                                        </script>
                                         @if($pesanan->status_pesanan === 'dibayar')
                                             <!-- Tombol Mulai Proses (QC & Packing) -->
                                             <form action="{{ route('admin.pesanan.updateStatus', $pesanan->pesanan_id) }}" method="POST" class="inline" onsubmit="return confirm('Mulai proses QC dan pengepakan butik untuk pesanan #{{ $pesanan->nomor_pesanan }}?')">
@@ -645,6 +704,129 @@
         </div>
     </div>
 
+    <!-- MODAL 2: RINCIAN LENGKAP PESANAN & TUJUAN PENGIRIMAN -->
+    <div id="modalDetailPesanan" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
+            
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between pb-4 border-b border-slate-100 flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg flex-shrink-0">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-black text-slate-900 leading-tight" id="detNoPesanan">Pesanan #...</h3>
+                            <span id="detStatusBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase"></span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5" id="detWaktuPesanan">-</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModalDetail()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
+                    <i class="bi bi-x-lg text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="overflow-y-auto py-4 space-y-4 text-xs pr-1">
+                
+                <!-- 1. Kotak Tujuan Pengiriman & Catatan -->
+                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 space-y-2">
+                    <div class="flex items-center gap-1.5 text-blue-600 font-bold uppercase tracking-wider text-[10px]">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>TUJUAN PENGIRIMAN LOGISTIK</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div>
+                            <span class="text-slate-400 block text-[11px]">Nama Penerima:</span>
+                            <span class="font-bold text-slate-900 text-sm" id="detNamaPenerima">-</span>
+                            <div class="text-slate-500 font-mono mt-0.5" id="detTeleponPenerima">-</div>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block text-[11px]">Alamat Lengkap:</span>
+                            <div class="font-medium text-slate-800 leading-relaxed" id="detAlamatPengiriman">-</div>
+                            <div class="text-slate-600 font-semibold mt-0.5" id="detKotaKodePos">-</div>
+                        </div>
+                    </div>
+
+                    <!-- Kotak Catatan Khusus Pembeli -->
+                    <div class="pt-2 border-t border-slate-200/60 mt-2">
+                        <span class="text-slate-400 block text-[11px]">Catatan Khusus dari Pembeli:</span>
+                        <div class="mt-1 px-3 py-2 rounded-xl text-xs flex items-start gap-2" id="detCatatanBox">
+                            <i class="bi bi-chat-quote-fill text-amber-600 flex-shrink-0 mt-0.5"></i>
+                            <span id="detCatatanText">Tidak ada catatan.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Ekspedisi & Status Logistik -->
+                <div class="grid grid-cols-2 gap-3 bg-slate-50/60 border border-slate-100 rounded-2xl p-3.5">
+                    <div>
+                        <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">Kurir Logistik</span>
+                        <div class="font-bold text-slate-900 mt-0.5" id="detKurir">-</div>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">Nomor Resi</span>
+                        <div class="font-mono font-bold text-slate-900 mt-0.5" id="detResi">-</div>
+                    </div>
+                </div>
+
+                <!-- 3. Daftar Produk yang Dipesan -->
+                <div>
+                    <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-2">RINCIAN JAM TANGAN DIPESAN</span>
+                    <div class="border border-slate-200 rounded-2xl overflow-hidden">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-[10px] text-slate-500 font-extrabold uppercase">
+                                <tr>
+                                    <th class="py-2.5 px-3">Item Jam Tangan</th>
+                                    <th class="py-2.5 px-3 text-center">Qty</th>
+                                    <th class="py-2.5 px-3 text-right">Harga Satuan</th>
+                                    <th class="py-2.5 px-3 text-right">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detItemsTable" class="divide-y divide-slate-100">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4. Ringkasan Pembayaran -->
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-1.5 text-xs">
+                    <div class="flex justify-between text-slate-500">
+                        <span>Subtotal Produk</span>
+                        <span class="font-semibold text-slate-800" id="detSubtotal">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between text-slate-500">
+                        <span>Ongkos Kirim Flat</span>
+                        <span class="font-semibold text-slate-800" id="detOngkir">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between text-slate-500">
+                        <span>Metode Pembayaran</span>
+                        <span class="font-bold text-slate-800" id="detMetodeBayar">-</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-200 text-sm">
+                        <span class="font-extrabold text-slate-900">Total Pembayaran</span>
+                        <span class="font-black text-emerald-600 text-base" id="detTotalHarga">Rp 0</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex items-center justify-between pt-4 border-t border-slate-100 flex-shrink-0">
+                <a href="#" id="detBtnCetak" target="_blank" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-sm transition">
+                    <i class="bi bi-printer-fill text-emerald-400"></i>
+                    <span>Cetak Kuitansi / Lembar Packing (A4)</span>
+                </a>
+                <button type="button" onclick="closeModalDetail()" class="px-5 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition">
+                    Tutup
+                </button>
+            </div>
+
+        </div>
+    </div>
+
     <!-- JavaScript Aksi Modal Resi & Clipboard -->
     <script>
         // Modal Input Resi
@@ -658,6 +840,89 @@
 
         function closeModalResi() {
             document.getElementById('modalInputResi').classList.add('hidden');
+        }
+
+        // Modal Detail Pesanan
+        function openModalDetail(id) {
+            const dataElem = document.getElementById(`data-pesanan-${id}`);
+            if (!dataElem) return;
+            const data = JSON.parse(dataElem.textContent);
+
+            document.getElementById('detNoPesanan').textContent = `Pesanan #${data.nomor}`;
+            document.getElementById('detWaktuPesanan').textContent = `Waktu Transaksi: ${data.tanggal}`;
+            
+            // Badge Status
+            const badge = document.getElementById('detStatusBadge');
+            badge.textContent = data.status.toUpperCase().replace('_', ' ');
+            if (data.status === 'dibayar') {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-700';
+            } else if (data.status === 'diproses') {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200 text-slate-800';
+            } else if (data.status === 'dikirim') {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-sky-100 text-sky-800';
+            } else if (data.status === 'selesai') {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800';
+            } else if (data.status === 'dibatalkan') {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-800';
+            } else {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800';
+            }
+
+            // Alamat & Penerima
+            document.getElementById('detNamaPenerima').textContent = data.nama_penerima;
+            document.getElementById('detTeleponPenerima').textContent = data.telepon_penerima + (data.email && data.email !== '-' ? ` (${data.email})` : '');
+            document.getElementById('detAlamatPengiriman').textContent = data.alamat;
+            document.getElementById('detKotaKodePos').textContent = `${data.kota} - ${data.kode_pos}`;
+
+            // Catatan
+            const catatanText = document.getElementById('detCatatanText');
+            if (data.catatan && data.catatan.trim() !== '') {
+                catatanText.textContent = `"${data.catatan}"`;
+                document.getElementById('detCatatanBox').className = 'mt-1 bg-amber-50 border border-amber-200 text-amber-900 px-3 py-2 rounded-xl text-xs font-medium italic flex items-start gap-2';
+            } else {
+                catatanText.textContent = 'Tidak ada catatan dari pembeli.';
+                document.getElementById('detCatatanBox').className = 'mt-1 bg-slate-50 border border-slate-200 text-slate-400 px-3 py-2 rounded-xl text-xs font-normal flex items-start gap-2';
+            }
+
+            // Ekspedisi
+            document.getElementById('detKurir').textContent = data.kurir;
+            document.getElementById('detResi').textContent = data.resi;
+
+            // Rincian Item Jam Tangan
+            const tbody = document.getElementById('detItemsTable');
+            tbody.innerHTML = '';
+            if (data.items && data.items.length > 0) {
+                data.items.forEach((item) => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50/50';
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-3">
+                            <div class="font-bold text-slate-900">${item.nama_produk}</div>
+                            <div class="text-[11px] text-slate-500">Varian: ${item.nama_varian} &bull; <span class="font-mono text-slate-400">SKU: ${item.kode_sku}</span></div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center font-bold text-slate-800">${item.qty}</td>
+                        <td class="py-2.5 px-3 text-right text-slate-600">${item.harga}</td>
+                        <td class="py-2.5 px-3 text-right font-bold text-slate-900">${item.subtotal}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // Biaya & Pembayaran
+            document.getElementById('detSubtotal').textContent = data.subtotal;
+            document.getElementById('detOngkir').textContent = data.ongkir;
+            document.getElementById('detTotalHarga').textContent = data.total;
+            document.getElementById('detMetodeBayar').textContent = `${data.metode_bayar} (${data.status_bayar.toUpperCase()})`;
+
+            // Tombol Cetak Kuitansi Resmi
+            const btnCetak = document.getElementById('detBtnCetak');
+            btnCetak.href = data.cetak_url;
+
+            document.getElementById('modalDetailPesanan').classList.remove('hidden');
+        }
+
+        function closeModalDetail() {
+            document.getElementById('modalDetailPesanan').classList.add('hidden');
         }
 
         // Copy Text Helper
