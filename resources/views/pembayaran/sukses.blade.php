@@ -204,7 +204,7 @@
                 <div>
                     @foreach($pesanan->detail as $item)
                         @php
-                            $produk = $item->varian->produk ?? null;
+                            $produk = $item->varian?->produk ?? null;
                             $fotoUtama = $produk && $produk->galeri ? ($produk->galeri->where('foto_utama', 1)->first() ?? $produk->galeri->first()) : null;
                         @endphp
                         <div class="d-flex align-items-center gap-3 py-3 border-bottom">
@@ -307,17 +307,17 @@
                         </div>
                     </div>
 
-                    <!-- Tombol Unduh Bukti Transaksi (Langsung Download PDF) -->
-                    <button type="button" id="btnUnduhBukti" onclick="unduhBuktiPdf()" class="btn btn-dark w-100 py-2.5 fw-bold small mt-2 d-flex align-items-center justify-content-center gap-2 d-print-none shadow-sm" style="background: #0f172a; border-radius: 12px; height: 46px;">
+                    <!-- Tombol Unduh / Cetak Bukti Transaksi Resmi -->
+                    <a href="{{ route('pembayaran.cetak', ['id' => $pesanan->pesanan_id, 'print' => 1]) }}" target="_blank" class="btn btn-dark w-100 py-2.5 fw-bold small mt-2 d-flex align-items-center justify-content-center gap-2 d-print-none shadow-sm" style="background: #0f172a; border-radius: 12px; height: 46px; text-decoration: none;">
                         <i class="bi bi-file-earmark-arrow-down-fill text-emerald-400 fs-5"></i>
-                        <span id="btnUnduhBuktiText">Unduh Bukti Transaksi (PDF)</span>
-                    </button>
+                        <span>Unduh / Cetak Bukti (PDF)</span>
+                    </a>
 
-                    <!-- Tombol Cetak Dokumen Fisik Alternatif -->
-                    <button type="button" onclick="window.print()" class="btn btn-light w-100 py-1.5 fw-semibold small d-flex align-items-center justify-content-center gap-2 d-print-none border" style="border: 1.5px solid #e2e8f0; border-radius: 12px; color: #64748b; font-size: 0.78rem;">
-                        <i class="bi bi-printer"></i>
-                        <span>Cetak Dokumen Fisik</span>
-                    </button>
+                    <!-- Tombol Lihat Lembar Kuitansi Fisik -->
+                    <a href="{{ route('pembayaran.cetak', $pesanan->pesanan_id) }}" target="_blank" class="btn btn-light w-100 py-1.5 fw-semibold small d-flex align-items-center justify-content-center gap-2 d-print-none border mt-1" style="border: 1.5px solid #e2e8f0; border-radius: 12px; color: #64748b; font-size: 0.78rem; text-decoration: none;">
+                        <i class="bi bi-eye"></i>
+                        <span>Lihat Lembar Kuitansi</span>
+                    </a>
                 </div>
             </div>
 
@@ -358,8 +358,8 @@
     $nomorCoa = 'KW-COA-' . strtoupper(substr(md5($pesanan->nomor_pesanan), 0, 4)) . '-' . strtoupper(substr($pesanan->nomor_pesanan, -3));
 @endphp
 
-<!-- ELEMEN KHUSUS GENERASI PDF BUKTI PEMBAYARAN RESMI (OFF-SCREEN) -->
-<div id="buktiTransaksiPdf" style="display: none; position: fixed; top: 0; left: 0; width: 794px; background: #ffffff; color: #0f172a; font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 40px 45px; box-sizing: border-box; z-index: -9999;">
+<!-- ELEMEN KHUSUS BUKTI PEMBAYARAN RESMI -->
+<div id="buktiTransaksiPdf" style="display: none; width: 794px; background: #ffffff; color: #0f172a; font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 40px 45px; box-sizing: border-box;">
     
     <!-- Header Kuitansi -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 22px; border-bottom: 2px solid #0f172a;">
@@ -509,23 +509,28 @@
 
 </div>
 
-<!-- Mode Cetak Khusus Saat Pengguna Menekan 'Cetak Dokumen Fisik' -->
+<!-- Mode Cetak Khusus: Hanya Munculkan Kuitansi Resmi di Kertas Cetak -->
 <style>
     @media print {
-        header, footer, .d-print-none {
+        header, footer, nav, .container, .d-print-none {
             display: none !important;
         }
-        body {
+        html, body {
             background: #ffffff !important;
             color: #000000 !important;
-        }
-        .container {
-            max-width: 100% !important;
+            margin: 0 !important;
             padding: 0 !important;
         }
-        .card {
-            border: 1px solid #cbd5e1 !important;
-            box-shadow: none !important;
+        #buktiTransaksiPdf {
+            display: block !important;
+            position: relative !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 10px 25px !important;
+            box-sizing: border-box !important;
+            z-index: 1 !important;
+            visibility: visible !important;
         }
     }
 </style>
@@ -543,15 +548,21 @@
     function unduhBuktiPdf() {
         const btn = document.getElementById('btnUnduhBukti');
         const btnText = document.getElementById('btnUnduhBuktiText');
-        const originalContent = btnText.innerHTML;
+        const originalContent = btnText ? btnText.innerHTML : 'Unduh Bukti Transaksi (PDF)';
 
-        btn.disabled = true;
-        btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Menyiapkan PDF...';
+        if (btn) btn.disabled = true;
+        if (btnText) btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Menyiapkan PDF...';
 
         const element = document.getElementById('buktiTransaksiPdf');
+        if (!element) return;
 
-        // Tampilkan elemen secara off-screen aman
+        // Posisikan elemen di layer teratas yang terlihat oleh html2canvas
         element.style.display = 'block';
+        element.style.position = 'fixed';
+        element.style.top = '0';
+        element.style.left = '0';
+        element.style.zIndex = '999999';
+        element.style.backgroundColor = '#ffffff';
 
         const opt = {
             margin:       [8, 8, 8, 8],
@@ -562,16 +573,26 @@
                 useCORS: true, 
                 logging: false,
                 letterRendering: true,
+                scrollY: 0,
+                scrollX: 0,
                 windowWidth: 800
             },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
+        const cleanup = () => {
+            element.style.display = 'none';
+            element.style.position = '';
+            element.style.top = '';
+            element.style.left = '';
+            element.style.zIndex = '';
+            if (btn) btn.disabled = false;
+        };
+
         setTimeout(() => {
             if (typeof html2pdf !== 'function') {
-                element.style.display = 'none';
-                btn.disabled = false;
-                btnText.innerHTML = originalContent;
+                cleanup();
+                if (btnText) btnText.innerHTML = originalContent;
                 if (confirm('Library PDF sedang dimuat atau diblokir browser. Ingin membuka dialog cetak dokumen?')) {
                     window.print();
                 }
@@ -579,19 +600,17 @@
             }
 
             html2pdf().set(opt).from(element).save().then(() => {
-                element.style.display = 'none';
-                btn.disabled = false;
-                btnText.innerHTML = '<i class="bi bi-check2-circle text-emerald-400 me-1"></i>Unduh Ulang Bukti (PDF)';
+                cleanup();
+                if (btnText) btnText.innerHTML = '<i class="bi bi-check2-circle text-emerald-400 me-1"></i>Unduh Ulang Bukti (PDF)';
             }).catch(err => {
                 console.error('Gagal mengunduh PDF:', err);
-                element.style.display = 'none';
-                btn.disabled = false;
-                btnText.innerHTML = originalContent;
+                cleanup();
+                if (btnText) btnText.innerHTML = originalContent;
                 if (confirm('Unduhan otomatis mengalami kendala. Apakah Anda ingin mencetak dokumen secara langsung?')) {
                     window.print();
                 }
             });
-        }, 150);
+        }, 200);
     }
 </script>
 @endpush

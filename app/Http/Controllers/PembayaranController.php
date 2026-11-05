@@ -236,4 +236,27 @@ class PembayaranController extends Controller
 
         return view('pembayaran.sukses', compact('pesanan'));
     }
+
+    /**
+     * Menampilkan dokumen cetak / PDF kuitansi resmi pembayaran (Standar A4).
+     */
+    public function cetak($id)
+    {
+        $userId = Auth::id();
+
+        $pesanan = Pesanan::with([
+            'detail.varian.produk',
+            'pembayaran',
+            'pengiriman',
+        ])
+            ->where('pesanan_id', $id)
+            ->firstOrFail();
+
+        // Otorisasi: hanya pemilik pesanan atau admin yang dapat mencetak bukti
+        if ($pesanan->user_id !== $userId && Auth::user()->role !== 'admin') {
+            abort(403, 'Akses ditolak.');
+        }
+
+        return view('pembayaran.cetak', compact('pesanan'));
+    }
 }

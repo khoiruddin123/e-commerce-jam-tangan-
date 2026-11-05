@@ -161,7 +161,7 @@
                     <div>
                         @foreach($pesanan->detail as $item)
                             @php
-                                $produk = $item->varian->produk ?? null;
+                                $produk = $item->varian?->produk ?? null;
                                 $fotoUtama = $produk && $produk->galeri ? ($produk->galeri->where('foto_utama', 1)->first() ?? $produk->galeri->first()) : null;
                             @endphp
                             <div class="d-flex align-items-center gap-3 py-3 border-bottom">

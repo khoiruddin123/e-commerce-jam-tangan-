@@ -31,9 +31,16 @@ class CheckoutController extends Controller
                 ->with('error', 'Keranjang belanja Anda masih kosong. Silakan pilih produk terlebih dahulu.');
         }
 
-        // 3. Validasi stok masing-masing varian sebelum lanjut checkout
+        // 3. Validasi status aktif dan ketersediaan stok masing-masing varian
         foreach ($keranjang->detail as $item) {
-            if (! $item->varian || $item->varian->stok < $item->jumlah) {
+            if (! $item->varian || $item->varian->status_varian !== 'aktif' || ($item->varian->produk && $item->varian->produk->status_produk !== 'aktif')) {
+                $namaProduk = $item->varian?->produk?->nama_produk ?? 'Produk';
+
+                return redirect()->route('keranjang.index')
+                    ->with('error', "Produk {$namaProduk} saat ini sedang dinonaktifkan atau tidak tersedia. Silakan hapus produk dari keranjang.");
+            }
+
+            if ($item->varian->stok < $item->jumlah) {
                 $namaProduk = $item->varian->produk->nama_produk ?? 'Produk';
                 $namaVarian = $item->varian->nama_varian ?? '';
                 $stokAda = $item->varian->stok ?? 0;
@@ -93,11 +100,16 @@ class CheckoutController extends Controller
             $pesanan = DB::transaction(function () use ($request, $userId, $keranjang) {
                 $subtotal = 0;
 
-                // Hitung ulang subtotal dan cek stok langsung dari database
+                // Hitung ulang subtotal dan cek status serta ketersediaan stok
                 foreach ($keranjang->detail as $item) {
                     $varian = $item->varian;
-                    if (! $varian || $varian->stok < $item->jumlah) {
-                        $nama = $varian ? $varian->produk->nama_produk : 'Produk';
+                    if (! $varian || $varian->status_varian !== 'aktif' || ($varian->produk && $varian->produk->status_produk !== 'aktif')) {
+                        $nama = $varian ? ($varian->produk?->nama_produk ?? 'Produk') : 'Produk';
+                        throw new \Exception("Produk {$nama} saat ini sedang dinonaktifkan atau tidak tersedia.");
+                    }
+
+                    if ($varian->stok < $item->jumlah) {
+                        $nama = $varian->produk?->nama_produk ?? 'Produk';
                         throw new \Exception("Stok untuk {$nama} tidak mencukupi.");
                     }
                     $subtotal += ((float) $varian->harga_varian) * $item->jumlah;

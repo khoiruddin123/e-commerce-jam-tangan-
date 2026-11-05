@@ -1,22 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\LaporanController;
-use App\Http\Controllers\Admin\PesananController;
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\MerekController;
-use App\Http\Controllers\Admin\VarianController;
+use App\Http\Controllers\Admin\PesananController;
 use App\Http\Controllers\Admin\ProdukController as AdminProdukController;
+use App\Http\Controllers\Admin\VarianController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\Pelanggan\PelangganController;
 use App\Http\Controllers\Pelanggan\UlasanController;
-use App\Http\Controllers\KeranjangController;
-use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\ProfilController;
-
+use Illuminate\Support\Facades\Route;
 
 // --- Rute Publik / Beranda & Katalog ---
 Route::get('/', [ProdukController::class, 'beranda'])->name('produk.index');
@@ -111,4 +110,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/pembayaran/{id}/verifikasi', [PembayaranController::class, 'verifikasi'])->name('pembayaran.verifikasi');
     Route::post('/pembayaran/{id}/batal', [PembayaranController::class, 'batal'])->name('pembayaran.batal');
     Route::get('/pembayaran/{id}/sukses', [PembayaranController::class, 'sukses'])->name('pembayaran.sukses');
+    Route::get('/pembayaran/{id}/cetak', [PembayaranController::class, 'cetak'])->name('pembayaran.cetak');
 });

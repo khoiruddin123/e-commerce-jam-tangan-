@@ -515,7 +515,7 @@
                             @forelse($pesananTerbaru as $order)
                             @php
                             $firstItem = $order->detail->first();
-                            $namaProduk = $firstItem->nama_produk ?? $firstItem->varian->produk->nama_produk ?? 'Jam Tangan';
+                            $namaProduk = $firstItem?->nama_produk ?? $firstItem?->varian?->produk?->nama_produk ?? 'Jam Tangan';
                             if ($order->detail->count() > 1) {
                             $namaProduk .= ' (+' . ($order->detail->count() - 1) . ' item)';
                             }

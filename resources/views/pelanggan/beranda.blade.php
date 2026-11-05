@@ -113,7 +113,7 @@
                                     <i class="bi bi-check-circle-fill text-blue-600"></i>
                                     Pesanan Selesai / Terkirim
                                 </span>
-                                <a href="{{ route('pembayaran.sukses', $pesanan->pesanan_id) }}" 
+                                <a href="{{ route('pembayaran.cetak', $pesanan->pesanan_id) }}" target="_blank" 
                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs transition"
                                    title="Lihat / Unduh Bukti Pembayaran Resmi">
                                     <i class="bi bi-file-earmark-arrow-down-fill text-blue-600"></i>
@@ -124,7 +124,7 @@
                                     <i class="bi bi-truck text-sky-600"></i>
                                     Dalam Pengiriman
                                 </span>
-                                <a href="{{ route('pembayaran.sukses', $pesanan->pesanan_id) }}" 
+                                <a href="{{ route('pembayaran.cetak', $pesanan->pesanan_id) }}" target="_blank" 
                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs transition"
                                    title="Lihat / Unduh Bukti Pembayaran Resmi">
                                     <i class="bi bi-file-earmark-arrow-down-fill text-blue-600"></i>
@@ -141,7 +141,7 @@
                                     <i class="bi bi-patch-check-fill text-emerald-600"></i>
                                     Dibayar & Lunas
                                 </span>
-                                <a href="{{ route('pembayaran.sukses', $pesanan->pesanan_id) }}" 
+                                <a href="{{ route('pembayaran.cetak', $pesanan->pesanan_id) }}" target="_blank" 
                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs transition"
                                    title="Lihat / Unduh Bukti Pembayaran Resmi">
                                     <i class="bi bi-file-earmark-arrow-down-fill text-emerald-600"></i>

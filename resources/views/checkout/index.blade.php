@@ -227,7 +227,7 @@
                     <div class="mb-3" style="max-height: 280px; overflow-y: auto;">
                         @foreach($keranjang->detail as $item)
                             @php
-                                $produk = $item->varian->produk ?? null;
+                                $produk = $item->varian?->produk ?? null;
                                 $fotoUtama = $produk && $produk->galeri ? ($produk->galeri->where('foto_utama', 1)->first() ?? $produk->galeri->first()) : null;
                                 $eyebrow = strtoupper($produk->merek->nama_merek ?? ($produk->kategori->nama_kategori ?? 'A1ORA HOROLOGY'));
                             @endphp
@@ -247,7 +247,7 @@
                                         {{ $produk->nama_produk ?? 'Jam Tangan' }}
                                     </div>
                                     <div class="text-muted small" style="font-size: 0.75rem;">
-                                        Varian: {{ $item->varian->nama_varian }} &times; {{ $item->jumlah }} unit
+                                        Varian: {{ $item->varian?->nama_varian ?? 'Standard' }} &times; {{ $item->jumlah }} unit
                                     </div>
                                 </div>
                                 <div class="text-end fw-bold small text-dark">
