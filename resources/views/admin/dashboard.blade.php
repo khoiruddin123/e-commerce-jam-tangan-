@@ -487,13 +487,13 @@
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4 print-card">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div class="flex items-center gap-2">
-                        <h3 class="font-bold text-sm text-slate-900">Pesanan Terbaru</h3>
-                        <span class="text-[11px] text-slate-400">{{ $pesananTerbaru->count() }} transaksi</span>
+                        <h3 class="font-bold text-sm text-slate-900">Semua Transaksi Pesanan</h3>
+                        <span class="text-[11px] text-slate-400 font-semibold bg-slate-100 px-2.5 py-0.5 rounded-full">{{ $pesananTerbaru->count() }} transaksi</span>
                     </div>
                     <!-- Filter Search Mini -->
                     <div class="relative w-full sm:w-64 no-print">
                         <i class="bi bi-search absolute left-3 top-2 text-slate-400 text-xs"></i>
-                        <input type="text" placeholder="Cari pesanan..."
+                        <input type="text" id="inputCariPesanan" placeholder="Cari pesanan..."
                             class="w-full text-xs pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
@@ -511,7 +511,7 @@
                                 <th class="py-3 px-4 text-right no-print">AKSI</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-xs">
+                        <tbody id="tabelPesananBody" class="divide-y divide-slate-100 text-xs">
                             @forelse($pesananTerbaru as $order)
                             @php
                             $firstItem = $order->detail->first();
@@ -677,6 +677,19 @@
                     window.myTrenChart.resize();
                 }
             });
+
+            // Live filter pencarian tabel pesanan
+            const inputCari = document.getElementById('inputCariPesanan');
+            if (inputCari) {
+                inputCari.addEventListener('input', function() {
+                    const query = this.value.toLowerCase().trim();
+                    const rows = document.querySelectorAll('#tabelPesananBody tr');
+                    rows.forEach(row => {
+                        const text = row.innerText.toLowerCase();
+                        row.style.display = text.includes(query) ? '' : 'none';
+                    });
+                });
+            }
         });
     </script>
 

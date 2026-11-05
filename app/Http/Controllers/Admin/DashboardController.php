@@ -135,10 +135,9 @@ class DashboardController extends Controller
             ->orderByDesc('total_terjual')
             ->first();
 
-        // 8. Data Riil 5 Pesanan Terbaru
+        // 8. Data Riil Seluruh Pesanan (Menampilkan Semua Transaksi)
         $pesananTerbaru = Pesanan::with(['user', 'detail.varian.produk', 'pengiriman'])
             ->latest('tanggal_pesanan')
-            ->take(5)
             ->get();
 
         return view('admin.dashboard', compact(
